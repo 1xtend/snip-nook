@@ -14,7 +14,7 @@ import { AuthModalComponent } from './shared/components/auth-modal/auth-modal.co
 export class AppComponent {
   visible: boolean = false;
 
-  onCloseModal(): void {
-    this.visible = false;
+  toggleModal(value: boolean): void {
+    this.visible = value;
   }
 }

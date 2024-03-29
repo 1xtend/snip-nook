@@ -20,8 +20,11 @@ describe('AppComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set visible to false on onCloseModal', () => {
-    component.onCloseModal();
+  it('should toggle visible on toggleModal', () => {
+    component.toggleModal(false);
     expect(component.visible).toBeFalsy();
+
+    component.toggleModal(true);
+    expect(component.visible).toBeTruthy();
   });
 });

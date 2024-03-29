@@ -1,16 +1,12 @@
-<app-header></app-header>
+<app-header (openModal)="toggleModal(true)"></app-header>
 
 <main class="main">
   <div class="container">
-    <button class="p-button" (click)="visible = !visible">open</button>
-
     <router-outlet></router-outlet>
   </div>
 </main>
 
-@if (visible) {
 <app-auth-modal
   [visible]="visible"
-  (closeModal)="onCloseModal()"
+  (closeModal)="toggleModal(false)"
 ></app-auth-modal>
-}
