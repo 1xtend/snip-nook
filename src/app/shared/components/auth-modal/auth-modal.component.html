@@ -6,5 +6,9 @@
   [(visible)]="visible"
   (visibleChange)="onVisibleChange($event)"
 >
-  it works!
+  @if (logIn) {
+    <app-log-in></app-log-in>
+  } @else {
+    <app-sign-up></app-sign-up>
+  }
 </p-dialog>

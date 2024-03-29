@@ -6,11 +6,13 @@ import {
   Output,
 } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
+import { LogInComponent } from '../log-in/log-in.component';
+import { SignUpComponent } from '../sign-up/sign-up.component';
 
 @Component({
   selector: 'app-auth-modal',
   standalone: true,
-  imports: [DialogModule],
+  imports: [DialogModule, LogInComponent, SignUpComponent],
   templateUrl: './auth-modal.component.html',
   styleUrl: './auth-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
