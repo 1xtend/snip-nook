@@ -2,6 +2,10 @@
 
 <main class="main">
   <div class="container">
+    <button class="p-button" (click)="visible = !visible">open</button>
+
     <router-outlet></router-outlet>
   </div>
 </main>
+
+<app-auth-modal [visible]="visible"></app-auth-modal>
