@@ -1,4 +1,8 @@
+@import "../../../assets/scss/variables";
+
 .header {
   display: flex;
   align-items: center;
+  padding: $spacing-m 0;
+  background-color: var(--primary-900);
 }
