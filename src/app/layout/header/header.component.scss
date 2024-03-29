@@ -3,6 +3,24 @@
 .header {
   display: flex;
   align-items: center;
-  padding: $spacing-m 0;
-  background-color: var(--primary-900);
+  padding: $spacing-m;
+  column-gap: $spacing-l;
+
+  &__logo {
+    margin-right: auto;
+
+    ::ng-deep .p-button {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.navbar {
+  display: flex;
+  column-gap: $spacing-m;
+
+  &__link {
+    padding: $spacing-xs;
+    text-decoration: none;
+  }
 }

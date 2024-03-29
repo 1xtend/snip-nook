@@ -1,11 +1,18 @@
 <header class="header">
-  <a routerLink="/" class="header__logo">SnipNook</a>
+  <p-button routerLink="/" class="header__logo" [link]="true" [text]="true">
+    SnipNook
+  </p-button>
 
   <nav class="navbar">
-    <a routerLink="/trending">Trendig</a>
-    <a routerLink="/saved">Saved</a>
-    <a routerLink="/snippets">My snippets</a>
+    <a routerLink="/trending" class="navbar__link p-button p-button-text"
+      >Trending</a
+    >
+    <a routerLink="/trending" class="navbar__link p-button p-button-text"
+      >My Snippets</a
+    >
   </nav>
 
-  <p-button>Login</p-button>
+  <div class="header__actions">
+    <p-button>Login</p-button>
+  </div>
 </header>
