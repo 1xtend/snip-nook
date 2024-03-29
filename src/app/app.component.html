@@ -8,4 +8,9 @@
   </div>
 </main>
 
-<app-auth-modal [visible]="visible"></app-auth-modal>
+@if (visible) {
+<app-auth-modal
+  [visible]="visible"
+  (closeModal)="onCloseModal()"
+></app-auth-modal>
+}

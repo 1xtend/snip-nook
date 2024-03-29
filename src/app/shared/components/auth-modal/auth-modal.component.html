@@ -1,9 +1,10 @@
 <p-dialog
   [modal]="true"
-  [(visible)]="visible"
-  header="Log In"
+  [header]="logIn ? 'Log In' : 'Sign Up'"
   [style]="{ width: '50vw' }"
   [draggable]="false"
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange($event)"
 >
   it works!
 </p-dialog>
