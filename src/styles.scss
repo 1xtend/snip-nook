@@ -1,5 +1,5 @@
-// @import "primeng/resources/themes/nova-accent/theme.css";
-@import "primeng/resources/themes/lara-dark-indigo/theme.css";
+// @import "primeng/resources/themes/lara-dark-indigo/theme.css";
+@import "./assets/scss/variables";
 
 body {
   padding: 0;
@@ -8,4 +8,7 @@ body {
 }
 
 .container {
+  max-width: $container;
+  margin: 0 auto;
+  padding: 0 $spacing-l;
 }
