@@ -12,3 +12,35 @@ body {
   margin: 0 auto;
   padding: 0 $spacing-l;
 }
+
+// Auth form
+.auth-form {
+  &__box {
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+
+  &__label {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-s;
+    }
+  }
+
+  &__input {
+    width: 100%;
+
+    ::ng-deep .p-inputwrapper {
+      display: block;
+    }
+    ::ng-deep .p-inputtext {
+      width: 100%;
+    }
+  }
+
+  &__error {
+    color: $color-error;
+  }
+}

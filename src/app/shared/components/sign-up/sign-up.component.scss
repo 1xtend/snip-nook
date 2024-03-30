@@ -1,0 +1,10 @@
+.auth-form__input {
+  width: 100%;
+
+  ::ng-deep .p-inputwrapper {
+    display: block;
+  }
+  ::ng-deep .p-inputtext {
+    width: 100%;
+  }
+}
