@@ -9,3 +9,7 @@ export interface AuthData {
   email: string;
   password: string;
 }
+
+export interface AuthErrors {
+  emailInUse: boolean;
+}

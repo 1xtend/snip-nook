@@ -21,7 +21,7 @@
       (emailControl.invalid && emailControl.dirty) ||
       (form.touched && form.invalid && authForm.submitted)
     ) {
-      <small class="card__error">
+      <small class="card__validation-error">
         @if (emailControl.hasError("pattern")) {
           Please enter an email address
         }
@@ -43,7 +43,7 @@
       (passwordControl.invalid && passwordControl.dirty) ||
       (form.touched && form.invalid && authForm.submitted)
     ) {
-      <small class="card__error">
+      <small class="card__validation-error">
         @if (passwordControl.hasError("minlength")) {
           Password must contain at least 8 characters.
         }
@@ -54,7 +54,15 @@
     }
   </div>
 
-  <p class="card__row">
+  @if (authErrors) {
+    <small class="card__auth-error">
+      @if (authErrors.emailInUse) {
+        Email is already taken.
+      }
+    </small>
+  }
+
+  <p class="card__info">
     Already have an account? <a routerLink="/login">Log In</a>
   </p>
 
