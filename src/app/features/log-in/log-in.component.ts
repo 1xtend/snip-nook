@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -11,12 +10,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthForm } from '../shared/models/auth.interface';
-import { FormFocusDirective } from '../shared/directives/form-focus.directive';
-import { emailRegex } from '../shared/helpers/regex';
+import { AuthForm } from '@shared/models/auth.interface';
+import { FormFocusDirective } from '@shared/directives/form-focus.directive';
+import { emailRegex } from '@shared/helpers/regex';
 
 @Component({
-  selector: 'app-sign-up',
+  selector: 'app-log-in',
   standalone: true,
   imports: [
     InputTextModule,
@@ -26,10 +25,10 @@ import { emailRegex } from '../shared/helpers/regex';
     ReactiveFormsModule,
     FormFocusDirective,
   ],
-  templateUrl: './sign-up.component.html',
-  styleUrl: './sign-up.component.scss',
+  templateUrl: './log-in.component.html',
+  styleUrl: './log-in.component.scss',
 })
-export class SignUpComponent implements OnInit {
+export class LogInComponent implements OnInit {
   form!: FormGroup<AuthForm>;
 
   get emailControl(): FormControl {
