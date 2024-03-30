@@ -1,1 +1,62 @@
-<p>sign-up works!</p>
+<form
+  class="card"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  focusInvalidInput
+  #authForm="ngForm"
+>
+  <h2 class="card__title">Sign Up</h2>
+
+  <div class="card__row">
+    <label for="auth-email" class="card__label">Email</label>
+    <input
+      type="email"
+      pInputText
+      class="card__input"
+      id="auth-email"
+      formControlName="email"
+    />
+
+    @if (
+      (emailControl.invalid && emailControl.dirty) ||
+      (form.touched && form.invalid && authForm.submitted)
+    ) {
+      <small class="card__error">
+        @if (emailControl.hasError("pattern")) {
+          Please enter an email address
+        }
+      </small>
+    }
+  </div>
+  <div class="card__row">
+    <label for="auth-password" class="card__label">Password</label>
+    <input
+      type="password"
+      pPassword
+      [feedback]="false"
+      id="auth-password"
+      class="card__input"
+      formControlName="password"
+    />
+
+    @if (
+      (passwordControl.invalid && passwordControl.dirty) ||
+      (form.touched && form.invalid && authForm.submitted)
+    ) {
+      <small class="card__error">
+        @if (passwordControl.hasError("minlength")) {
+          Password must contain at least 8 characters.
+        }
+        @if (passwordControl.hasError("maxlength")) {
+          Password cannot contain more than 16 characters.
+        }
+      </small>
+    }
+  </div>
+
+  <p class="card__row">
+    Already have an account? <a routerLink="/login">Log In</a>
+  </p>
+
+  <p-button type="submit" severity="help" label="Sign Up"></p-button>
+</form>
