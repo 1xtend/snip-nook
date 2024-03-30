@@ -1,4 +1,6 @@
-<p-card header="Log In" class="card">
+<form class="card">
+  <h2 class="card__title">Log In</h2>
+
   <div class="card__row">
     <label for="auth-email" class="card__label">Email</label>
     <input type="email" pInputText class="card__input" id="auth-email" />
@@ -13,9 +15,9 @@
     ></p-password>
   </div>
 
-  <p class="card__info">New to SnipNook? <a routerLink="/signup">Sign Up</a></p>
+  <p class="card__info card__row">
+    New to SnipNook? <a routerLink="/signup">Sign Up</a>
+  </p>
 
-  <ng-template pTemplate="footer">
-    <p-button severity="help" label="Log In"></p-button>
-  </ng-template>
-</p-card>
+  <p-button severity="help" label="Log In"></p-button>
+</form>

@@ -8,6 +8,9 @@
 
 .card {
   width: 50vw;
+  background-color: $color-surface;
+  padding: $spacing-l;
+  border-radius: 0.75rem;
 
   @media (max-width: $breakpoint-l) {
     width: 70vw;
@@ -15,6 +18,10 @@
 
   @media (max-width: $breakpoint-m) {
     width: 90vw;
+  }
+
+  &__title {
+    margin: 0 0 $spacing-l;
   }
 
   &__row:not(:last-child) {
