@@ -1,23 +1,62 @@
-<form class="card">
+<form
+  class="card"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  focusInvalidInput
+  #authForm="ngForm"
+>
   <h2 class="card__title">Log In</h2>
 
   <div class="card__row">
     <label for="auth-email" class="card__label">Email</label>
-    <input type="email" pInputText class="card__input" id="auth-email" />
+    <input
+      type="email"
+      pInputText
+      class="card__input"
+      id="auth-email"
+      formControlName="email"
+    />
+
+    @if (
+      (emailControl.invalid && emailControl.dirty) ||
+      (form.touched && form.invalid && authForm.submitted)
+    ) {
+      <small class="card__error">
+        @if (emailControl.hasError("email")) {
+          Please enter an email address
+        }
+      </small>
+    }
   </div>
   <div class="card__row">
     <label for="auth-password" class="card__label">Password</label>
-    <p-password
+    <input
+      type="password"
+      pPassword
       [feedback]="false"
       inputId="auth-password"
-      [toggleMask]="true"
       class="card__input"
-    ></p-password>
+      formControlName="password"
+    />
+
+    @if (
+      (passwordControl.invalid && passwordControl.dirty) ||
+      (form.touched && form.invalid && authForm.submitted)
+    ) {
+      <small class="card__error">
+        @if (passwordControl.hasError("minlength")) {
+          Password must contain at least 8 characters.
+        }
+        @if (passwordControl.hasError("maxlength")) {
+          Password cannot contain more than 16 characters.
+        }
+      </small>
+    }
   </div>
 
   <p class="card__info card__row">
     New to SnipNook? <a routerLink="/signup">Sign Up</a>
   </p>
 
-  <p-button severity="help" label="Log In"></p-button>
+  <p-button type="submit" severity="help" label="Log In"></p-button>
 </form>

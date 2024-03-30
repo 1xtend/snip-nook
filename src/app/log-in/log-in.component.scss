@@ -21,11 +21,15 @@
   }
 
   &__title {
-    margin: 0 0 $spacing-l;
+    margin: 0 0 $spacing-x;
   }
 
-  &__row:not(:last-child) {
-    margin-bottom: $spacing-l;
+  &__row {
+    position: relative;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-x;
+    }
   }
 
   &__label {
@@ -52,5 +56,11 @@
 
   ::ng-deep .p-card-footer {
     padding: 0;
+  }
+
+  &__error {
+    color: $color-error;
+    bottom: -20px;
+    position: absolute;
   }
 }
