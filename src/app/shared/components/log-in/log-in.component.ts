@@ -51,7 +51,6 @@ export class LogInComponent implements OnInit {
 
     console.log(this.form.value);
     this.form.reset();
-    this.form.markAsPristine();
   }
 
   get emailControl(): FormControl {

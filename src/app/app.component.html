@@ -1,12 +1,7 @@
-<app-header (openModal)="toggleModal(true)"></app-header>
+<app-header (openModal)="showModal()"></app-header>
 
 <main class="main">
   <div class="container">
     <router-outlet></router-outlet>
   </div>
 </main>
-
-<app-auth-modal
-  [visible]="visible"
-  (closeModal)="toggleModal(false)"
-></app-auth-modal>

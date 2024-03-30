@@ -16,7 +16,7 @@
 
     @if (
       (emailControl.invalid && emailControl.dirty) ||
-      (authForm.submitted && form.invalid)
+      (authForm.submitted && form.pristine)
     ) {
       <small class="auth-form__error">
         @if (emailControl.hasError("required")) {
@@ -40,7 +40,7 @@
 
     @if (
       (passwordControl.invalid && passwordControl.dirty) ||
-      (authForm.submitted && form.invalid)
+      (authForm.submitted && form.pristine)
     ) {
       <small class="auth-form__error">
         @if (passwordControl.hasError("required")) {
@@ -48,6 +48,9 @@
         }
         @if (passwordControl.hasError("minlength")) {
           Password must contain at least 8 characters.
+        }
+        @if (passwordControl.hasError("maxlength")) {
+          Password cannot contain more than 16 characters.
         }
       </small>
     }

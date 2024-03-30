@@ -1,14 +1,5 @@
-<p-dialog
-  [modal]="true"
-  [header]="logIn ? 'Log In' : 'Sign Up'"
-  [style]="{ width: '50vw' }"
-  [draggable]="false"
-  [(visible)]="visible"
-  (visibleChange)="onVisibleChange($event)"
->
-  @if (logIn) {
-    <app-log-in></app-log-in>
-  } @else {
-    <app-sign-up></app-sign-up>
-  }
-</p-dialog>
+@if (logIn) {
+  <app-log-in></app-log-in>
+} @else {
+  <app-sign-up></app-sign-up>
+}
