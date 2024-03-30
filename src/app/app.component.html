@@ -1,4 +1,6 @@
-<app-header></app-header>
+@if (!hasRoute("login") && !hasRoute("signup")) {
+  <app-header></app-header>
+}
 
 <main class="main">
   <div class="container">
