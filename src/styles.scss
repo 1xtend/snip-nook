@@ -21,6 +21,13 @@ body {
     }
   }
 
+  &__row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+  }
+
   &__label {
     display: block;
 
