@@ -1,1 +1,21 @@
-<p>log-in works!</p>
+<p-card header="Log In" class="card">
+  <div class="card__row">
+    <label for="auth-email" class="card__label">Email</label>
+    <input type="email" pInputText class="card__input" id="auth-email" />
+  </div>
+  <div class="card__row">
+    <label for="auth-password" class="card__label">Password</label>
+    <p-password
+      [feedback]="false"
+      inputId="auth-password"
+      [toggleMask]="true"
+      class="card__input"
+    ></p-password>
+  </div>
+
+  <p class="card__info">New to SnipNook? <a routerLink="/signup">Sign Up</a></p>
+
+  <ng-template pTemplate="footer">
+    <p-button severity="help" label="Log In"></p-button>
+  </ng-template>
+</p-card>

@@ -1,0 +1,49 @@
+@import "../../assets/scss/variables";
+
+:host {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+.card {
+  width: 50vw;
+
+  @media (max-width: $breakpoint-l) {
+    width: 70vw;
+  }
+
+  @media (max-width: $breakpoint-m) {
+    width: 90vw;
+  }
+
+  &__row:not(:last-child) {
+    margin-bottom: $spacing-l;
+  }
+
+  &__label {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-xs;
+    }
+  }
+
+  &__input {
+    display: block;
+    width: 100%;
+
+    ::ng-deep .p-inputtext,
+    ::ng-deep .p-password {
+      width: 100%;
+    }
+  }
+
+  &__info {
+    margin: 0;
+  }
+
+  ::ng-deep .p-card-footer {
+    padding: 0;
+  }
+}
