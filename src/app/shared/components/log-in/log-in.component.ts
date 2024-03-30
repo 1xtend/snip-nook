@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -6,19 +12,21 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthForm } from '../../models/auth-form.interface';
+import { AuthData, AuthForm } from '../../models/auth.interface';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-log-in',
   standalone: true,
-  imports: [ReactiveFormsModule, PasswordModule, InputTextModule],
+  imports: [ReactiveFormsModule, PasswordModule, InputTextModule, ButtonModule],
   templateUrl: './log-in.component.html',
   styleUrl: './log-in.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogInComponent implements OnInit {
+  @Output() submit = new EventEmitter<AuthData>();
   form!: FormGroup<AuthForm>;
 
   constructor(private fb: FormBuilder) {}
@@ -46,8 +54,11 @@ export class LogInComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.invalid) {
+      this.form.markAllAsTouched();
       return;
     }
+
+    this.submit.emit(this.form.getRawValue());
 
     console.log(this.form.value);
     this.form.reset();

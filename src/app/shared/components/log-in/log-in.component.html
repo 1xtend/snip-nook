@@ -1,9 +1,4 @@
-<form
-  [formGroup]="form"
-  class="auth-form"
-  (ngSubmit)="onSubmit()"
-  #authForm="ngForm"
->
+<form [formGroup]="form" class="auth-form" (ngSubmit)="onSubmit()">
   <div class="auth-form__box">
     <label for="auth-email" class="auth-form__label">Email</label>
     <input
@@ -16,7 +11,7 @@
 
     @if (
       (emailControl.invalid && emailControl.dirty) ||
-      (authForm.submitted && form.pristine)
+      (form.touched && form.invalid)
     ) {
       <small class="auth-form__error">
         @if (emailControl.hasError("required")) {
@@ -40,7 +35,7 @@
 
     @if (
       (passwordControl.invalid && passwordControl.dirty) ||
-      (authForm.submitted && form.pristine)
+      (form.touched && form.invalid)
     ) {
       <small class="auth-form__error">
         @if (passwordControl.hasError("required")) {
@@ -56,5 +51,5 @@
     }
   </div>
 
-  <button type="submit" class="p-button p-button-error">Submit</button>
+  <p-button type="submit" severity="help">Log In</p-button>
 </form>
