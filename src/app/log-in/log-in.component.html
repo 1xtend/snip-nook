@@ -22,7 +22,7 @@
       (form.touched && form.invalid && authForm.submitted)
     ) {
       <small class="card__error">
-        @if (emailControl.hasError("email")) {
+        @if (emailControl.hasError("pattern")) {
           Please enter an email address
         }
       </small>
@@ -34,7 +34,7 @@
       type="password"
       pPassword
       [feedback]="false"
-      inputId="auth-password"
+      id="auth-password"
       class="card__input"
       formControlName="password"
     />

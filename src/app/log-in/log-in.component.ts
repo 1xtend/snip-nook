@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { AuthForm } from '../shared/models/auth.interface';
 import { FormFocusDirective } from '../shared/directives/form-focus.directive';
+import { emailRegex } from '../shared/helpers/regex';
 
 @Component({
   selector: 'app-log-in',
@@ -48,8 +49,7 @@ export class LogInComponent implements OnInit {
     this.form = this.fb.group<AuthForm>({
       email: this.fb.control('', {
         nonNullable: true,
-        validators: [Validators.required, Validators.email],
-        updateOn: 'blur',
+        validators: [Validators.required, Validators.pattern(emailRegex)],
       }),
       password: this.fb.control('', {
         nonNullable: true,
@@ -58,7 +58,6 @@ export class LogInComponent implements OnInit {
           Validators.minLength(8),
           Validators.maxLength(16),
         ],
-        updateOn: 'blur',
       }),
     });
   }
