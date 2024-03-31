@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
   FormControl,
@@ -10,9 +10,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthForm } from '@shared/models/auth.interface';
+import { AuthErrors, AuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
+import { AuthService } from '@core/services/auth.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-log-in',
@@ -31,6 +33,9 @@ import { emailRegex } from '@shared/helpers/regex';
 export class LogInComponent implements OnInit {
   form!: FormGroup<AuthForm>;
 
+  authErrors: Partial<AuthErrors> | null = null;
+  loading: boolean = false;
+
   get emailControl(): FormControl {
     return this.form.controls['email'];
   }
@@ -39,7 +44,12 @@ export class LogInComponent implements OnInit {
     return this.form.controls['password'];
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private destroyRef: DestroyRef,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -68,7 +78,31 @@ export class LogInComponent implements OnInit {
       return;
     }
 
-    console.log(this.form.value);
-    this.form.reset();
+    this.authErrors = null;
+    this.loading = true;
+    this.form.disable();
+
+    this.authService
+      .logIn(this.form.getRawValue())
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (user) => {
+          this.loading = false;
+          this.form.enable();
+          this.form.reset();
+
+          this.router.navigate(['/home']);
+        },
+        error: (err) => {
+          this.authErrors = {
+            invalidCredential: err.code === 'auth/invalid-credential',
+          };
+
+          this.loading = false;
+          this.form.enable();
+
+          console.log(err);
+        },
+      });
   }
 }

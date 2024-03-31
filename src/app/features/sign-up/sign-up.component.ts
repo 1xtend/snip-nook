@@ -33,7 +33,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class SignUpComponent implements OnInit {
   form!: FormGroup<SignUpForm>;
 
-  authErrors: AuthErrors | null = null;
+  authErrors: Partial<AuthErrors> | null = null;
   loading: boolean = false;
 
   get emailControl(): FormControl {

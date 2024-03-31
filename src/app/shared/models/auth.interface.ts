@@ -16,4 +16,5 @@ export interface AuthData {
 
 export interface AuthErrors {
   emailInUse: boolean;
+  invalidCredential: boolean;
 }
