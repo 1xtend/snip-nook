@@ -9,7 +9,7 @@ import { getAuth } from 'firebase/auth';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideFirebaseApp } from '@angular/fire/app';
 import { initializeApp } from 'firebase/app';
-import { environment } from '@environment/environment';
+import { environment } from '@environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [

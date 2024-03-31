@@ -7,6 +7,7 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    title: 'Home',
   },
   {
     path: '',
@@ -15,14 +16,12 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    // loadComponent: () =>
-    //   import('./log-in/log-in.component').then((m) => m.LogInComponent),
     component: LogInComponent,
+    title: 'Log In',
   },
   {
     path: 'signup',
-    // loadComponent: () =>
-    //   import('./sign-up/sign-up.component').then((m) => m.SignUpComponent),
     component: SignUpComponent,
+    title: 'SIgn Up',
   },
 ];

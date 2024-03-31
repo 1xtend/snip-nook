@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { FirebaseApps } from '@angular/fire/app';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
@@ -7,8 +6,8 @@ import { HeaderComponent } from '@shared/components/header/header.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent],
-  providers: [Router, AuthService],
+  imports: [HeaderComponent, RouterOutlet],
+  providers: [AuthService],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

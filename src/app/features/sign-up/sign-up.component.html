@@ -8,6 +8,30 @@
   <h2 class="card__title">Sign Up</h2>
 
   <div class="card__row">
+    <label for="auth-username" class="card__label">Username</label>
+    <input
+      type="text"
+      pInputText
+      class="card__input"
+      id="auth-username"
+      formControlName="username"
+    />
+
+    @if (
+      (usernameControl.invalid && usernameControl.dirty) ||
+      (form.touched && form.invalid && authForm.submitted)
+    ) {
+      <small class="card__validation-error">
+        @if (usernameControl.hasError("minlength")) {
+          Username must contain at least 8 characters.
+        }
+        @if (usernameControl.hasError("maxlength")) {
+          Username cannot contain more than 16 characters.
+        }
+      </small>
+    }
+  </div>
+  <div class="card__row">
     <label for="auth-email" class="card__label">Email</label>
     <input
       type="email"
@@ -66,5 +90,10 @@
     Already have an account? <a routerLink="/login">Log In</a>
   </p>
 
-  <p-button type="submit" severity="help" label="Sign Up"></p-button>
+  <p-button
+    type="submit"
+    severity="help"
+    label="Sign Up"
+    [loading]="loading"
+  ></p-button>
 </form>

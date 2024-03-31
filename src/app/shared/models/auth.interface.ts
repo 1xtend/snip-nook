@@ -5,6 +5,10 @@ export interface AuthForm {
   password: FormControl<string>;
 }
 
+export interface SignUpForm extends AuthForm {
+  username: FormControl<string>;
+}
+
 export interface AuthData {
   email: string;
   password: string;

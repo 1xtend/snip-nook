@@ -8,14 +8,13 @@ import {
 } from '@angular/fire/auth';
 import { AuthData } from '@shared/models/auth.interface';
 import { signOut } from 'firebase/auth';
-import { Observable, Subject, from, tap } from 'rxjs';
+import { Observable, from, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   constructor(private auth: Auth) {}
-
   logIn({ email, password }: AuthData): Observable<UserCredential> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       tap((user) => {
@@ -23,7 +22,6 @@ export class AuthService {
       }),
     );
   }
-
   signUp({ email, password }: AuthData): Observable<UserCredential> {
     return from(
       createUserWithEmailAndPassword(this.auth, email, password),
@@ -33,14 +31,12 @@ export class AuthService {
       }),
     );
   }
-
   logOut(): Observable<void> {
     return from(signOut(this.auth));
   }
-
   isAuthenticated(): void {
-    // authState(this.auth).subscribe((user) => {
-    //   console.log('Is authenticated', user);
-    // });
+    authState(this.auth).subscribe((user) => {
+      console.log('Is authenticated', user);
+    });
   }
 }
