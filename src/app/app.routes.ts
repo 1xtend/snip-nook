@@ -22,6 +22,6 @@ export const routes: Routes = [
   {
     path: 'signup',
     component: SignUpComponent,
-    title: 'SIgn Up',
+    title: 'Sign Up',
   },
 ];

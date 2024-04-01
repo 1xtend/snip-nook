@@ -23,10 +23,13 @@
     ) {
       <small class="card__validation-error">
         @if (usernameControl.hasError("minlength")) {
-          Username must contain at least 8 characters.
+          Username must contain at least 4 characters.
         }
         @if (usernameControl.hasError("maxlength")) {
           Username cannot contain more than 16 characters.
+        }
+        @if (usernameControl.hasError("usernameExists")) {
+          Username is already taken.
         }
       </small>
     }
@@ -82,6 +85,12 @@
     <small class="card__auth-error">
       @if (authErrors.emailInUse) {
         Email is already taken.
+      }
+      @if (authErrors.invalidEmail) {
+        Email is invalid.
+      }
+      @if (authErrors.missingEmail) {
+        Missing email.
       }
     </small>
   }

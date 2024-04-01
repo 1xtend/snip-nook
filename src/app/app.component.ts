@@ -18,7 +18,13 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    console.log(this.authService.isLoggedIn);
+
     this.authService.checkIfUserIsAuthenticated();
+
+    this.authService.isLoggedIn$.subscribe((value) => {
+      console.log('Logged in: ', value);
+    });
   }
 
   hasRoute(route: string): boolean {

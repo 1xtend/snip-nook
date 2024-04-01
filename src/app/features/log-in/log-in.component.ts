@@ -73,7 +73,7 @@ export class LogInComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) {
+    if (!this.form.valid) {
       this.form.markAllAsTouched();
       return;
     }

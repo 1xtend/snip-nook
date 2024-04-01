@@ -15,6 +15,7 @@ import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { AuthService } from '@core/services/auth.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { usernameValidator } from '@shared/helpers/username.validator';
 
 @Component({
   selector: 'app-sign-up',
@@ -54,6 +55,8 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+
+    this.authService.checkUsername('user');
   }
 
   private initForm(): void {
@@ -65,6 +68,8 @@ export class SignUpComponent implements OnInit {
           Validators.minLength(4),
           Validators.maxLength(16),
         ],
+        asyncValidators: [usernameValidator(this.authService)],
+        updateOn: 'blur',
       }),
       email: this.fb.control('', {
         nonNullable: true,
@@ -82,10 +87,13 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid) {
+    if (!this.form.valid) {
       this.form.markAllAsTouched();
       return;
     }
+
+    console.log(this.form.value);
+    console.log(this.form.valid);
 
     this.form.disable();
     this.loading = true;
@@ -100,15 +108,21 @@ export class SignUpComponent implements OnInit {
           this.form.enable();
           this.loading = false;
 
-          this.router.navigate(['/home']);
+          console.log(user);
+
+          // this.router.navigate(['/home']);
         },
-        error: (err) => {
+        error: (err: Error) => {
           this.authErrors = {
-            emailInUse: err.code === 'auth/email-already-in-use',
+            emailInUse: err.message.includes('auth/email-already-in-use'),
+            invalidEmail: err.message.includes('auth/invalid-email'),
+            missingEmail: err.message.includes('auth/missing-email'),
           };
 
           this.form.enable();
           this.loading = false;
+
+          console.log('ERROR: ', err);
         },
       });
   }
