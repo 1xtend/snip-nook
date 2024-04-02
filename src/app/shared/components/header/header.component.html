@@ -7,12 +7,20 @@
     <a routerLink="/trending" class="navbar__link p-button p-button-text"
       >Trending</a
     >
-    <a routerLink="/trending" class="navbar__link p-button p-button-text"
-      >My Snippets</a
+    <a routerLink="/user/sasd" class="navbar__link p-button p-button-text"
+      >User</a
     >
   </nav>
 
   <div class="header__actions">
-    <p-button routerLink="/login" label="Log In"></p-button>
+    @if (isLoggedIn$ | async) {
+      <button type="button" class="header__avatar">
+        <p-avatar icon="pi pi-user" shape="circle"></p-avatar>
+      </button>
+
+      <!-- <p-button (onClick)="logOut()" label="Log out"></p-button> -->
+    } @else {
+      <p-button routerLink="/login" label="Log In"></p-button>
+    }
   </div>
 </header>

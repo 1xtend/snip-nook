@@ -26,7 +26,7 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
-  private isLoggedInSubject = new Subject<boolean>();
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   private loadingSubject = new BehaviorSubject<boolean>(false);

@@ -14,6 +14,18 @@
       padding: $spacing-s;
     }
   }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+
+  &__avatar {
+    background: none;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+  }
 }
 
 .navbar {

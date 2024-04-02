@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-trending',
   standalone: true,
   imports: [],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './trending.component.html',
+  styleUrl: './trending.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {}
+export class TrendingComponent {}
