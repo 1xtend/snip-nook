@@ -4,27 +4,29 @@ import {
   UserCredential,
   authState,
   createUserWithEmailAndPassword,
+  signOut,
   signInWithEmailAndPassword,
-  user,
+  updateCurrentUser,
 } from '@angular/fire/auth';
 import {
   Firestore,
   getDoc,
   setDoc,
   doc,
-  collection,
-  addDoc,
+  docData,
 } from '@angular/fire/firestore';
 import { AuthData, SignUpData } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
-import { signOut } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 import {
   BehaviorSubject,
   Observable,
   Subject,
   catchError,
+  combineLatest,
   from,
   map,
+  merge,
   switchMap,
   tap,
   throwError,
@@ -37,9 +39,10 @@ export class AuthService {
   private isLoggedInSubject = new Subject<boolean>();
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  user: IUser | undefined = undefined;
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
 
-  isLoggedIn = this.auth.currentUser !== null;
+  private user: IUser | undefined = undefined;
 
   constructor(
     private auth: Auth,
@@ -48,9 +51,7 @@ export class AuthService {
 
   logIn({ email, password }: AuthData): Observable<UserCredential> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
-      tap((user) => {
-        console.log('Logged in', user);
-      }),
+      catchError((err) => throwError(() => new Error(err))),
     );
   }
 
@@ -79,24 +80,33 @@ export class AuthService {
   }
 
   checkIfUserIsAuthenticated(): void {
+    this.loadingSubject.next(true);
+
     authState(this.auth).subscribe((user) => {
       if (user) {
         this.isLoggedInSubject.next(true);
       } else {
         this.isLoggedInSubject.next(false);
       }
-      // console.log('Is authenticated', user);
+
+      this.loadingSubject.next(false);
     });
   }
 
-  private setUser(user: IUser) {
-    const userDoc = doc(this.fs, 'users', user.username);
+  private setUser(user: IUser): Observable<[void, void]> {
+    const userDoc = doc(this.fs, 'users', user.uid);
+    const usernameDoc = doc(this.fs, 'usernames', user.username);
 
-    return from(setDoc(userDoc, user));
+    return combineLatest([
+      from(setDoc(userDoc, user)),
+      from(setDoc(usernameDoc, { uid: userDoc.id })),
+    ]);
   }
 
+  private getUser(uid: string) {}
+
   checkUsername(username: string): Observable<boolean> {
-    const usernameDoc = doc(this.fs, 'users', username);
+    const usernameDoc = doc(this.fs, 'usernames', username);
 
     return from(getDoc(usernameDoc)).pipe(map((user) => user.exists()));
   }

@@ -1,9 +1,13 @@
-@if (!hasRoute("login") && !hasRoute("signup")) {
-  <app-header></app-header>
-}
+@if (loading$ | async) {
+  <div style="padding: 100px">Loading...</div>
+} @else {
+  @if (!hasRoute("login") && !hasRoute("signup")) {
+    <app-header></app-header>
+  }
 
-<main class="main">
-  <div class="container">
-    <router-outlet></router-outlet>
-  </div>
-</main>
+  <main class="main">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+}

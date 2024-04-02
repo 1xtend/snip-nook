@@ -59,6 +59,12 @@
       @if (authErrors.invalidCredential) {
         Invalid username or password.
       }
+      @if (authErrors.invalidEmail) {
+        Email is invalid.
+      }
+      @if (authErrors.missingEmail) {
+        Missing email.
+      }
     </small>
   }
 

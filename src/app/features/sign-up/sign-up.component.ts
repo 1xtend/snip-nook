@@ -1,4 +1,9 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+} from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -46,6 +51,7 @@ export class SignUpComponent implements OnInit {
   get usernameControl(): FormControl {
     return this.form.controls['username'];
   }
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -55,8 +61,6 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-
-    this.authService.checkUsername('user');
   }
 
   private initForm(): void {
@@ -92,9 +96,6 @@ export class SignUpComponent implements OnInit {
       return;
     }
 
-    console.log(this.form.value);
-    console.log(this.form.valid);
-
     this.form.disable();
     this.loading = true;
     this.authErrors = null;
@@ -104,13 +105,11 @@ export class SignUpComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
-          this.form.reset();
-          this.form.enable();
-          this.loading = false;
-
           console.log(user);
 
-          // this.router.navigate(['/home']);
+          this.form.reset();
+
+          this.router.navigate(['/home']);
         },
         error: (err: Error) => {
           this.authErrors = {
@@ -119,10 +118,13 @@ export class SignUpComponent implements OnInit {
             missingEmail: err.message.includes('auth/missing-email'),
           };
 
+          console.log(err);
           this.form.enable();
           this.loading = false;
-
-          console.log('ERROR: ', err);
+        },
+        complete: () => {
+          this.loading = false;
+          this.form.enable();
         },
       });
   }

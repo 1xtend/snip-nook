@@ -87,21 +87,23 @@ export class LogInComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (user) => {
-          this.loading = false;
-          this.form.enable();
           this.form.reset();
 
           this.router.navigate(['/home']);
         },
-        error: (err) => {
+        error: (err: Error) => {
           this.authErrors = {
-            invalidCredential: err.code === 'auth/invalid-credential',
+            invalidCredential: err.message.includes('auth/invalid-credential'),
+            invalidEmail: err.message.includes('auth/invalid-email'),
+            missingEmail: err.message.includes('auth/missing-email'),
           };
 
+          this.form.enable();
+          this.loading = false;
+        },
+        complete: () => {
           this.loading = false;
           this.form.enable();
-
-          console.log(err);
         },
       });
   }
