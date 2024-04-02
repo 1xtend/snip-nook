@@ -6,18 +6,10 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
-  updateCurrentUser,
 } from '@angular/fire/auth';
-import {
-  Firestore,
-  getDoc,
-  setDoc,
-  doc,
-  docData,
-} from '@angular/fire/firestore';
+import { Firestore, getDoc, setDoc, doc } from '@angular/fire/firestore';
 import { AuthData, SignUpData } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
-import { addDoc, collection } from 'firebase/firestore';
 import {
   BehaviorSubject,
   Observable,
@@ -26,9 +18,7 @@ import {
   combineLatest,
   from,
   map,
-  merge,
   switchMap,
-  tap,
   throwError,
 } from 'rxjs';
 
@@ -41,8 +31,6 @@ export class AuthService {
 
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
-
-  private user: IUser | undefined = undefined;
 
   constructor(
     private auth: Auth,
@@ -102,8 +90,6 @@ export class AuthService {
       from(setDoc(usernameDoc, { uid: userDoc.id })),
     ]);
   }
-
-  private getUser(uid: string) {}
 
   checkUsername(username: string): Observable<boolean> {
     const usernameDoc = doc(this.fs, 'usernames', username);
