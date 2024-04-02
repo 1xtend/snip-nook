@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
+  User,
 } from '@angular/fire/auth';
 import { Firestore, getDoc, setDoc, doc } from '@angular/fire/firestore';
 import { AuthData, SignUpData } from '@shared/models/auth.interface';
@@ -31,6 +32,8 @@ export class AuthService {
 
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
+
+  user: User | undefined = undefined;
 
   constructor(
     private auth: Auth,
@@ -73,8 +76,10 @@ export class AuthService {
     authState(this.auth).subscribe((user) => {
       if (user) {
         this.isLoggedInSubject.next(true);
+        this.user = user;
       } else {
         this.isLoggedInSubject.next(false);
+        this.user = undefined;
       }
 
       this.loadingSubject.next(false);

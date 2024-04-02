@@ -14,11 +14,15 @@
 
   <div class="header__actions">
     @if (isLoggedIn$ | async) {
-      <button type="button" class="header__avatar">
+      <button
+        type="button"
+        class="header__avatar"
+        (click)="menu.toggle($event)"
+      >
         <p-avatar icon="pi pi-user" shape="circle"></p-avatar>
       </button>
 
-      <!-- <p-button (onClick)="logOut()" label="Log out"></p-button> -->
+      <p-menu [popup]="true" [model]="items" #menu></p-menu>
     } @else {
       <p-button routerLink="/login" label="Log In"></p-button>
     }
