@@ -1,0 +1,9 @@
+<p-sidebar
+  [(visible)]="visible"
+  position="right"
+  (onHide)="closeSidebar.emit()"
+>
+  <ng-template pTemplate="header">
+    <app-logo></app-logo>
+  </ng-template>
+</p-sidebar>

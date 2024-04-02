@@ -26,10 +26,9 @@ export const routes: Routes = [
     title: 'Sign Up',
   },
   {
-    path: 'user/:username',
+    path: 'user/:id',
     loadComponent: () =>
       import('./features/user/user.component').then((m) => m.UserComponent),
-    canActivate: [authGuard],
   },
   {
     path: 'trending',

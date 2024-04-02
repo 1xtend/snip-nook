@@ -2,7 +2,12 @@
   <div style="padding: 100px">Loading...</div>
 } @else {
   @if (!hasRoute("login") && !hasRoute("signup")) {
-    <app-header></app-header>
+    <app-header (openSidebar)="toggleSidebar(true)"></app-header>
+
+    <app-sidebar
+      [visible]="sidebarVisible"
+      (closeSidebar)="toggleSidebar(false)"
+    ></app-sidebar>
   }
 
   <main class="main">

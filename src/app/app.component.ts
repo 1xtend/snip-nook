@@ -3,17 +3,26 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
-import { Observable } from 'rxjs';
+import { SidebarComponent } from '@shared/components/sidebar/sidebar.component';
+import { LogoComponent } from '@shared/components/logo/logo.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HeaderComponent, RouterOutlet, AsyncPipe],
+  imports: [
+    HeaderComponent,
+    RouterOutlet,
+    AsyncPipe,
+    SidebarComponent,
+    LogoComponent,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
   loading$ = this.authService.loading$;
+
+  sidebarVisible: boolean = false;
 
   constructor(
     private router: Router,
@@ -26,6 +35,10 @@ export class AppComponent implements OnInit {
     this.authService.isLoggedIn$.subscribe((value) => {
       console.log('Logged in: ', value);
     });
+  }
+
+  toggleSidebar(value: boolean): void {
+    this.sidebarVisible = value;
   }
 
   hasRoute(route: string): boolean {

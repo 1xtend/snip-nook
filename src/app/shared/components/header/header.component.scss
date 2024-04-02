@@ -8,11 +8,6 @@
 
   &__logo {
     margin-right: auto;
-
-    ::ng-deep .p-button {
-      font-size: 1.25rem;
-      padding: $spacing-s;
-    }
   }
 
   &__actions {

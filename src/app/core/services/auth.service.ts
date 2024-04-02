@@ -56,6 +56,7 @@ export class AuthService {
           email: res.user.email!,
           uid: res.user.uid,
           username,
+          created_at: new Date().toString(),
         };
 
         return this.setUser(user).pipe(
