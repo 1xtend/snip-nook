@@ -14,7 +14,6 @@ import { IUser } from '@shared/models/user.interface';
 import {
   BehaviorSubject,
   Observable,
-  Subject,
   catchError,
   combineLatest,
   from,
@@ -27,13 +26,11 @@ import {
   providedIn: 'root',
 })
 export class AuthService {
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-  isLoggedIn$ = this.isLoggedInSubject.asObservable();
-
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
 
-  user: User | undefined = undefined;
+  private userSubject = new BehaviorSubject<User | undefined>(undefined);
+  user$ = this.userSubject.asObservable();
 
   constructor(
     private auth: Auth,
@@ -67,7 +64,7 @@ export class AuthService {
     );
   }
 
-  logOut(): Observable<void> {
+  signOut(): Observable<void> {
     return from(signOut(this.auth));
   }
 
@@ -75,13 +72,7 @@ export class AuthService {
     this.loadingSubject.next(true);
 
     authState(this.auth).subscribe((user) => {
-      if (user) {
-        this.isLoggedInSubject.next(true);
-        this.user = user;
-      } else {
-        this.isLoggedInSubject.next(false);
-        this.user = undefined;
-      }
+      this.userSubject.next(user ?? undefined);
 
       this.loadingSubject.next(false);
     });

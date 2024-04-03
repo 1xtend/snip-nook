@@ -11,7 +11,7 @@
   </nav>
 
   <div class="header__actions">
-    @if (isLoggedIn$ | async) {
+    @if (user$ | async) {
       <button type="button" class="header__avatar" (click)="openSidebar.emit()">
         <p-avatar icon="pi pi-user" shape="circle"></p-avatar>
       </button>

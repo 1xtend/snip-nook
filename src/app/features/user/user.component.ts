@@ -7,7 +7,8 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
-import { combineLatest, map, switchMap } from 'rxjs';
+import { User } from 'firebase/auth';
+import { Observable, combineLatest, map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-user',
@@ -32,17 +33,17 @@ export class UserComponent implements OnInit {
   }
 
   private paramsChanges(): void {
-    combineLatest({
-      params: this.route.paramMap,
-      queryParams: this.route.queryParamMap,
-    })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        map(({ params, queryParams }) => {
-          this.owner = params.get('id') === this.authService.user?.uid;
-          console.log('Is owner: ', this.owner);
-        }),
-      )
-      .subscribe();
+    // combineLatest({
+    //   params: this.route.paramMap,
+    //   queryParams: this.route.queryParamMap,
+    // })
+    //   .pipe(
+    //     takeUntilDestroyed(this.destroyRef),
+    //     map(({ params, queryParams }) => {
+    //       this.owner = params.get('id') === this.authService.user?.uid;
+    //       console.log('Is owner: ', this.owner);
+    //     }),
+    //   )
+    //   .subscribe();
   }
 }

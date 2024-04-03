@@ -2,8 +2,36 @@
   [(visible)]="visible"
   position="right"
   (onHide)="closeSidebar.emit()"
+  class="sidebar"
 >
   <ng-template pTemplate="header">
     <app-logo></app-logo>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    @if (user$ | async; as user) {
+      <ul class="sidebar__list">
+        <li class="sidebar__item">
+          <a
+            [routerLink]="['/user', user.uid]"
+            class="sidebar__link"
+            (click)="closeSidebar.emit()"
+          >
+            <span class="sidebar__icon pi pi-user"></span>
+            View Profile
+          </a>
+        </li>
+        <li class="sidebar__item">
+          <button
+            (click)="signOut()"
+            class="sidebar__button"
+            (click)="closeSidebar.emit()"
+          >
+            <span class="sidebar__icon pi pi-sign-out"></span>
+            Log Out
+          </button>
+        </li>
+      </ul>
+    }
   </ng-template>
 </p-sidebar>
