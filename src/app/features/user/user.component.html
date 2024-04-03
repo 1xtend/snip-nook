@@ -1,1 +1,5 @@
-<p>user works!</p>
+@if (user$ | async; as user) {
+  <h1>Welcome, {{ user.username }}!</h1>
+} @else {
+  <div>User doesn't exist</div>
+}

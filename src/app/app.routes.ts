@@ -22,7 +22,10 @@ export const routes: Routes = [
   },
   {
     path: 'signup',
-    component: SignUpComponent,
+    loadComponent: () =>
+      import('./features/sign-up/sign-up.component').then(
+        (m) => m.SignUpComponent,
+      ),
     title: 'Sign Up',
   },
   {
