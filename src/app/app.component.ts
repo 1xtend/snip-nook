@@ -5,6 +5,8 @@ import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { SidebarComponent } from '@shared/components/sidebar/sidebar.component';
 import { LogoComponent } from '@shared/components/logo/logo.component';
+import { Observable } from 'rxjs';
+import { LoaderComponent } from '@shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +17,17 @@ import { LogoComponent } from '@shared/components/logo/logo.component';
     AsyncPipe,
     SidebarComponent,
     LogoComponent,
+    LoaderComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  loading$ = this.authService.loading$;
-
   sidebarVisible: boolean = false;
+
+  get authLoading$(): Observable<boolean> {
+    return this.authService.loading$;
+  }
 
   constructor(
     private router: Router,

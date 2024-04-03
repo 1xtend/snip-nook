@@ -1,4 +1,8 @@
-@if (loading$ | async) {
+<!-- @if (loading$ | async) { -->
+<app-loader></app-loader>
+<!-- } -->
+
+@if (authLoading$ | async) {
   <div style="padding: 100px">Loading...</div>
 } @else {
   @if (!hasRoute("login") && !hasRoute("signup")) {

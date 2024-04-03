@@ -1,3 +1,4 @@
+import { LoadingService } from './../../core/services/loading.service';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -6,7 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { UserService } from '@core/services/user.service';
 import { IUser } from '@shared/models/user.interface';
@@ -16,21 +17,26 @@ import {
   EMPTY,
   Observable,
   combineLatest,
+  finalize,
   map,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
+import { TabMenuModule } from 'primeng/tabmenu';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [AsyncPipe, TabMenuModule, RouterOutlet],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
   isOwner: boolean = false;
+  tabItems: MenuItem[] | undefined = undefined;
 
   private userSubject = new BehaviorSubject<IUser | undefined>(undefined);
   user$ = this.userSubject.asObservable();
@@ -41,13 +47,31 @@ export class UserComponent implements OnInit {
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private userService: UserService,
+    private loadingService: LoadingService,
   ) {}
 
   ngOnInit(): void {
     this.paramsChanges();
+
+    this.tabItems = [
+      {
+        label: 'Snippets',
+        icon: 'pi pi-fw pi-box',
+      },
+      {
+        label: 'Saved',
+        icon: 'pi pi-fw pi-bookmark',
+      },
+      {
+        label: 'Settings',
+        icon: 'pi pi-fw pi-cog',
+      },
+    ];
   }
 
   private paramsChanges(): void {
+    this.loadingService.setLoading(true);
+
     combineLatest({
       params: this.route.paramMap,
       queryParams: this.route.queryParamMap,
@@ -56,16 +80,25 @@ export class UserComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(({ params, queryParams, user }) => {
-          const paramsId = params.get('id');
+          const userId = params.get('id');
 
-          this.isOwner = user?.uid === paramsId;
+          this.isOwner = user?.uid === userId;
+          console.log('Is owner: ', this.isOwner);
 
-          return paramsId ? this.userService.getUser(paramsId) : EMPTY;
+          return userId
+            ? this.userService.getUser(userId).pipe(take(1))
+            : EMPTY;
         }),
       )
-      .subscribe((user) => {
-        console.log('Retrieved user: ', user);
-        this.userSubject.next(user);
+      .subscribe({
+        next: (user) => {
+          console.log('Retrieved user: ', user);
+          this.userSubject.next(user);
+          this.loadingService.setLoading(false);
+        },
+        error: (err) => {
+          console.log(err);
+        },
       });
   }
 }

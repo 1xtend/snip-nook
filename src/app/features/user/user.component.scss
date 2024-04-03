@@ -1,0 +1,9 @@
+@import "../../../assets/scss/variables";
+
+.content {
+  &__tab-menu {
+    ::ng-deep .p-menuitem-link {
+      padding: $spacing-s;
+    }
+  }
+}

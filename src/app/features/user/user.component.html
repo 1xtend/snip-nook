@@ -1,5 +1,17 @@
 @if (user$ | async; as user) {
-  <h1>Welcome, {{ user.username }}!</h1>
+  <section class="profile">
+    <div class="profile__info info">
+      <h2 class="info__username">{{ user.username }}</h2>
+    </div>
+    <div class="profile__content content">
+      <p-tabMenu
+        [model]="tabItems"
+        [scrollable]="true"
+        class="content__tab-menu"
+      ></p-tabMenu>
+      <router-outlet></router-outlet>
+    </div>
+  </section>
 } @else {
   <div>User doesn't exist</div>
 }
