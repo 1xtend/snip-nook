@@ -5,7 +5,7 @@
   class="sidebar"
 >
   <ng-template pTemplate="header">
-    <app-logo></app-logo>
+    <app-logo (click)="closeSidebar.emit()"></app-logo>
   </ng-template>
 
   <ng-template pTemplate="content">
@@ -32,6 +32,19 @@
           >
             <span class="sidebar__icon pi pi-box"></span>
             My Snippets
+          </a>
+        </li>
+        <li class="sidebar__item">
+          <a
+            [routerLink]="['/user', user.uid]"
+            [queryParams]="{
+              tab: 'saved'
+            }"
+            class="sidebar__link"
+            (click)="closeSidebar.emit()"
+          >
+            <span class="sidebar__icon pi pi-bookmark"></span>
+            Saved
           </a>
         </li>
         <li class="sidebar__item">

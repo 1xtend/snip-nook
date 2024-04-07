@@ -7,9 +7,11 @@
       <p-tabMenu
         [model]="tabItems"
         [scrollable]="true"
+        [activeItem]="activeItem"
         class="content__tab-menu"
-      ></p-tabMenu>
-      <router-outlet></router-outlet>
+        (activeItemChange)="onActiveItemChange($event)"
+      >
+      </p-tabMenu>
     </div>
   </section>
 } @else {
