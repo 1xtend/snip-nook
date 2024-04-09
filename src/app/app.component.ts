@@ -7,6 +7,7 @@ import { SidebarComponent } from '@shared/components/sidebar/sidebar.component';
 import { LogoComponent } from '@shared/components/logo/logo.component';
 import { Observable } from 'rxjs';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ import { LoaderComponent } from '@shared/components/loader/loader.component';
     SidebarComponent,
     LogoComponent,
     LoaderComponent,
+    ProgressSpinnerModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
