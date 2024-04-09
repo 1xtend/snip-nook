@@ -34,7 +34,7 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
 
   constructor(
-    private auth: Auth,
+    public auth: Auth,
     private fs: Firestore,
   ) {}
 
