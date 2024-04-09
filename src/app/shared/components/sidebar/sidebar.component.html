@@ -23,10 +23,7 @@
         </li>
         <li class="sidebar__item">
           <a
-            [routerLink]="['/user', user.uid]"
-            [queryParams]="{
-              tab: 'snippets'
-            }"
+            [routerLink]="['/user', user.uid, 'snippets']"
             class="sidebar__link"
             (click)="closeSidebar.emit()"
           >
@@ -36,10 +33,7 @@
         </li>
         <li class="sidebar__item">
           <a
-            [routerLink]="['/user', user.uid]"
-            [queryParams]="{
-              tab: 'saved'
-            }"
+            [routerLink]="['/user', user.uid, 'saved']"
             class="sidebar__link"
             (click)="closeSidebar.emit()"
           >

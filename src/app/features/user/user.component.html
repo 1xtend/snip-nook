@@ -2,16 +2,34 @@
   <section class="profile">
     <div class="profile__info info">
       <h2 class="info__username">{{ user.username }}</h2>
-    </div>
-    <div class="profile__content content">
+
+      <!-- <p-tabMenu
+        [model]="tabItems"
+        [scrollable]="true"
+        class="profile__tab-menu"
+      >
+        <ng-template pTemplate="item" let-item>
+          <a
+            [routerLink]="['']"
+            [queryParams]="{ tab: item.tab }"
+            [relativeTo]="this.route"
+            class="p-menuitem-link"
+          >
+            <span [class]="item.icon"></span>
+            <span>{{ item.label }}</span>
+          </a>
+        </ng-template>
+      </p-tabMenu> -->
+
       <p-tabMenu
         [model]="tabItems"
         [scrollable]="true"
-        [activeItem]="activeItem"
-        class="content__tab-menu"
-        (activeItemChange)="onActiveItemChange($event)"
-      >
-      </p-tabMenu>
+        class="profile__tab-menu"
+      ></p-tabMenu>
+
+      <div class="profile__content content">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </section>
 } @else {
