@@ -3,6 +3,7 @@ import { authGuard } from '@core/guards/auth.guard';
 import { HomeComponent } from '@features/home/home.component';
 import { LogInComponent } from '@features/log-in/log-in.component';
 import { SignUpComponent } from './features/sign-up/sign-up.component';
+import { ownerGuard } from '@core/guards/owner.guard';
 
 export const routes: Routes = [
   {
@@ -65,7 +66,7 @@ export const routes: Routes = [
           import('./features/user/user-settings/user-settings.component').then(
             (m) => m.UserSettingsComponent,
           ),
-        canActivate: [authGuard],
+        canActivate: [authGuard, ownerGuard],
       },
     ],
   },
