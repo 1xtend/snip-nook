@@ -10,6 +10,7 @@ import { AuthService } from '@core/services/auth.service';
 import { ModalService } from '@core/services/modal.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { AuthErrors, AuthPasswordsForm } from '@shared/models/auth.interface';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { take } from 'rxjs';
@@ -44,6 +45,7 @@ export class PasswordDialogComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private modalService: ModalService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -83,6 +85,12 @@ export class PasswordDialogComponent {
         next: () => {
           this.form.reset();
           this.modalService.closeDialog();
+
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Password has been changed successfully',
+            summary: 'Success',
+          });
         },
         error: (err) => {
           this.authErrors = {

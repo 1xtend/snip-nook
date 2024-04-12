@@ -15,6 +15,7 @@ import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
 import { AuthErrors, AuthForm } from '@shared/models/auth.interface';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-email-dialog',
@@ -47,6 +48,7 @@ export class EmailDialogComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private modalService: ModalService,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +84,12 @@ export class EmailDialogComponent implements OnInit {
         next: () => {
           this.form.reset();
           this.modalService.closeDialog();
+
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Email has been changed successfully',
+            summary: 'Success',
+          });
         },
         error: (err) => {
           console.log(err);

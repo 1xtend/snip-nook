@@ -1,5 +1,7 @@
 <app-loader></app-loader>
 
+<p-toast [life]="2000"></p-toast>
+
 @if (authLoading$ | async) {
   <p-progressSpinner
     ariaLabel="loading"

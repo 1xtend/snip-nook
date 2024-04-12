@@ -1,7 +1,6 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import {
   FileUpload,
-  FileUploadEvent,
   FileUploadHandlerEvent,
   FileUploadModule,
 } from 'primeng/fileupload';
@@ -9,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DialogService } from 'primeng/dynamicdialog';
 import { EmailDialogComponent } from '@shared/components/email-dialog/email-dialog.component';
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
@@ -17,6 +16,7 @@ import { AuthService } from '@core/services/auth.service';
 import { Observable, take } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AsyncPipe } from '@angular/common';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-user-settings',
@@ -43,6 +43,7 @@ export class UserSettingsComponent {
   constructor(
     private modalService: ModalService,
     private authService: AuthService,
+    private messageService: MessageService,
   ) {}
 
   ngAfterViewInit(): void {}
@@ -56,6 +57,12 @@ export class UserSettingsComponent {
       .subscribe(() => {
         console.log('Uploaded image');
         this.fileUpload.clear();
+
+        this.messageService.add({
+          severity: 'success',
+          detail: 'Avatar has been changed successfully',
+          summary: 'Success',
+        });
       });
   }
 

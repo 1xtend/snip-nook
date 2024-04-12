@@ -8,6 +8,7 @@ import { LogoComponent } from '@shared/components/logo/logo.component';
 import { Observable } from 'rxjs';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     LogoComponent,
     LoaderComponent,
     ProgressSpinnerModule,
+    ToastModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

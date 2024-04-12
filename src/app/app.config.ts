@@ -10,6 +10,7 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { initializeApp } from 'firebase/app';
 
 import { environment } from '@environments/environment';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,6 +21,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(provideAuth(() => getAuth())),
     importProvidersFrom(provideFirestore(() => getFirestore())),
     importProvidersFrom(provideStorage(() => getStorage())),
+    MessageService,
     provideAnimations(),
   ],
 };
