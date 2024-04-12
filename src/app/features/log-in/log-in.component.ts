@@ -91,7 +91,10 @@ export class LogInComponent implements OnInit {
             invalidCredential: err.message.includes('auth/invalid-credential'),
             invalidEmail: err.message.includes('auth/invalid-email'),
             missingEmail: err.message.includes('auth/missing-email'),
+            userNotFound: err.message.includes('auth/user-not-found'),
           };
+
+          console.log(err);
 
           this.form.enable();
           this.loading = false;

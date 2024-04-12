@@ -1,9 +1,6 @@
 @import "../../../../assets/scss/variables";
 
-.settings {
-}
-
-.form {
+.content {
   max-width: 600px;
   width: 100%;
 
@@ -27,9 +24,6 @@
   }
 
   &__row {
-    display: flex;
-    align-items: center;
-
     &:not(:last-child) {
       margin-bottom: $spacing-x;
     }
@@ -49,6 +43,12 @@
 
   &__title {
     margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-s;
+    }
+    // display: block;
+    // width: 100%;
   }
 
   &__sub {

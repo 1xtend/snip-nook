@@ -51,6 +51,9 @@
       @if (authErrors.missingEmail) {
         Missing email.
       }
+      @if (authErrors.userNotFound) {
+        User was not found.
+      }
     </small>
   }
 

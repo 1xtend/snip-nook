@@ -10,6 +10,8 @@ import {
   updateProfile,
 } from '@angular/fire/auth';
 import { Firestore, getDoc, setDoc, doc } from '@angular/fire/firestore';
+import { Storage, getDownloadURL, uploadBytes } from '@angular/fire/storage';
+import { environment } from '@environments/environment';
 import { AuthData, SignUpData } from '@shared/models/auth.interface';
 import { IProfile } from '@shared/models/profile.interface';
 import { IUser } from '@shared/models/user.interface';
@@ -19,6 +21,8 @@ import {
   reauthenticateWithCredential,
   updateEmail,
 } from 'firebase/auth';
+import { updateDoc } from 'firebase/firestore';
+import { ref } from 'firebase/storage';
 import {
   BehaviorSubject,
   EMPTY,
@@ -46,6 +50,7 @@ export class AuthService {
   constructor(
     public auth: Auth,
     private fs: Firestore,
+    private storage: Storage,
   ) {}
 
   logIn({ email, password }: AuthData): Observable<UserCredential> {
@@ -77,13 +82,6 @@ export class AuthService {
           user: this.setUser(user),
           profile: from(updateProfile(res.user, profile)),
         }).pipe(catchError((err) => throwError(() => new Error(err))));
-
-        // return this.setUser(user).pipe(
-        //   catchError((err) => throwError(() => new Error(err))),
-        //   map(() => {
-        //     return { userAuth: res.user, userData: user };
-        //   }),
-        // );
       }),
     );
   }
@@ -132,26 +130,50 @@ export class AuthService {
         }
 
         const credential = EmailAuthProvider.credential(user.email, password);
+        const userDoc = doc(this.fs, 'users', user.uid);
 
         return from(reauthenticateWithCredential(user, credential)).pipe(
           take(1),
-          switchMap((credential) => {
-            return from(updateEmail(user, email));
+          switchMap(() => {
+            return combineLatest({
+              user: from(updateEmail(user, email)),
+              doc: from(
+                updateDoc(userDoc, {
+                  email,
+                }),
+              ),
+            });
           }),
         );
-
-        // return  reauthenticateWithCredential(user, )
       }),
     );
+  }
 
-    // return this.user$.pipe(
-    //   take(1),
-    //   switchMap((user) => {
-    //     return user
-    //       ? from(updateEmail(user, email))
-    //       : throwError(() => new Error('User is not defined'));
-    //   }),
-    // );
+  updateAvatar(file: File) {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('User is not defined'));
+        }
+
+        const avatarRef = ref(this.storage, `avatars/${user.uid}`);
+
+        return from(uploadBytes(avatarRef, file)).pipe(
+          switchMap(() => getDownloadURL(avatarRef)),
+          switchMap((url) => {
+            const userDoc = doc(this.fs, 'users', user.uid);
+
+            const userUpdate$ = this.updateUser(user, { photoURL: url });
+            const docUpdate$ = updateDoc(userDoc, {
+              photoURL: url,
+            });
+
+            return combineLatest([userUpdate$, docUpdate$]);
+          }),
+        );
+      }),
+    );
   }
 
   checkUsername(username: string): Observable<boolean> {
