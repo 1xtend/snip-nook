@@ -92,6 +92,7 @@ export class LogInComponent implements OnInit {
             invalidEmail: err.message.includes('auth/invalid-email'),
             missingEmail: err.message.includes('auth/missing-email'),
             userNotFound: err.message.includes('auth/user-not-found'),
+            wrongPassword: err.message.includes('auth/wrong-password'),
           };
 
           console.log(err);

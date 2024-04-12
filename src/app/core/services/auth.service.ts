@@ -8,10 +8,15 @@ import {
   signInWithEmailAndPassword,
   User,
   updateProfile,
+  updatePassword,
 } from '@angular/fire/auth';
 import { Firestore, getDoc, setDoc, doc } from '@angular/fire/firestore';
 import { Storage, getDownloadURL, uploadBytes } from '@angular/fire/storage';
-import { AuthData, SignUpData } from '@shared/models/auth.interface';
+import {
+  AuthData,
+  AuthPasswords,
+  SignUpData,
+} from '@shared/models/auth.interface';
 import { IProfile } from '@shared/models/profile.interface';
 import { IUser } from '@shared/models/user.interface';
 import {
@@ -132,6 +137,25 @@ export class AuthService {
             const docUpdate$ = from(updateDoc(userDoc, { email }));
 
             return combineLatest([emailUpdate$, docUpdate$]);
+          }),
+        );
+      }),
+    );
+  }
+
+  updatePassword({ password, newPassword }: AuthPasswords) {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user || !user.email) {
+          return this.throwUserError();
+        }
+
+        const credential = EmailAuthProvider.credential(user.email, password);
+
+        return from(reauthenticateWithCredential(user, credential)).pipe(
+          switchMap(() => {
+            return from(updatePassword(user, newPassword));
           }),
         );
       }),

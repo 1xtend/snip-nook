@@ -78,3 +78,42 @@ body {
     }
   }
 }
+
+// Form
+.form {
+  &__row {
+    position: relative;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-x;
+    }
+  }
+
+  &__label {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-xs;
+    }
+  }
+
+  &__input {
+    display: block;
+    width: 100%;
+  }
+
+  &__validation-error {
+    color: $color-error;
+    position: absolute;
+    bottom: -20px;
+  }
+
+  &__auth-error {
+    color: $color-error;
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+}

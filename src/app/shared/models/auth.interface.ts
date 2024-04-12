@@ -10,6 +10,16 @@ export interface AuthData {
   password: string;
 }
 
+export interface AuthPasswordsForm {
+  password: FormControl<string>;
+  newPassword: FormControl<string>;
+}
+
+export interface AuthPasswords {
+  password: string;
+  newPassword: string;
+}
+
 export interface AuthErrors {
   emailInUse: boolean;
   invalidCredential: boolean;

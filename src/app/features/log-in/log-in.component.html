@@ -54,6 +54,9 @@
       @if (authErrors.userNotFound) {
         User was not found.
       }
+      @if (authErrors.wrongPassword) {
+        Wrong password.
+      }
     </small>
   }
 
