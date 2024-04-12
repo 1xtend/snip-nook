@@ -38,5 +38,23 @@
         (onClick)="showDialog('email')"
       ></p-button>
     </div>
+
+    <div class="content__item">
+      <div class="content__info">
+        <h4 class="content__title">Password</h4>
+        <small class="content__sub"
+          >Password must be at least 8 characters long.</small
+        >
+      </div>
+
+      <p-button
+        type="button"
+        label="Change"
+        [rounded]="true"
+        size="small"
+        [outlined]="true"
+        (onClick)="showDialog('password')"
+      ></p-button>
+    </div>
   </div>
 </section>

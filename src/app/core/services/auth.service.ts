@@ -11,12 +11,10 @@ import {
 } from '@angular/fire/auth';
 import { Firestore, getDoc, setDoc, doc } from '@angular/fire/firestore';
 import { Storage, getDownloadURL, uploadBytes } from '@angular/fire/storage';
-import { environment } from '@environments/environment';
 import { AuthData, SignUpData } from '@shared/models/auth.interface';
 import { IProfile } from '@shared/models/profile.interface';
 import { IUser } from '@shared/models/user.interface';
 import {
-  EmailAuthCredential,
   EmailAuthProvider,
   reauthenticateWithCredential,
   updateEmail,
@@ -25,13 +23,11 @@ import { updateDoc } from 'firebase/firestore';
 import { ref } from 'firebase/storage';
 import {
   BehaviorSubject,
-  EMPTY,
   Observable,
   catchError,
   combineLatest,
   from,
   map,
-  merge,
   switchMap,
   take,
   throwError,
@@ -98,8 +94,6 @@ export class AuthService {
 
       console.log('AUTH STATE WAS CHANGED: ', user);
 
-      console.log('USER displayName: ', user?.displayName);
-
       this.loadingSubject.next(false);
     });
   }
@@ -112,11 +106,11 @@ export class AuthService {
   }
 
   private setUser(user: IUser): Observable<[void, void]> {
-    const userDoc = doc(this.fs, 'users', user.uid);
-    const usernameDoc = doc(this.fs, 'usernames', user.username);
+    const userDoc = this.userDoc(user.uid);
+    const usernameDoc = this.usernameDoc(user.username);
 
     return combineLatest([
-      from(setDoc(userDoc, user)),
+      from(setDoc(this.userDoc(user.uid), user)),
       from(setDoc(usernameDoc, { uid: userDoc.id })),
     ]);
   }
@@ -126,23 +120,18 @@ export class AuthService {
       take(1),
       switchMap((user) => {
         if (!user || !user.email) {
-          return throwError(() => new Error('User is not defined'));
+          return this.throwUserError();
         }
 
         const credential = EmailAuthProvider.credential(user.email, password);
-        const userDoc = doc(this.fs, 'users', user.uid);
+        const userDoc = this.userDoc(user.uid);
 
         return from(reauthenticateWithCredential(user, credential)).pipe(
-          take(1),
           switchMap(() => {
-            return combineLatest({
-              user: from(updateEmail(user, email)),
-              doc: from(
-                updateDoc(userDoc, {
-                  email,
-                }),
-              ),
-            });
+            const emailUpdate$ = from(updateEmail(user, email));
+            const docUpdate$ = from(updateDoc(userDoc, { email }));
+
+            return combineLatest([emailUpdate$, docUpdate$]);
           }),
         );
       }),
@@ -154,7 +143,7 @@ export class AuthService {
       take(1),
       switchMap((user) => {
         if (!user) {
-          return throwError(() => new Error('User is not defined'));
+          return this.throwUserError();
         }
 
         const avatarRef = ref(this.storage, `avatars/${user.uid}`);
@@ -162,12 +151,10 @@ export class AuthService {
         return from(uploadBytes(avatarRef, file)).pipe(
           switchMap(() => getDownloadURL(avatarRef)),
           switchMap((url) => {
-            const userDoc = doc(this.fs, 'users', user.uid);
+            const userDoc = this.userDoc(user.uid);
 
             const userUpdate$ = this.updateUser(user, { photoURL: url });
-            const docUpdate$ = updateDoc(userDoc, {
-              photoURL: url,
-            });
+            const docUpdate$ = updateDoc(userDoc, { photoURL: url });
 
             return combineLatest([userUpdate$, docUpdate$]);
           }),
@@ -177,8 +164,20 @@ export class AuthService {
   }
 
   checkUsername(username: string): Observable<boolean> {
-    const usernameDoc = doc(this.fs, 'usernames', username);
+    const usernameDoc = this.usernameDoc(username);
 
     return from(getDoc(usernameDoc)).pipe(map((user) => user.exists()));
+  }
+
+  userDoc(uid: string) {
+    return doc(this.fs, 'users', uid);
+  }
+
+  usernameDoc(username: string) {
+    return doc(this.fs, 'usernames', username);
+  }
+
+  throwUserError(): Observable<never> {
+    return throwError(() => new Error('User is not defined'));
   }
 }

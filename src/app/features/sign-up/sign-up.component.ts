@@ -110,7 +110,6 @@ export class SignUpComponent implements OnInit {
             missingEmail: err.message.includes('auth/missing-email'),
           };
 
-          console.log(err);
           this.form.enable();
           this.loading = false;
         },

@@ -6,16 +6,20 @@
       >Trending</a
     >
     <a
-      routerLink="/user/re7F1vc064TWCEQscLmKHHKnD3Q2"
+      routerLink="/user/sfw9rBkKKdWGwoj0Q5gzjgQG5jg1"
       class="navbar__link p-button p-button-text"
       >User</a
     >
   </nav>
 
   <div class="header__actions">
-    @if (user$ | async) {
+    @if (user$ | async; as user) {
       <button type="button" class="header__avatar" (click)="openSidebar.emit()">
-        <p-avatar icon="pi pi-user" shape="circle"></p-avatar>
+        @if (user.photoURL) {
+          <p-avatar [image]="user.photoURL" shape="circle"></p-avatar>
+        } @else {
+          <p-avatar icon="pi pi-user" shape="circle"></p-avatar>
+        }
       </button>
     } @else {
       <p-button routerLink="/login" label="Log In"></p-button>
