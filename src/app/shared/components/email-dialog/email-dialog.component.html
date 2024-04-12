@@ -1,0 +1,59 @@
+<form
+  [formGroup]="form"
+  class="form"
+  #settingsForm="ngForm"
+  (ngSubmit)="onSubmit()"
+  focusInvalidInput
+>
+  <div class="form__row">
+    <label for="form-password" class="form__label">Current password</label>
+    <input
+      type="password"
+      formControlName="password"
+      pPassword
+      class="form__input"
+      id="form-password"
+    />
+  </div>
+  <div class="form__row">
+    <label for="form-email">New email</label>
+    <input
+      type="email"
+      formControlName="email"
+      pInputText
+      class="form__input"
+      id="form-email"
+    />
+
+    @if (
+      (emailControl.invalid && emailControl.dirty) ||
+      (form.touched && form.invalid && settingsForm.submitted)
+    ) {
+      <small class="form__validation-error">
+        @if (emailControl.hasError("pattern")) {
+          Please enter an email address
+        }
+      </small>
+    }
+  </div>
+
+  @if (authErrors) {
+    <small class="form__auth-error">
+      @if (authErrors.wrongPassword) {
+        Wrong password.
+      }
+      @if (authErrors.emailInUse) {
+        Email is already taken.
+      }
+    </small>
+  }
+
+  <p-button
+    type="submit"
+    severity="help"
+    label="Save email"
+    class="form__button"
+    size="small"
+    [loading]="loading"
+  ></p-button>
+</form>

@@ -1,0 +1,57 @@
+@import "../../../../assets/scss/variables";
+
+.settings {
+}
+
+.form {
+  max-width: 600px;
+  width: 100%;
+
+  ::ng-deep .p-fileupload {
+    .p-fileupload-buttonbar {
+      padding: $spacing-s;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: $spacing-s;
+    }
+
+    .p-button {
+      padding: $spacing-s $spacing-m;
+      margin: 0;
+    }
+
+    .p-fileupload-content {
+      padding: $spacing-l;
+    }
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-x;
+    }
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-l;
+    flex-wrap: wrap;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-x;
+    }
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__sub {
+    color: $color-blue-gray;
+  }
+}

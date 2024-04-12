@@ -1,35 +1,27 @@
 @if (user$ | async; as user) {
   <section class="profile">
     <div class="profile__info info">
+      @if (user.photoURL) {
+        <p-avatar
+          [image]="user.photoURL"
+          size="xlarge"
+          shape="circle"
+        ></p-avatar>
+      } @else {
+        <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
+      }
+
       <h2 class="info__username">{{ user.username }}</h2>
+    </div>
 
-      <!-- <p-tabMenu
-        [model]="tabItems"
-        [scrollable]="true"
-        class="profile__tab-menu"
-      >
-        <ng-template pTemplate="item" let-item>
-          <a
-            [routerLink]="['']"
-            [queryParams]="{ tab: item.tab }"
-            [relativeTo]="this.route"
-            class="p-menuitem-link"
-          >
-            <span [class]="item.icon"></span>
-            <span>{{ item.label }}</span>
-          </a>
-        </ng-template>
-      </p-tabMenu> -->
+    <p-tabMenu
+      [model]="tabItems"
+      [scrollable]="true"
+      class="profile__tab-menu"
+    ></p-tabMenu>
 
-      <p-tabMenu
-        [model]="tabItems"
-        [scrollable]="true"
-        class="profile__tab-menu"
-      ></p-tabMenu>
-
-      <div class="profile__content content">
-        <router-outlet></router-outlet>
-      </div>
+    <div class="profile__content content">
+      <router-outlet></router-outlet>
     </div>
   </section>
 } @else {

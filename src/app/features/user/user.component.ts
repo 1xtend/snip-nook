@@ -21,11 +21,12 @@ import {
 } from 'rxjs';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
+import { AvatarModule } from 'primeng/avatar';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [AsyncPipe, TabMenuModule, AsyncPipe, RouterOutlet],
+  imports: [AsyncPipe, TabMenuModule, AsyncPipe, RouterOutlet, AvatarModule],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

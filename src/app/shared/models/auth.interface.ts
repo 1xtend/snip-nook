@@ -15,6 +15,7 @@ export interface AuthErrors {
   invalidCredential: boolean;
   invalidEmail: boolean;
   missingEmail: boolean;
+  wrongPassword: boolean;
 }
 
 export interface SignUpForm extends AuthForm {

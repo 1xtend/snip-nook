@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -14,8 +14,8 @@ import { AuthErrors, SignUpForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { AuthService } from '@core/services/auth.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { usernameValidator } from '@shared/helpers/username.validator';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-sign-up',
@@ -50,7 +50,6 @@ export class SignUpComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private destroyRef: DestroyRef,
     private router: Router,
   ) {}
 
@@ -97,11 +96,9 @@ export class SignUpComponent implements OnInit {
 
     this.authService
       .signUp(this.form.getRawValue())
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(take(1))
       .subscribe({
         next: (user) => {
-          console.log(user);
-
           this.form.reset();
 
           this.router.navigate(['/home']);

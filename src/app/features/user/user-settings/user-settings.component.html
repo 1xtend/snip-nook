@@ -1,1 +1,61 @@
-<p>user-settings works!</p>
+<section class="settings">
+  <h2>Profile settings</h2>
+  <p-divider></p-divider>
+
+  <form class="form">
+    <div class="form__item">
+      <div class="form__info">
+        <h4 class="form__title">Email address</h4>
+        @if (user$ | async; as user) {
+          <small class="form__sub">{{ user.email }}</small>
+        }
+      </div>
+
+      <p-button
+        type="button"
+        label="Change"
+        [rounded]="true"
+        size="small"
+        [outlined]="true"
+        (onClick)="showDialog('email')"
+      ></p-button>
+    </div>
+
+    <!-- <div class="form__row">
+      <label for="form-file" class="form__label">Change profile image</label>
+      <p-fileUpload
+        [multiple]="false"
+        accept="image/*"
+        id="form-file"
+        [maxFileSize]="1000000"
+      >
+        <ng-template pTemplate="content" let-files>
+          <div>Drag and drop image here</div>
+        </ng-template>
+      </p-fileUpload>
+    </div>
+
+    <div class="form__row">
+      <label for="form-email" class="card__label">Email</label>
+      <input type="email" pInputText class="form__input" id="form-email" />
+    </div>
+
+    <div class="form__row">
+      <label for="form-password" class="card__label">Password</label>
+      <input
+        type="password"
+        pPassword
+        [feedback]="false"
+        id="form-password"
+        class="form__input"
+      />
+    </div>
+
+    <button type="button" (click)="showDialog('email')">
+      Open email modal
+    </button>
+    <button type="button" (click)="showDialog('password')">
+      Open password modal
+    </button> -->
+  </form>
+</section>

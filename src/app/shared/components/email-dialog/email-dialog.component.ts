@@ -1,8 +1,5 @@
+import { ModalService } from './../../../core/services/modal.service';
 import { Component, OnInit } from '@angular/core';
-import { PasswordModule } from 'primeng/password';
-import { InputTextModule } from 'primeng/inputtext';
-import { ButtonModule } from 'primeng/button';
-import { Router, RouterLink } from '@angular/router';
 import {
   FormBuilder,
   FormControl,
@@ -10,27 +7,29 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthErrors, AuthForm } from '@shared/models/auth.interface';
-import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { PasswordModule } from 'primeng/password';
+import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
+import { AuthErrors, AuthForm } from '@shared/models/auth.interface';
 
 @Component({
-  selector: 'app-log-in',
+  selector: 'app-email-dialog',
   standalone: true,
   imports: [
-    InputTextModule,
-    PasswordModule,
-    ButtonModule,
-    RouterLink,
     ReactiveFormsModule,
+    InputTextModule,
+    ButtonModule,
     FormFocusDirective,
+    PasswordModule,
   ],
-  templateUrl: './log-in.component.html',
-  styleUrl: './log-in.component.scss',
+  templateUrl: './email-dialog.component.html',
+  styleUrl: './email-dialog.component.scss',
 })
-export class LogInComponent implements OnInit {
+export class EmailDialogComponent implements OnInit {
   form!: FormGroup<AuthForm>;
 
   authErrors: Partial<AuthErrors> | null = null;
@@ -47,7 +46,7 @@ export class LogInComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,
+    private modalService: ModalService,
   ) {}
 
   ngOnInit(): void {
@@ -73,28 +72,26 @@ export class LogInComponent implements OnInit {
       return;
     }
 
-    this.authErrors = null;
-    this.loading = true;
     this.form.disable();
+    this.loading = true;
 
     this.authService
-      .logIn(this.form.getRawValue())
+      .updateEmail(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: (user) => {
+        next: () => {
           this.form.reset();
-
-          this.router.navigate(['/home']);
+          this.modalService.closeDialog();
         },
-        error: (err: Error) => {
+        error: (err) => {
+          console.log(err);
           this.authErrors = {
-            invalidCredential: err.message.includes('auth/invalid-credential'),
-            invalidEmail: err.message.includes('auth/invalid-email'),
-            missingEmail: err.message.includes('auth/missing-email'),
+            wrongPassword: err.message.includes('auth/wrong-password'),
+            emailInUse: err.message.includes('auth/email-already-in-use'),
           };
 
-          this.form.enable();
           this.loading = false;
+          this.form.enable();
         },
         complete: () => {
           this.loading = false;

@@ -38,20 +38,6 @@
       class="card__input"
       formControlName="password"
     />
-
-    @if (
-      (passwordControl.invalid && passwordControl.dirty) ||
-      (form.touched && form.invalid && authForm.submitted)
-    ) {
-      <small class="card__validation-error">
-        @if (passwordControl.hasError("minlength")) {
-          Password must contain at least 8 characters.
-        }
-        @if (passwordControl.hasError("maxlength")) {
-          Password cannot contain more than 16 characters.
-        }
-      </small>
-    }
   </div>
 
   @if (authErrors) {
