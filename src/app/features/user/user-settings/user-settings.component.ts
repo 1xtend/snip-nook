@@ -48,8 +48,6 @@ export class UserSettingsComponent {
     private messageService: MessageService,
   ) {}
 
-  ngAfterViewInit(): void {}
-
   uploadAvatar(e: FileUploadHandlerEvent) {
     console.log(e.files[0]);
 

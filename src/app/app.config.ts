@@ -11,6 +11,7 @@ import { initializeApp } from 'firebase/app';
 
 import { environment } from '@environments/environment';
 import { MessageService } from 'primeng/api';
+import { provideHighlightOptions } from 'ngx-highlightjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +24,8 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(provideStorage(() => getStorage())),
     MessageService,
     provideAnimations(),
+    provideHighlightOptions({
+      fullLibraryLoader: () => import('highlight.js'),
+    }),
   ],
 };

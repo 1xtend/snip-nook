@@ -1,1 +1,14 @@
-<p>user-snippets works!</p>
+@if (snippets$ | async; as snippets) {
+  <h2>User snippets</h2>
+
+  @if (snippets.length > 0) {
+    @for (snippet of snippets; track snippet.uid) {
+      <div>
+        <h4>{{ snippet.name }}</h4>
+        <p>{{ snippet.description }}</p>
+      </div>
+    }
+  } @else {
+    There are no snippets.
+  }
+}

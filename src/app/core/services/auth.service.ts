@@ -46,6 +46,7 @@ import {
   take,
   throwError,
 } from 'rxjs';
+import { FirestoreService } from './firestore.service';
 
 @Injectable({
   providedIn: 'root',
@@ -59,8 +60,8 @@ export class AuthService {
 
   constructor(
     public auth: Auth,
-    private fs: Firestore,
     private storage: Storage,
+    private firestoreService: FirestoreService,
   ) {}
 
   logIn({ email, password }: AuthData): Observable<UserCredential> {
@@ -212,7 +213,7 @@ export class AuthService {
         const credential = EmailAuthProvider.credential(user.email, password);
 
         return from(reauthenticateWithCredential(user, credential)).pipe(
-          map(async (credential) => {
+          switchMap(async (credential) => {
             const deletionPromises = [];
 
             deletionPromises.push(deleteDoc(this.userDoc(credential.user.uid)));
@@ -241,11 +242,11 @@ export class AuthService {
   }
 
   userDoc(uid: string) {
-    return doc(this.fs, 'users', uid);
+    return this.firestoreService.userDoc(uid);
   }
 
   usernameDoc(username: string) {
-    return doc(this.fs, 'usernames', username);
+    return this.firestoreService.usernameDoc(username);
   }
 
   throwUserError(): Observable<never> {

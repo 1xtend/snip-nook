@@ -9,7 +9,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
-import { UserService } from '@core/services/user.service';
 import { IUser } from '@shared/models/user.interface';
 import {
   BehaviorSubject,
@@ -23,6 +22,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
+import { FirestoreService } from '@core/services/firestore.service';
 
 @Component({
   selector: 'app-user',
@@ -60,7 +60,7 @@ export class UserComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private destroyRef: DestroyRef,
-    private userService: UserService,
+    private firestoreService: FirestoreService,
     private loadingService: LoadingService,
   ) {}
 
@@ -82,7 +82,7 @@ export class UserComponent implements OnInit {
           this.loadingService.setLoading(true);
           this.isOwnerSubject.next(user?.uid === userId);
 
-          return userId ? this.userService.getUser(userId) : EMPTY;
+          return userId ? this.firestoreService.getUser(userId) : EMPTY;
         }),
       )
       .subscribe((user) => {
