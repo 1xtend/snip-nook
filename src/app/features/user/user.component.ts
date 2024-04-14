@@ -22,17 +22,25 @@ import {
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [AsyncPipe, TabMenuModule, AsyncPipe, RouterOutlet, AvatarModule],
+  imports: [
+    AsyncPipe,
+    TabMenuModule,
+    AsyncPipe,
+    RouterOutlet,
+    AvatarModule,
+    SkeletonModule,
+  ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
-  tabItems: MenuItem[] = [{}];
+  tabItems: MenuItem[] = [];
 
   get loading$(): Observable<boolean> {
     return this.loadingService.loading$;

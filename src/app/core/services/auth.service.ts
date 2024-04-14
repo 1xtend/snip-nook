@@ -9,9 +9,25 @@ import {
   User,
   updateProfile,
   updatePassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updateEmail,
 } from '@angular/fire/auth';
-import { Firestore, getDoc, setDoc, doc } from '@angular/fire/firestore';
-import { Storage, getDownloadURL, uploadBytes } from '@angular/fire/storage';
+import {
+  Firestore,
+  getDoc,
+  setDoc,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from '@angular/fire/firestore';
+import {
+  Storage,
+  deleteObject,
+  getDownloadURL,
+  uploadBytes,
+  ref,
+} from '@angular/fire/storage';
 import {
   AuthData,
   AuthPasswords,
@@ -19,13 +35,6 @@ import {
 } from '@shared/models/auth.interface';
 import { IProfile } from '@shared/models/profile.interface';
 import { IUser } from '@shared/models/user.interface';
-import {
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  updateEmail,
-} from 'firebase/auth';
-import { updateDoc } from 'firebase/firestore';
-import { ref } from 'firebase/storage';
 import {
   BehaviorSubject,
   Observable,
@@ -97,7 +106,7 @@ export class AuthService {
     authState(this.auth).subscribe((user) => {
       this.userSubject.next(user ?? undefined);
 
-      console.log('AUTH STATE WAS CHANGED: ', user);
+      console.log('AUTH STATE WAS CHANGED');
 
       this.loadingSubject.next(false);
     });
@@ -191,6 +200,44 @@ export class AuthService {
     const usernameDoc = this.usernameDoc(username);
 
     return from(getDoc(usernameDoc)).pipe(map((user) => user.exists()));
+  }
+
+  deleteUser(password: string) {
+    return this.user$.pipe(
+      switchMap((user) => {
+        if (!user || !user.email) {
+          return this.throwUserError();
+        }
+
+        const credential = EmailAuthProvider.credential(user.email, password);
+
+        return from(reauthenticateWithCredential(user, credential)).pipe(
+          map(async (credential) => {
+            const deletionPromises = [];
+
+            deletionPromises.push(deleteDoc(this.userDoc(credential.user.uid)));
+
+            if (credential.user.displayName) {
+              deletionPromises.push(
+                deleteDoc(this.usernameDoc(credential.user.displayName)),
+              );
+            }
+
+            if (credential.user.photoURL) {
+              deletionPromises.push(
+                deleteObject(ref(this.storage, credential.user.photoURL)),
+              );
+            }
+
+            deletionPromises.push(credential.user.delete());
+
+            return combineLatest(deletionPromises).pipe(
+              map(() => 'User successfully deleted'),
+            );
+          }),
+        );
+      }),
+    );
   }
 
   userDoc(uid: string) {

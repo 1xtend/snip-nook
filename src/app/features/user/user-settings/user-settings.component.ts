@@ -15,8 +15,9 @@ import { ModalService } from '@core/services/modal.service';
 import { AuthService } from '@core/services/auth.service';
 import { Observable, take } from 'rxjs';
 import { User } from 'firebase/auth';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, UpperCasePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
+import { DeleteDialogComponent } from '@shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-user-settings',
@@ -28,6 +29,7 @@ import { MessageService } from 'primeng/api';
     ButtonModule,
     DividerModule,
     AsyncPipe,
+    UpperCasePipe,
   ],
   providers: [ModalService, DialogService],
   templateUrl: './user-settings.component.html',
@@ -66,12 +68,16 @@ export class UserSettingsComponent {
       });
   }
 
-  showDialog(type: 'password' | 'email'): void {
-    const header = `Update your ${type}`;
+  showDialog(type: 'password' | 'email' | 'delete'): void {
+    const header = type === 'delete' ? 'Delete account' : `Update your ${type}`;
 
     this.modalService.showDialog(
       header,
-      type === 'email' ? EmailDialogComponent : PasswordDialogComponent,
+      type === 'email'
+        ? EmailDialogComponent
+        : type === 'password'
+          ? PasswordDialogComponent
+          : DeleteDialogComponent,
     );
   }
 }

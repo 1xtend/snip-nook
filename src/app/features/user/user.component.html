@@ -1,18 +1,30 @@
 @if (user$ | async; as user) {
   <section class="profile">
-    <div class="profile__info info">
-      @if (user.photoURL) {
-        <p-avatar
-          [image]="user.photoURL"
-          size="xlarge"
-          shape="circle"
-        ></p-avatar>
-      } @else {
-        <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
-      }
+    @if (loading$ | async) {
+      <div class="profile__info info">
+        <p-skeleton shape="circle" size="4rem"></p-skeleton>
 
-      <h2 class="info__username">{{ user.username }}</h2>
-    </div>
+        <p-skeleton
+          width="8rem"
+          height="1.5rem"
+          class="info__username"
+        ></p-skeleton>
+      </div>
+    } @else {
+      <div class="profile__info info">
+        @if (user.photoURL) {
+          <p-avatar
+            [image]="user.photoURL"
+            size="xlarge"
+            shape="circle"
+          ></p-avatar>
+        } @else {
+          <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
+        }
+
+        <h2 class="info__username">{{ user.username }}</h2>
+      </div>
+    }
 
     <p-tabMenu
       [model]="tabItems"

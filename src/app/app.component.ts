@@ -40,6 +40,10 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.checkIfUserIsAuthenticated();
+
+    this.authService.user$.subscribe((user) => {
+      console.log('USER CHANGES: ', user);
+    });
   }
 
   toggleSidebar(value: boolean): void {

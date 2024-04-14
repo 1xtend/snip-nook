@@ -1,7 +1,10 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  DestroyRef,
   EventEmitter,
+  OnInit,
   Output,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -12,6 +15,7 @@ import { AsyncPipe } from '@angular/common';
 import { LogoComponent } from '../logo/logo.component';
 import { Observable } from 'rxjs';
 import { User } from 'firebase/auth';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -21,12 +25,23 @@ import { User } from 'firebase/auth';
   styleUrl: './header.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   @Output() openSidebar = new EventEmitter<void>();
 
   get user$(): Observable<User | undefined> {
     return this.authService.user$;
   }
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private destroyRef: DestroyRef,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.user$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      this.cdr.detectChanges();
+      console.log('Detect changes');
+    });
+  }
 }

@@ -56,5 +56,17 @@
         (onClick)="showDialog('password')"
       ></p-button>
     </div>
+
+    <div class="content__row">
+      <p-button
+        type="button"
+        [rounded]="true"
+        size="small"
+        [label]="'delete account' | uppercase"
+        [outlined]="true"
+        severity="danger"
+        (onClick)="showDialog('delete')"
+      ></p-button>
+    </div>
   </div>
 </section>
