@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, EMPTY, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Subject, first, switchMap, take } from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { AsyncPipe } from '@angular/common';
 
@@ -43,7 +43,9 @@ export class UserSnippetsComponent implements OnInit {
 
           console.log('User id: ', userId);
 
-          return userId ? this.firestoreService.getUserSnippets(userId) : EMPTY;
+          return userId
+            ? this.firestoreService.getUserSnippets(userId).pipe(take(1))
+            : EMPTY;
         }),
       )
       .subscribe((snippets) => {

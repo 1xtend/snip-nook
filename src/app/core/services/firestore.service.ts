@@ -5,11 +5,12 @@ import {
   docData,
   collection,
   doc,
+  deleteDoc,
+  collectionSnapshots,
 } from '@angular/fire/firestore';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
-import { TabType } from '@shared/models/tab.type';
 import { IUser } from '@shared/models/user.interface';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, combineLatest, map, switchMap, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -18,22 +19,42 @@ export class FirestoreService {
   constructor(private fs: Firestore) {}
 
   // Users
-  userDoc(uid: string) {
-    return doc(this.fs, 'users', uid);
-  }
-
   getUser(uid: string): Observable<IUser | undefined> {
-    const userDoc = doc(this.fs, '/users', uid);
-    return docData(userDoc) as Observable<IUser | undefined>;
+    return docData(this.getDoc('users', uid)) as Observable<IUser | undefined>;
   }
 
   getUserSnippets(uid: string): Observable<ISnippetPreview[]> {
-    const snippetsCollection = collection(this.fs, 'users', uid, 'snippets');
+    const snippetsCollection = this.getCollection('users', uid, 'snippets');
     return collectionData(snippetsCollection) as Observable<ISnippetPreview[]>;
   }
 
-  // Usernames
-  usernameDoc(username: string) {
-    return doc(this.fs, 'usernames', username);
+  // Utils
+  getDoc(path: string, ...pathSegments: string[]) {
+    return doc(this.fs, path, ...pathSegments);
+  }
+
+  getCollection(path: string, ...pathSegments: string[]) {
+    return collection(this.fs, path, ...pathSegments);
+  }
+
+  deleteDoc(path: string, ...pathSegments: string[]) {
+    return deleteDoc(doc(this.fs, path, ...pathSegments));
+  }
+
+  deleteCollection(path: string, ...pathSegments: string[]) {
+    const deleteCollection = collection(this.fs, path, ...pathSegments);
+
+    return collectionSnapshots(deleteCollection).pipe(
+      take(1),
+      switchMap((res) => {
+        const deletePromises: Promise<void>[] = [];
+
+        res.forEach((doc) => {
+          deletePromises.push(this.deleteDoc(path, ...pathSegments, doc.id));
+        });
+
+        return combineLatest(deletePromises);
+      }),
+    );
   }
 }

@@ -213,20 +213,25 @@ export class AuthService {
         const credential = EmailAuthProvider.credential(user.email, password);
 
         return from(reauthenticateWithCredential(user, credential)).pipe(
+          switchMap((credential) => {
+            return this.deleteSnippetsCollection(credential.user.uid).pipe(
+              map(() => credential),
+            );
+          }),
           switchMap(async (credential) => {
             const deletionPromises = [];
 
-            deletionPromises.push(deleteDoc(this.userDoc(credential.user.uid)));
+            deletionPromises.push(this.deleteUserDoc(credential.user.uid));
 
             if (credential.user.displayName) {
               deletionPromises.push(
-                deleteDoc(this.usernameDoc(credential.user.displayName)),
+                this.deleteUsernameDoc(credential.user.displayName),
               );
             }
 
             if (credential.user.photoURL) {
               deletionPromises.push(
-                deleteObject(ref(this.storage, credential.user.photoURL)),
+                this.deleteAvatar(credential.user.photoURL),
               );
             }
 
@@ -241,12 +246,29 @@ export class AuthService {
     );
   }
 
+  // Utils
   userDoc(uid: string) {
-    return this.firestoreService.userDoc(uid);
+    return this.firestoreService.getDoc('users', uid);
   }
 
   usernameDoc(username: string) {
-    return this.firestoreService.usernameDoc(username);
+    return this.firestoreService.getDoc('usernames', username);
+  }
+
+  deleteUserDoc(uid: string) {
+    return this.firestoreService.deleteDoc('users', uid);
+  }
+
+  deleteUsernameDoc(uid: string) {
+    return this.firestoreService.deleteDoc('usernames', uid);
+  }
+
+  deleteAvatar(url: string) {
+    return deleteObject(ref(this.storage, url));
+  }
+
+  deleteSnippetsCollection(uid: string) {
+    return this.firestoreService.deleteCollection('users', uid, 'snippets');
   }
 
   throwUserError(): Observable<never> {
