@@ -51,7 +51,6 @@ export class UserSettingsComponent {
   ) {}
 
   uploadAvatar(e: FileUploadHandlerEvent) {
-    console.log(e.files[0]);
     this.loadingService.setLoading(true);
 
     this.authService

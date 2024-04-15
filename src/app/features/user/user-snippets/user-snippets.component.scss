@@ -1,0 +1,10 @@
+@import "../../../../assets/scss/variables";
+
+.snippets {
+  display: grid;
+  gap: $spacing-l;
+
+  @media (min-width: calc($breakpoint-l + 1px)) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

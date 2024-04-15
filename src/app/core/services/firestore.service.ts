@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Query } from '@angular/core';
 import {
   Firestore,
   collectionData,
@@ -7,6 +7,10 @@ import {
   doc,
   deleteDoc,
   collectionSnapshots,
+  orderBy,
+  query,
+  where,
+  DocumentData,
 } from '@angular/fire/firestore';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { IUser } from '@shared/models/user.interface';
@@ -23,9 +27,22 @@ export class FirestoreService {
     return docData(this.getDoc('users', uid)) as Observable<IUser | undefined>;
   }
 
-  getUserSnippets(uid: string): Observable<ISnippetPreview[]> {
-    const snippetsCollection = this.getCollection('users', uid, 'snippets');
-    return collectionData(snippetsCollection) as Observable<ISnippetPreview[]>;
+  getUserSnippets(
+    uid: string,
+    owner: boolean = false,
+  ): Observable<ISnippetPreview[]> {
+    let snippets;
+
+    if (owner) {
+      snippets = this.getCollection('users', uid, 'snippets');
+    } else {
+      snippets = query(
+        this.getCollection('users', uid, 'snippets'),
+        where('public', '==', true),
+      );
+    }
+
+    return collectionData(snippets) as Observable<ISnippetPreview[]>;
   }
 
   // Utils

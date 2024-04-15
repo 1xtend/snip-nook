@@ -1,0 +1,11 @@
+<article class="snippet-card">
+  <h3 class="snippet-card__title">
+    <a
+      [routerLink]="['snippet', snippet.uid]"
+      class="snippet-card__title-link"
+      >{{ snippet.name }}</a
+    >
+  </h3>
+
+  <p class="snippet-card__description">{{ snippet.description }}</p>
+</article>

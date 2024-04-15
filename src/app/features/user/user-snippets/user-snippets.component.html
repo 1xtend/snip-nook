@@ -1,14 +1,18 @@
 @if (snippets$ | async; as snippets) {
   <h2>User snippets</h2>
 
-  @if (snippets.length > 0) {
-    @for (snippet of snippets; track snippet.uid) {
-      <div>
-        <h4>{{ snippet.name }}</h4>
-        <p>{{ snippet.description }}</p>
-      </div>
+  <p-divider></p-divider>
+
+  <div class="snippets">
+    @if (snippets.length > 0) {
+      @for (snippet of snippets; track snippet.uid) {
+        <app-snippet-card
+          [snippet]="snippet"
+          class="snippet"
+        ></app-snippet-card>
+      }
+    } @else {
+      There are no snippets.
     }
-  } @else {
-    There are no snippets.
-  }
+  </div>
 }
