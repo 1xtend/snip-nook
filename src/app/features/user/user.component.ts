@@ -49,9 +49,6 @@ export class UserComponent implements OnInit {
   private userSubject = new BehaviorSubject<IUser | undefined>(undefined);
   user$ = this.userSubject.asObservable();
 
-  private tabItemsSubject = new BehaviorSubject<MenuItem[]>([]);
-  tabItems$ = this.tabItemsSubject.asObservable();
-
   private isOwnerSubject = new BehaviorSubject<boolean>(false);
   isOwner$ = this.isOwnerSubject.asObservable();
 

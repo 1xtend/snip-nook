@@ -1,0 +1,18 @@
+@if (snippet$ | async; as snippet) {
+  <section class="snippet">
+    <div class="snippet__info">
+      <h2 class="snippet__title">{{ snippet.name }}</h2>
+      <a [routerLink]="['/user', snippet.author.uid]" class="snippet__author"
+        >&#64;{{ snippet.author.name }}</a
+      >
+
+      @if (snippet.description) {
+        <p class="snippet__description">{{ snippet.description }}</p>
+      }
+    </div>
+
+    <p-tabMenu [model]="tabItems"></p-tabMenu>
+
+    <div class="snippets__tabs"></div>
+  </section>
+}

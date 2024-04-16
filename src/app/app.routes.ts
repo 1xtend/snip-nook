@@ -78,4 +78,11 @@ export const routes: Routes = [
       ),
     title: 'Trending',
   },
+  {
+    path: 'snippet/:id',
+    loadComponent: () =>
+      import('./features/snippet/snippet.component').then(
+        (m) => m.SnippetComponent,
+      ),
+  },
 ];

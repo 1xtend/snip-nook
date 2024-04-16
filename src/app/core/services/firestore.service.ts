@@ -1,4 +1,5 @@
 import { Injectable, Query } from '@angular/core';
+import { authState } from '@angular/fire/auth';
 import {
   Firestore,
   collectionData,
@@ -12,7 +13,7 @@ import {
   where,
   DocumentData,
 } from '@angular/fire/firestore';
-import { ISnippetPreview } from '@shared/models/snippet.interface';
+import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
 import { IUser } from '@shared/models/user.interface';
 import { Observable, combineLatest, map, switchMap, take } from 'rxjs';
 
@@ -45,6 +46,11 @@ export class FirestoreService {
     return collectionData(snippets) as Observable<ISnippetPreview[]>;
   }
 
+  getSnippet(uid: string): Observable<ISnippet | undefined> {
+    const snippetDoc = this.getDoc('snippets', uid);
+    return docData(snippetDoc) as Observable<ISnippet | undefined>;
+  }
+
   // Utils
   getDoc(path: string, ...pathSegments: string[]) {
     return doc(this.fs, path, ...pathSegments);
@@ -55,7 +61,11 @@ export class FirestoreService {
   }
 
   deleteDoc(path: string, ...pathSegments: string[]) {
-    return deleteDoc(doc(this.fs, path, ...pathSegments));
+    return deleteDoc(this.getDoc(path, ...pathSegments));
+  }
+
+  checkUserSnippet(userUid: string, snippetUid: string) {
+    return docData(this.getDoc('users', userUid, 'snippets', snippetUid));
   }
 
   deleteCollection(path: string, ...pathSegments: string[]) {
