@@ -43,8 +43,6 @@ export class SnippetComponent implements OnInit, AfterViewInit {
   private isOwnerSubject = new BehaviorSubject<boolean>(false);
   isOwner$ = this.isOwnerSubject.asObservable();
 
-  @ViewChild('test') test!: ElementRef<HTMLElement>;
-
   constructor(
     private firestoreService: FirestoreService,
     private route: ActivatedRoute,
