@@ -11,6 +11,26 @@ import { initializeApp } from 'firebase/app';
 
 import { environment } from '@environments/environment';
 import { MessageService } from 'primeng/api';
+import {
+  MonacoEditorModule,
+  NgxMonacoEditorConfig,
+} from 'ngx-monaco-editor-v2';
+
+const monacoConfig: NgxMonacoEditorConfig = {
+  defaultOptions: {
+    scrollBeyondLastLine: false,
+    theme: 'vs-dark',
+    lineNumbers: true,
+  },
+  onMonacoLoad: () => {
+    const monaco = (<any>window).monaco;
+
+    monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+    });
+  },
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +43,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(provideStorage(() => getStorage())),
     MessageService,
     provideAnimations(),
+    importProvidersFrom(MonacoEditorModule.forRoot(monacoConfig)),
   ],
 };

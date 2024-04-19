@@ -12,6 +12,7 @@ export interface ISnippetPreview {
 
 export interface ISnippet extends ISnippetPreview {
   code: ICodeItem[];
+  public: boolean;
 }
 
 export interface ICodeItem {

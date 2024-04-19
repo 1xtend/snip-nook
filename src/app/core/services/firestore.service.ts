@@ -12,6 +12,7 @@ import {
   query,
   where,
   DocumentData,
+  setDoc,
 } from '@angular/fire/firestore';
 import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
 import { IUser } from '@shared/models/user.interface';
@@ -51,9 +52,20 @@ export class FirestoreService {
     return docData(snippetDoc) as Observable<ISnippet | undefined>;
   }
 
+  saveSnippet(uid: string, snippet: ISnippet) {
+    const observables = [];
+
+    return this.setDoc(snippet, 'users', snippet.author.uid, 'snippets', uid);
+  }
+
   // Utils
   getDoc(path: string, ...pathSegments: string[]) {
     return doc(this.fs, path, ...pathSegments);
+  }
+
+  setDoc(data: unknown, path: string, ...pathSegments: string[]) {
+    const doc = this.getDoc(path, ...pathSegments);
+    return setDoc(doc, data);
   }
 
   getCollection(path: string, ...pathSegments: string[]) {

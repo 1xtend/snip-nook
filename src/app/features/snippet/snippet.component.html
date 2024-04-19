@@ -16,3 +16,13 @@
     <div class="snippets__tabs"></div>
   </section>
 }
+
+<ngx-monaco-editor
+  [(ngModel)]="code"
+  [options]="options"
+  (onInit)="onEditorInit($event)"
+  (ngModelChange)="onEditorChange($event)"
+  [style]="{
+    height: '500px'
+  }"
+></ngx-monaco-editor>
