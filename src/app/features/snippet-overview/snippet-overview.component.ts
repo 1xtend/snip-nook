@@ -1,3 +1,4 @@
+import { CodeService } from './../../core/services/code.service';
 import {
   BehaviorSubject,
   EMPTY,
@@ -22,11 +23,20 @@ import { AsyncPipe } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
+import { MonacoEditorModule, NgxEditorModel } from 'ngx-monaco-editor-v2';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-snippet-overview',
   standalone: true,
-  imports: [AsyncPipe, RouterLink, SkeletonModule, TabMenuModule],
+  imports: [
+    AsyncPipe,
+    RouterLink,
+    SkeletonModule,
+    TabMenuModule,
+    MonacoEditorModule,
+    FormsModule,
+  ],
   templateUrl: './snippet-overview.component.html',
   styleUrl: './snippet-overview.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -34,6 +44,16 @@ import { MenuItem } from 'primeng/api';
 export class SnippetOverviewComponent implements OnInit {
   tabItems: MenuItem[] = [];
   activeTab: MenuItem | undefined = undefined;
+
+  code: string = '';
+  editorOptions = {
+    language: '',
+    minimap: {
+      enabled: false,
+    },
+    contextmenu: false,
+    readOnly: true,
+  };
 
   private snippetSubject = new BehaviorSubject<ISnippet | undefined>(undefined);
   snippet$ = this.snippetSubject.asObservable();
@@ -49,6 +69,7 @@ export class SnippetOverviewComponent implements OnInit {
     private firestoreService: FirestoreService,
     private authService: AuthService,
     private destroyRef: DestroyRef,
+    private codeService: CodeService,
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +118,7 @@ export class SnippetOverviewComponent implements OnInit {
         if (snippet) {
           this.tabItems = this.getTabItems(snippet.code);
           this.activeTab = this.tabItems[0];
+          this.setTabCode(snippet.code[0]);
         }
       });
   }
@@ -109,12 +131,22 @@ export class SnippetOverviewComponent implements OnInit {
       });
   }
 
-  private getTabItems(code: ICodeItem[]) {
+  private getTabItems(code: ICodeItem[]): MenuItem[] {
     return code.map((item) => {
       return {
         label: item.language,
-        command: () => {},
+        command: () => {
+          this.setTabCode(item);
+        },
       };
     });
+  }
+
+  private setTabCode(item: ICodeItem) {
+    this.code = this.codeService.formatProcessedCode(item.code);
+    this.editorOptions = {
+      ...this.editorOptions,
+      language: item.language,
+    };
   }
 }

@@ -52,6 +52,17 @@
         [model]="tabItems"
         [activeItem]="activeTab"
       ></p-tabMenu>
+
+      <div class="overview__tab-items">
+        <ngx-monaco-editor
+          [(ngModel)]="code"
+          [options]="editorOptions"
+          class="overview__editor"
+          [style]="{
+            height: '500px'
+          }"
+        ></ngx-monaco-editor>
+      </div>
     </section>
   }
 }
