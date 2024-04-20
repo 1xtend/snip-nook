@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { authGuard } from '@core/guards/auth.guard';
 import { HomeComponent } from '@features/home/home.component';
 import { LogInComponent } from '@features/log-in/log-in.component';
-import { SignUpComponent } from './features/sign-up/sign-up.component';
 import { ownerGuard } from '@core/guards/owner.guard';
 
 export const routes: Routes = [
@@ -79,10 +78,24 @@ export const routes: Routes = [
     title: 'Trending',
   },
   {
-    path: 'snippet/:id',
+    path: 'snippet/:id/overview',
     loadComponent: () =>
-      import('./features/snippet/snippet.component').then(
-        (m) => m.SnippetComponent,
+      import('./features/snippet-overview/snippet-overview.component').then(
+        (m) => m.SnippetOverviewComponent,
+      ),
+  },
+  {
+    path: 'snippet/:id/edit',
+    loadComponent: () =>
+      import('./features/snippet-edit/snippet-edit.component').then(
+        (m) => m.SnippetEditComponent,
+      ),
+  },
+  {
+    path: 'snippet/create',
+    loadComponent: () =>
+      import('./features/snippet-create/snippet-create.component').then(
+        (m) => m.SnippetCreateComponent,
       ),
   },
 ];

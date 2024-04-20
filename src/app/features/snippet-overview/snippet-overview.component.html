@@ -1,0 +1,57 @@
+@if (loading$ | async) {
+  <div class="skeleton">
+    <div class="skeleton__info">
+      <p-skeleton
+        width="12rem"
+        height="28px"
+        [style]="{
+          marginBottom: '0.5rem'
+        }"
+      ></p-skeleton>
+      <p-skeleton
+        width="9rem"
+        height="19px"
+        class="skeleton__author-link"
+        [style]="{
+          marginBottom: '0.5rem'
+        }"
+      ></p-skeleton>
+      <p-skeleton
+        width="20rem"
+        height="1rem"
+        [style]="{
+          marginBottom: '0.5rem'
+        }"
+      ></p-skeleton>
+      <p-skeleton
+        width="14rem"
+        height="1rem"
+        [style]="{
+          marginBottom: '0.5rem'
+        }"
+      ></p-skeleton>
+    </div>
+  </div>
+} @else {
+  @if (snippet$ | async; as snippet) {
+    <section class="overview">
+      <div class="overview__info">
+        <h2 class="overview__name">{{ snippet.name }}</h2>
+        <a
+          [routerLink]="['/user', snippet.author.uid]"
+          class="overview__author-link"
+          >&commat;{{ snippet.author.name }}</a
+        >
+        @if (snippet.description) {
+          <p class="overview__description">{{ snippet.description }}</p>
+        }
+      </div>
+
+      <p-tabMenu
+        class="overview__tab-menu"
+        [model]="tabItems"
+        [activeItem]="activeTab"
+      ></p-tabMenu>
+    </section>
+  }
+}

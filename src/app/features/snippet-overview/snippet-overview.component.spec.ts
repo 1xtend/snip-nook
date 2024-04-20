@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SnippetComponent } from './snippet.component';
+import { SnippetOverviewComponent } from './snippet-overview.component';
 
-describe('SnippetComponent', () => {
-  let component: SnippetComponent;
-  let fixture: ComponentFixture<SnippetComponent>;
+describe('SnippetOverviewComponent', () => {
+  let component: SnippetOverviewComponent;
+  let fixture: ComponentFixture<SnippetOverviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SnippetComponent]
+      imports: [SnippetOverviewComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(SnippetComponent);
+    fixture = TestBed.createComponent(SnippetOverviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
