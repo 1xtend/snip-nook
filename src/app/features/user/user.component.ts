@@ -1,4 +1,3 @@
-import { LoadingService } from './../../core/services/loading.service';
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -13,7 +12,6 @@ import { IUser } from '@shared/models/user.interface';
 import {
   BehaviorSubject,
   EMPTY,
-  Observable,
   combineLatest,
   distinctUntilChanged,
   switchMap,
@@ -42,9 +40,8 @@ import { FirestoreService } from '@core/services/firestore.service';
 export class UserComponent implements OnInit {
   tabItems: MenuItem[] = [];
 
-  get loading$(): Observable<boolean> {
-    return this.loadingService.loading$;
-  }
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
 
   private userSubject = new BehaviorSubject<IUser | undefined>(undefined);
   user$ = this.userSubject.asObservable();
@@ -58,7 +55,6 @@ export class UserComponent implements OnInit {
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private firestoreService: FirestoreService,
-    private loadingService: LoadingService,
   ) {}
 
   ngOnInit(): void {
@@ -76,7 +72,7 @@ export class UserComponent implements OnInit {
         switchMap(({ params, user }) => {
           const userId = params.get('id');
 
-          this.loadingService.setLoading(true);
+          this.loadingSubject.next(true);
           this.isOwnerSubject.next(user?.uid === userId);
 
           return userId ? this.firestoreService.getUser(userId) : EMPTY;
@@ -86,7 +82,7 @@ export class UserComponent implements OnInit {
         console.log('***PARAMS CHANGES***');
 
         this.userSubject.next(user);
-        this.loadingService.setLoading(false);
+        this.loadingSubject.next(false);
       });
   }
 

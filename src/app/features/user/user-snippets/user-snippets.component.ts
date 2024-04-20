@@ -6,26 +6,18 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-  BehaviorSubject,
-  EMPTY,
-  Subject,
-  combineLatest,
-  first,
-  switchMap,
-  take,
-} from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { BehaviorSubject, EMPTY, combineLatest, switchMap } from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { AsyncPipe } from '@angular/common';
-import { DividerModule } from 'primeng/divider';
 import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-card.component';
 import { AuthService } from '@core/services/auth.service';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-user-snippets',
   standalone: true,
-  imports: [AsyncPipe, DividerModule, SnippetCardComponent],
+  imports: [AsyncPipe, SnippetCardComponent, SkeletonModule],
   templateUrl: './user-snippets.component.html',
   styleUrl: './user-snippets.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,9 +29,11 @@ export class UserSnippetsComponent implements OnInit {
   private isOwnerSubject = new BehaviorSubject<boolean>(false);
   isOwner$ = this.isOwnerSubject.asObservable();
 
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private destroyRef: DestroyRef,
     private firestoreService: FirestoreService,
     private authService: AuthService,
@@ -62,6 +56,7 @@ export class UserSnippetsComponent implements OnInit {
           const owner = user?.uid === userId;
 
           this.isOwnerSubject.next(owner);
+          this.loadingSubject.next(true);
 
           return userId
             ? this.firestoreService.getUserSnippets(userId, owner)
@@ -72,6 +67,7 @@ export class UserSnippetsComponent implements OnInit {
         console.log('***SNIPPETS PARAMS CHANGES***');
 
         this.snippetsSubject.next(snippets);
+        this.loadingSubject.next(false);
       });
   }
 

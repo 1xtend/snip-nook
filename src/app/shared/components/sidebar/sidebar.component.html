@@ -33,6 +33,16 @@
         </li>
         <li class="sidebar__item">
           <a
+            [routerLink]="['/snippet', 'create']"
+            class="sidebar__link"
+            (click)="closeSidebar.emit()"
+          >
+            <span class="sidebar__icon pi pi-plus"></span>
+            Create snippet
+          </a>
+        </li>
+        <li class="sidebar__item">
+          <a
             [routerLink]="['/user', user.uid, 'saved']"
             class="sidebar__link"
             (click)="closeSidebar.emit()"

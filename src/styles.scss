@@ -84,6 +84,12 @@ body {
   &__row {
     position: relative;
 
+    &--inline {
+      display: flex;
+      align-items: center;
+      gap: $spacing-s;
+    }
+
     &:not(:last-child) {
       margin-bottom: $spacing-x;
     }

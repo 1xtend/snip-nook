@@ -17,14 +17,14 @@
         }"
       ></p-skeleton>
       <p-skeleton
-        width="20rem"
+        width="26rem"
         height="1rem"
         [style]="{
           marginBottom: '0.5rem'
         }"
       ></p-skeleton>
       <p-skeleton
-        width="14rem"
+        width="16rem"
         height="1rem"
         [style]="{
           marginBottom: '0.5rem'
@@ -42,9 +42,7 @@
           class="overview__author-link"
           >&commat;{{ snippet.author.name }}</a
         >
-        @if (snippet.description) {
-          <p class="overview__description">{{ snippet.description }}</p>
-        }
+        <p class="overview__description">{{ snippet.description }}</p>
       </div>
 
       <p-tabMenu

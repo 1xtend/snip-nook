@@ -1,8 +1,8 @@
+import { FormControl } from '@angular/forms';
+
 export interface ISnippetPreview {
-  description?: string;
+  description: string;
   name: string;
-  likes: number;
-  saves: number;
   uid: string;
   author: {
     name: string;
@@ -13,6 +13,13 @@ export interface ISnippetPreview {
 export interface ISnippet extends ISnippetPreview {
   code: ICodeItem[];
   public: boolean;
+}
+
+export interface ISnippetCreateForm {
+  description: FormControl<string>;
+  name: FormControl<string>;
+  public: FormControl<boolean>;
+  code: FormControl<ICodeItem[]>;
 }
 
 export interface ICodeItem {

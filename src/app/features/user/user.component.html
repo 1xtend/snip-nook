@@ -1,16 +1,16 @@
-@if (user$ | async; as user) {
-  <section class="profile">
-    @if (loading$ | async) {
-      <div class="profile__info info">
-        <p-skeleton shape="circle" size="4rem"></p-skeleton>
+@if (loading$ | async) {
+  <div class="profile__info info">
+    <p-skeleton shape="circle" size="4rem"></p-skeleton>
 
-        <p-skeleton
-          width="8rem"
-          height="1.5rem"
-          class="info__username"
-        ></p-skeleton>
-      </div>
-    } @else {
+    <p-skeleton
+      width="8rem"
+      height="1.5rem"
+      class="info__username"
+    ></p-skeleton>
+  </div>
+} @else {
+  @if (user$ | async; as user) {
+    <section class="profile">
       <div class="profile__info info">
         @if (user.photoURL) {
           <p-avatar
@@ -24,18 +24,18 @@
 
         <h2 class="info__username">{{ user.username }}</h2>
       </div>
-    }
 
-    <p-tabMenu
-      [model]="tabItems"
-      [scrollable]="true"
-      class="profile__tab-menu"
-    ></p-tabMenu>
+      <p-tabMenu
+        [model]="tabItems"
+        [scrollable]="true"
+        class="profile__tab-menu"
+      ></p-tabMenu>
 
-    <div class="profile__content content">
-      <router-outlet></router-outlet>
-    </div>
-  </section>
-} @else {
-  <div>User doesn't exist</div>
+      <div class="profile__content content">
+        <router-outlet></router-outlet>
+      </div>
+    </section>
+  } @else {
+    <div>User doesn't exist</div>
+  }
 }
