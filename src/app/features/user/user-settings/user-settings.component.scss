@@ -1,8 +1,9 @@
 @import "../../../../assets/scss/variables";
 
-.content {
+.settings {
   max-width: 600px;
   width: 100%;
+  padding: $spacing-l 0;
 
   ::ng-deep .p-fileupload {
     .p-fileupload-buttonbar {
@@ -47,8 +48,6 @@
     &:not(:last-child) {
       margin-bottom: $spacing-s;
     }
-    // display: block;
-    // width: 100%;
   }
 
   &__sub {

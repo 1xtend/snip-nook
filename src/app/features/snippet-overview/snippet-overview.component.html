@@ -1,5 +1,5 @@
-@if (loading$ | async) {
-  <div class="skeleton">
+<div class="skeleton">
+  @if (loading$ | async) {
     <div class="skeleton__info">
       <p-skeleton
         width="12rem"
@@ -11,7 +11,6 @@
       <p-skeleton
         width="9rem"
         height="19px"
-        class="skeleton__author-link"
         [style]="{
           marginBottom: '0.5rem'
         }"
@@ -31,36 +30,36 @@
         }"
       ></p-skeleton>
     </div>
-  </div>
-} @else {
-  @if (snippet$ | async; as snippet) {
-    <section class="overview">
-      <div class="overview__info">
-        <h2 class="overview__name">{{ snippet.name }}</h2>
-        <a
-          [routerLink]="['/user', snippet.author.uid]"
-          class="overview__author-link"
-          >&commat;{{ snippet.author.name }}</a
-        >
-        <p class="overview__description">{{ snippet.description }}</p>
-      </div>
+  } @else {
+    @if (snippet$ | async; as snippet) {
+      <section class="overview">
+        <div class="overview__info">
+          <h2 class="overview__name">{{ snippet.name }}</h2>
+          <a
+            [routerLink]="['/user', snippet.author.uid]"
+            class="overview__author-link"
+            >&commat;{{ snippet.author.name }}</a
+          >
+          <p class="overview__description">{{ snippet.description }}</p>
+        </div>
 
-      <p-tabMenu
-        class="overview__tab-menu"
-        [model]="tabItems"
-        [activeItem]="activeTab"
-      ></p-tabMenu>
+        <p-tabMenu
+          class="overview__tab-menu"
+          [model]="tabItems"
+          [activeItem]="activeTab"
+        ></p-tabMenu>
 
-      <div class="overview__tab-items">
-        <ngx-monaco-editor
-          [(ngModel)]="code"
-          [options]="editorOptions"
-          class="overview__editor"
-          [style]="{
-            height: '500px'
-          }"
-        ></ngx-monaco-editor>
-      </div>
-    </section>
+        <div class="overview__tab-items">
+          <ngx-monaco-editor
+            [(ngModel)]="code"
+            [options]="editorOptions"
+            class="overview__editor"
+            [style]="{
+              height: '500px'
+            }"
+          ></ngx-monaco-editor>
+        </div>
+      </section>
+    }
   }
-}
+</div>

@@ -18,7 +18,6 @@ import {
 
 const monacoConfig: NgxMonacoEditorConfig = {
   defaultOptions: {
-    scrollBeyondLastLine: false,
     theme: 'vs-dark',
     lineNumbers: true,
   },

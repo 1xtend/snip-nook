@@ -34,11 +34,14 @@
   }
 
   &__tab-menu {
+    display: block;
+
     ::ng-deep .p-menuitem-link {
       padding: $spacing-s;
     }
-  }
-}
 
-.skeleton {
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
 }

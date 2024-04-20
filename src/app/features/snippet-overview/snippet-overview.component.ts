@@ -53,6 +53,7 @@ export class SnippetOverviewComponent implements OnInit {
     },
     contextmenu: false,
     readOnly: true,
+    scrollBeyondLastLine: false,
   };
 
   private snippetSubject = new BehaviorSubject<ISnippet | undefined>(undefined);
@@ -109,7 +110,6 @@ export class SnippetOverviewComponent implements OnInit {
             ? this.firestoreService.getSnippet(snippetId)
             : EMPTY;
         }),
-        debounceTime(2000),
       )
       .subscribe((snippet) => {
         this.loadingSubject.next(false);

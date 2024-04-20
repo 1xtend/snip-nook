@@ -1,72 +1,66 @@
 <section class="settings">
-  <h2>Profile settings</h2>
+  <div class="settings__row">
+    <h4 class="settings__title">User avatar</h4>
+    <p-fileUpload
+      name="avatar[]"
+      [customUpload]="true"
+      [multiple]="false"
+      accept="image/*"
+      [maxFileSize]="100000"
+      (uploadHandler)="uploadAvatar($event)"
+      #fileUpload
+    >
+      <ng-template pTemplate="content" let-files>
+        <div>Drag and drop image here</div>
+      </ng-template>
+    </p-fileUpload>
+  </div>
 
-  <p-divider></p-divider>
+  <div class="settings__item">
+    <div class="settings__info">
+      <h4 class="settings__title">Email address</h4>
+      @if (user$ | async; as user) {
+        <small class="settings__sub">{{ user.email }}</small>
+      }
+    </div>
 
-  <div class="content">
-    <div class="content__row">
-      <h4 class="content__title">User avatar</h4>
-      <p-fileUpload
-        name="avatar[]"
-        [customUpload]="true"
-        [multiple]="false"
-        accept="image/*"
-        [maxFileSize]="100000"
-        (uploadHandler)="uploadAvatar($event)"
-        #fileUpload
+    <p-button
+      type="button"
+      label="Change"
+      [rounded]="true"
+      size="small"
+      [outlined]="true"
+      (onClick)="showDialog('email')"
+    ></p-button>
+  </div>
+
+  <div class="settings__item">
+    <div class="settings__info">
+      <h4 class="settings__title">Password</h4>
+      <small class="settings__sub"
+        >Password must be at least 8 characters long.</small
       >
-        <ng-template pTemplate="content" let-files>
-          <div>Drag and drop image here</div>
-        </ng-template>
-      </p-fileUpload>
     </div>
 
-    <div class="content__item">
-      <div class="content__info">
-        <h4 class="content__title">Email address</h4>
-        @if (user$ | async; as user) {
-          <small class="content__sub">{{ user.email }}</small>
-        }
-      </div>
+    <p-button
+      type="button"
+      label="Change"
+      [rounded]="true"
+      size="small"
+      [outlined]="true"
+      (onClick)="showDialog('password')"
+    ></p-button>
+  </div>
 
-      <p-button
-        type="button"
-        label="Change"
-        [rounded]="true"
-        size="small"
-        [outlined]="true"
-        (onClick)="showDialog('email')"
-      ></p-button>
-    </div>
-
-    <div class="content__item">
-      <div class="content__info">
-        <h4 class="content__title">Password</h4>
-        <small class="content__sub"
-          >Password must be at least 8 characters long.</small
-        >
-      </div>
-
-      <p-button
-        type="button"
-        label="Change"
-        [rounded]="true"
-        size="small"
-        [outlined]="true"
-        (onClick)="showDialog('password')"
-      ></p-button>
-    </div>
-
-    <div class="content__row">
-      <p-button
-        type="button"
-        [rounded]="true"
-        size="small"
-        [label]="'delete account' | uppercase"
-        [outlined]="true"
-        severity="danger"
-        (onClick)="showDialog('delete')"
-      ></p-button>
-    </div>
+  <div class="settings__row">
+    <p-button
+      type="button"
+      [rounded]="true"
+      size="small"
+      [label]="'delete account' | uppercase"
+      [outlined]="true"
+      severity="danger"
+      (onClick)="showDialog('delete')"
+    ></p-button>
   </div>
 </section>
