@@ -1,8 +1,12 @@
 @import "../../../../assets/scss/variables";
 
 .editor {
-  &__dropdown {
-    display: inline-block;
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-l;
+    flex-wrap: wrap;
 
     &:not(:last-child) {
       margin-bottom: $spacing-l;
@@ -11,5 +15,6 @@
 
   &__code {
     display: block;
+    border: 1px solid #424b57;
   }
 }

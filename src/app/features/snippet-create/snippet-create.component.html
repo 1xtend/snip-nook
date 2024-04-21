@@ -44,8 +44,20 @@
       <app-editor
         [options]="editorOptions"
         [formControl]="codeArrayControl.controls[i]"
+        height="400px"
         class="create__editor"
+        (deleteEditor)="deleteEditor(i)"
       ></app-editor>
+      @if (
+        codeArrayControl.controls.length > 1 &&
+        i !== codeArrayControl.controls.length - 1
+      ) {
+        <p-divider></p-divider>
+      }
+    }
+
+    @if (form.valid) {
+      <p-button type="submit" label="Create snippet"></p-button>
     }
   </form>
 </section>

@@ -22,11 +22,17 @@ import { ICodeItem } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { languages } from '@shared/helpers/supported-languages';
 import { DropdownModule } from 'primeng/dropdown';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [MonacoEditorModule, ReactiveFormsModule, DropdownModule],
+  imports: [
+    MonacoEditorModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    ButtonModule,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -39,6 +45,8 @@ import { DropdownModule } from 'primeng/dropdown';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent implements OnInit {
+  @Output() deleteEditor = new EventEmitter<void>();
+
   @Input({ required: true }) options: object = {};
   @Input() readonly: boolean = false;
   @Input() height: string = '300px';
@@ -111,6 +119,10 @@ export class EditorComponent implements OnInit {
 
   private formatRawCode(code: string): string {
     return this.codeService.formatRawCode(code);
+  }
+
+  onDelete(): void {
+    this.deleteEditor.emit();
   }
 
   writeValue(value: ICodeItem): void {

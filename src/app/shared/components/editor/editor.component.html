@@ -1,15 +1,24 @@
 <form [formGroup]="form" class="editor">
-  <p-dropdown
-    formControlName="language"
-    [options]="languagesList"
-    [filter]="true"
-    [style]="{
-      width: '250px'
-    }"
-    placeholder="Language"
-    class="editor__dropdown"
-  >
-  </p-dropdown>
+  <div class="editor__actions">
+    <p-dropdown
+      formControlName="language"
+      [options]="languagesList"
+      [filter]="true"
+      [style]="{
+        width: '250px'
+      }"
+      placeholder="Language"
+      class="editor__dropdown"
+    >
+    </p-dropdown>
+
+    <p-button
+      icon="pi pi-trash"
+      severity="danger"
+      [outlined]="true"
+      (onClick)="onDelete()"
+    ></p-button>
+  </div>
   <ngx-monaco-editor
     [options]="options"
     formControlName="code"

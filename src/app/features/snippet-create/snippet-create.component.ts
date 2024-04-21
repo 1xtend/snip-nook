@@ -18,6 +18,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
 import { EditorComponent } from '@shared/components/editor/editor.component';
 
 @Component({
@@ -32,6 +33,7 @@ import { EditorComponent } from '@shared/components/editor/editor.component';
     CheckboxModule,
     ButtonModule,
     EditorComponent,
+    DividerModule,
   ],
   templateUrl: './snippet-create.component.html',
   styleUrl: './snippet-create.component.scss',
@@ -90,5 +92,9 @@ export class SnippetCreateComponent implements OnInit {
         { nonNullable: true },
       ),
     );
+  }
+
+  deleteEditor(index: number) {
+    this.codeArrayControl.removeAt(index);
   }
 }
