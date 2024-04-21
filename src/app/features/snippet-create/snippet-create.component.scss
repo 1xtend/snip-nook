@@ -1,9 +1,22 @@
+@import "../../../assets/scss/variables";
+
 .create {
-  &__form {
+  padding: $spacing-l 0;
+
+  &__block {
     max-width: 400px;
     width: 100%;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-x;
+    }
   }
 
   &__editor {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
   }
 }

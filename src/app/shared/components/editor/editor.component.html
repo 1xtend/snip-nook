@@ -1,7 +1,21 @@
-<form [formGroup]="form">
-  <input type="text" formControlName="language" />
+<form [formGroup]="form" class="editor">
+  <p-dropdown
+    formControlName="language"
+    [options]="languagesList"
+    [filter]="true"
+    [style]="{
+      width: '250px'
+    }"
+    placeholder="Language"
+    class="editor__dropdown"
+  >
+  </p-dropdown>
   <ngx-monaco-editor
     [options]="options"
     formControlName="code"
+    [style]="{
+      height: height
+    }"
+    class="editor__code"
   ></ngx-monaco-editor>
 </form>

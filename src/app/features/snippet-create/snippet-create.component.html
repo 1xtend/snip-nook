@@ -2,46 +2,49 @@
   <h2 class="create__title">Create snippet</h2>
 
   <form class="create__form form" [formGroup]="form">
-    <div class="form__row">
-      <label for="snippet-name" class="form__label">Name</label>
-      <input
-        type="text"
-        pInputText
-        id="snippet-name"
-        formControlName="name"
-        class="form__input"
-      />
+    <div class="create__block">
+      <div class="form__row">
+        <label for="snippet-name" class="form__label">Name</label>
+        <input
+          type="text"
+          pInputText
+          id="snippet-name"
+          formControlName="name"
+          class="form__input"
+        />
+      </div>
+      <div class="form__row">
+        <label for="snippet-description" class="form__label">Description</label>
+        <textarea
+          type="text"
+          pInputTextarea
+          id="snippet-description"
+          formControlName="description"
+          [autoResize]="true"
+          class="form__input"
+        ></textarea>
+      </div>
+      <div class="form__row form__row--inline">
+        <p-checkbox
+          inputId="snippet-public"
+          formControlName="public"
+          value="false"
+        ></p-checkbox>
+        <label for="snippet-public" class="form__label">Public</label>
+      </div>
+      <p-button
+        icon="pi pi-plus"
+        label="Add code"
+        size="small"
+        (onClick)="addEditor()"
+      ></p-button>
     </div>
-    <div class="form__row">
-      <label for="snippet-description" class="form__label">Description</label>
-      <textarea
-        type="text"
-        pInputTextarea
-        id="snippet-description"
-        formControlName="description"
-        [autoResize]="true"
-        class="form__input"
-      ></textarea>
-    </div>
-    <div class="form__row form__row--inline">
-      <p-checkbox
-        inputId="snippet-public"
-        formControlName="public"
-        value="false"
-      ></p-checkbox>
-      <label for="snippet-public" class="form__label">Public</label>
-    </div>
-    <p-button
-      icon="pi pi-plus"
-      label="Add snippet"
-      size="small"
-      (onClick)="addEditor()"
-    ></p-button>
 
     @for (item of codeArrayControl.controls; track item; let i = $index) {
       <app-editor
         [options]="editorOptions"
         [formControl]="codeArrayControl.controls[i]"
+        class="create__editor"
       ></app-editor>
     }
   </form>

@@ -1,0 +1,15 @@
+@import "../../../../assets/scss/variables";
+
+.editor {
+  &__dropdown {
+    display: inline-block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+
+  &__code {
+    display: block;
+  }
+}

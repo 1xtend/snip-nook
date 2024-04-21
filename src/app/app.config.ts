@@ -28,6 +28,10 @@ const monacoConfig: NgxMonacoEditorConfig = {
       noSemanticValidation: true,
       noSyntaxValidation: true,
     });
+    monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      noSemanticValidation: true,
+      noSyntaxValidation: true,
+    });
   },
 };
 

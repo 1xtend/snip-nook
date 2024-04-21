@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   EventEmitter,
@@ -19,11 +20,13 @@ import {
 import { CodeService } from '@core/services/code.service';
 import { ICodeItem } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { languages } from '@shared/helpers/supported-languages';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [MonacoEditorModule, ReactiveFormsModule],
+  imports: [MonacoEditorModule, ReactiveFormsModule, DropdownModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -33,19 +36,27 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
   ],
   templateUrl: './editor.component.html',
   styleUrl: './editor.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent implements OnInit {
-  @Input({ required: true }) options: unknown;
+  @Input({ required: true }) options: object = {};
   @Input() readonly: boolean = false;
+  @Input() height: string = '300px';
 
   form!: FormGroup<{
     code: FormControl<string>;
     language: FormControl<string>;
   }>;
 
+  languagesList = languages;
+
   onChange: any = () => {};
   onTouched: any = () => {};
   disabled: boolean = false;
+
+  get languageControl(): FormControl {
+    return this.form.controls['language'];
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -56,6 +67,7 @@ export class EditorComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.formValuesChanges();
+    this.languageChanges();
   }
 
   private initForm(): void {
@@ -64,7 +76,7 @@ export class EditorComponent implements OnInit {
         nonNullable: true,
         validators: [Validators.required],
       }),
-      language: this.fb.control('', {
+      language: this.fb.control('plaintext', {
         nonNullable: true,
         validators: [Validators.required],
       }),
@@ -74,15 +86,26 @@ export class EditorComponent implements OnInit {
   private formValuesChanges(): void {
     this.form.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => {
-        if (!value.code || !value.language) {
+      .subscribe(({ code, language }) => {
+        if (!code || !language) {
           return;
         }
 
         this.onChange({
-          code: this.formatRawCode(value.code),
-          language: value.language,
+          code: this.formatRawCode(code),
+          language,
         });
+      });
+  }
+
+  private languageChanges(): void {
+    this.languageControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        this.options = {
+          ...this.options,
+          language: value,
+        };
       });
   }
 

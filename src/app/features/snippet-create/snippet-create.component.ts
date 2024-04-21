@@ -86,7 +86,7 @@ export class SnippetCreateComponent implements OnInit {
   addEditor(): void {
     this.codeArrayControl.push(
       this.fb.control<ICodeItem>(
-        { language: 'html', code: 'code' },
+        { language: '', code: '' },
         { nonNullable: true },
       ),
     );
