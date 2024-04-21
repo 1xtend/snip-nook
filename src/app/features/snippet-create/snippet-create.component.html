@@ -4,7 +4,13 @@
   <form class="create__form form" [formGroup]="form">
     <div class="form__row">
       <label for="snippet-name" class="form__label">Name</label>
-      <input type="text" pInputText id="snippet-name" formControlName="name" />
+      <input
+        type="text"
+        pInputText
+        id="snippet-name"
+        formControlName="name"
+        class="form__input"
+      />
     </div>
     <div class="form__row">
       <label for="snippet-description" class="form__label">Description</label>
@@ -14,6 +20,7 @@
         id="snippet-description"
         formControlName="description"
         [autoResize]="true"
+        class="form__input"
       ></textarea>
     </div>
     <div class="form__row form__row--inline">
@@ -24,5 +31,18 @@
       ></p-checkbox>
       <label for="snippet-public" class="form__label">Public</label>
     </div>
+    <p-button
+      icon="pi pi-plus"
+      label="Add snippet"
+      size="small"
+      (onClick)="addEditor()"
+    ></p-button>
+
+    @for (item of codeArrayControl.controls; track item; let i = $index) {
+      <app-editor
+        [options]="editorOptions"
+        [formControl]="codeArrayControl.controls[i]"
+      ></app-editor>
+    }
   </form>
 </section>

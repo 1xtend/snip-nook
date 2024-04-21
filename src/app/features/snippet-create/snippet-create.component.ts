@@ -1,16 +1,24 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
+  FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ISnippetCreateForm } from '@shared/models/snippet.interface';
+import {
+  ICodeItem,
+  ISnippetCreateForm,
+} from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ButtonModule } from 'primeng/button';
+import { EditorComponent } from '@shared/components/editor/editor.component';
 
 @Component({
   selector: 'app-snippet-create',
@@ -22,17 +30,38 @@ import { CheckboxModule } from 'primeng/checkbox';
     InputTextareaModule,
     MonacoEditorModule,
     CheckboxModule,
+    ButtonModule,
+    EditorComponent,
   ],
   templateUrl: './snippet-create.component.html',
   styleUrl: './snippet-create.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnippetCreateComponent implements OnInit {
   form!: FormGroup<ISnippetCreateForm>;
+
+  code: string = '';
+  editorOptions = {
+    language: 'html',
+    minimap: {
+      enabled: false,
+    },
+    contextmenu: false,
+    scrollBeyondLastLine: false,
+  };
+
+  get codeArrayControl(): FormArray<FormControl> {
+    return this.form.controls['code'];
+  }
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.initForm();
+
+    this.form.valueChanges.subscribe((value) => {
+      console.log(value);
+    });
   }
 
   private initForm(): void {
@@ -44,14 +73,22 @@ export class SnippetCreateComponent implements OnInit {
       public: this.fb.control(false, {
         nonNullable: true,
       }),
-      code: this.fb.control([], {
-        nonNullable: true,
-        validators: [Validators.required],
-      }),
       description: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required],
       }),
+      code: this.fb.array<FormControl<ICodeItem>>([], {
+        validators: [Validators.required],
+      }),
     });
+  }
+
+  addEditor(): void {
+    this.codeArrayControl.push(
+      this.fb.control<ICodeItem>(
+        { language: 'html', code: 'code' },
+        { nonNullable: true },
+      ),
+    );
   }
 }

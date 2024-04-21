@@ -97,5 +97,6 @@ export const routes: Routes = [
       import('./features/snippet-create/snippet-create.component').then(
         (m) => m.SnippetCreateComponent,
       ),
+    canActivate: [authGuard],
   },
 ];

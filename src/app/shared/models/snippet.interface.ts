@@ -1,4 +1,4 @@
-import { FormControl } from '@angular/forms';
+import { FormArray, FormControl } from '@angular/forms';
 
 export interface ISnippetPreview {
   description: string;
@@ -19,7 +19,7 @@ export interface ISnippetCreateForm {
   description: FormControl<string>;
   name: FormControl<string>;
   public: FormControl<boolean>;
-  code: FormControl<ICodeItem[]>;
+  code: FormArray<FormControl<ICodeItem>>;
 }
 
 export interface ICodeItem {
