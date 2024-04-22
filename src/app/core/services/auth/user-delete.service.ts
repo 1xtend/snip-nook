@@ -1,4 +1,3 @@
-import { FirestoreService } from '@core/services/firestore.service';
 import { AuthService } from '@core/services/auth/auth.service';
 import { Injectable } from '@angular/core';
 import {
@@ -8,9 +7,13 @@ import {
   reauthenticateWithCredential,
   signOut,
 } from '@angular/fire/auth';
-import { Firestore, doc } from '@angular/fire/firestore';
 import {
-  EMPTY,
+  Firestore,
+  collection,
+  collectionSnapshots,
+  doc,
+} from '@angular/fire/firestore';
+import {
   Observable,
   combineLatest,
   from,
@@ -35,7 +38,6 @@ export class UserDeleteService {
     private auth: Auth,
     private storage: Storage,
     private authService: AuthService,
-    private firestoreService: FirestoreService,
   ) {}
 
   signOut() {
@@ -56,9 +58,7 @@ export class UserDeleteService {
         return from(reauthenticateWithCredential(user, credential)).pipe(
           switchMap(({ user }) => {
             // Delete user snippets collection
-            return this.deleteSnippetsCollection(user.uid).pipe(
-              map(() => user),
-            );
+            return this.deleteUserSnippets(user.uid).pipe(map(() => user));
           }),
           switchMap((user) => {
             const deletionPromises = [];
@@ -91,7 +91,24 @@ export class UserDeleteService {
     );
   }
 
-  private deleteSnippetsCollection(uid: string) {
-    return this.firestoreService.deleteCollection('users', uid, 'snippets');
+  private deleteUserSnippets(uid: string) {
+    const snippetsCollection = collection(this.fs, 'users', uid, 'snippets');
+
+    return collectionSnapshots(snippetsCollection).pipe(
+      take(1),
+      switchMap((res) => {
+        const batch = writeBatch(this.fs);
+
+        res.forEach((docSnapshot) => {
+          const userSnippetRef = doc(snippetsCollection, docSnapshot.id);
+          batch.delete(userSnippetRef);
+
+          const snippetRef = doc(this.fs, 'snippets', docSnapshot.id);
+          batch.delete(snippetRef);
+        });
+
+        return batch.commit();
+      }),
+    );
   }
 }
