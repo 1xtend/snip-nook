@@ -17,12 +17,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CodeService } from '@core/services/code.service';
 import { ICodeItem } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { languages } from '@shared/helpers/supported-languages';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
+import { SharedService } from '@core/services/shared.service';
 
 @Component({
   selector: 'app-editor',
@@ -68,7 +68,7 @@ export class EditorComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private codeService: CodeService,
+    private sharedService: SharedService,
     private destroyRef: DestroyRef,
   ) {}
 
@@ -118,7 +118,7 @@ export class EditorComponent implements OnInit {
   }
 
   private formatRawCode(code: string): string {
-    return this.codeService.formatRawCode(code);
+    return this.sharedService.formatRawCode(code);
   }
 
   onDelete(): void {

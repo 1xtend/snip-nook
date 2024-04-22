@@ -1,4 +1,4 @@
-import { CodeService } from './../../core/services/code.service';
+import { SharedService } from './../../core/services/shared.service';
 import {
   BehaviorSubject,
   EMPTY,
@@ -70,7 +70,7 @@ export class SnippetOverviewComponent implements OnInit {
     private firestoreService: FirestoreService,
     private authService: AuthService,
     private destroyRef: DestroyRef,
-    private codeService: CodeService,
+    private sharedService: SharedService,
   ) {}
 
   ngOnInit(): void {
@@ -143,7 +143,7 @@ export class SnippetOverviewComponent implements OnInit {
   }
 
   private setTabCode(item: ICodeItem) {
-    this.code = this.codeService.formatProcessedCode(item.code);
+    this.code = this.sharedService.formatProcessedCode(item.code);
     this.editorOptions = {
       ...this.editorOptions,
       language: item.language,

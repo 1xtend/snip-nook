@@ -1,3 +1,5 @@
+import { MessageService } from 'primeng/api';
+import { SnippetService } from './../../core/services/snippet.service';
 import { FirestoreService } from '@core/services/firestore.service';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
@@ -12,6 +14,7 @@ import {
 } from '@angular/forms';
 import {
   ICodeItem,
+  ISnippet,
   ISnippetCreateForm,
 } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
@@ -21,6 +24,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { EditorComponent } from '@shared/components/editor/editor.component';
+import { take } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-snippet-create',
@@ -53,29 +58,21 @@ export class SnippetCreateComponent implements OnInit {
     scrollBeyondLastLine: false,
   };
 
+  loading: boolean = false;
+
   get codeArrayControl(): FormArray<FormControl> {
     return this.form.controls['code'];
   }
 
   constructor(
     private fb: FormBuilder,
-    private firestoreService: FirestoreService,
+    private snippetService: SnippetService,
+    private router: Router,
+    private messageService: MessageService,
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-
-    this.firestoreService.addSnippet({
-      author: {
-        name: 'test',
-        uid: 'test',
-      },
-      code: [],
-      description: 'descr',
-      name: 'test',
-      public: false,
-      uid: '',
-    });
 
     this.form.valueChanges.subscribe((value) => {
       console.log(value);
@@ -105,6 +102,46 @@ export class SnippetCreateComponent implements OnInit {
     if (!this.form.valid) {
       return;
     }
+
+    this.form.disable();
+    this.loading = true;
+
+    const value = this.form.getRawValue();
+
+    const snippet: ISnippet = {
+      author: {
+        name: '',
+        uid: '',
+      },
+      code: value.code,
+      description: value.description,
+      name: value.name,
+      public: value.public,
+      uid: '',
+    };
+
+    this.snippetService
+      .addSnippet(snippet)
+      .pipe(take(1))
+      .subscribe({
+        next: (snippet) => {
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Snippet was created successfully',
+            summary: 'Success',
+          });
+
+          this.router.navigate(['snippet', snippet.uid, 'overview']);
+        },
+        error: (err) => {
+          this.form.enable();
+          this.loading = false;
+        },
+        complete: () => {
+          this.form.enable();
+          this.loading = false;
+        },
+      });
   }
 
   addEditor(): void {

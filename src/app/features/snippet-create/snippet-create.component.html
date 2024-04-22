@@ -57,7 +57,11 @@
     }
 
     @if (form.valid) {
-      <p-button type="submit" label="Create snippet"></p-button>
+      <p-button
+        type="submit"
+        label="Create snippet"
+        [loading]="loading"
+      ></p-button>
     }
   </form>
 </section>
