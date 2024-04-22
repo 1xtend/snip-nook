@@ -1,0 +1,19 @@
+<p class="warning">
+  Are you sure you want to delete your account?
+  <br />All user snippets will also be deleted
+</p>
+<div class="actions">
+  <p-button
+    icon="pi pi-check"
+    label="Yes"
+    size="small"
+    (onClick)="onConfirm()"
+  ></p-button>
+  <p-button
+    icon="pi pi-times"
+    label="No"
+    severity="danger"
+    size="small"
+    (onClick)="onDecline()"
+  ></p-button>
+</div>

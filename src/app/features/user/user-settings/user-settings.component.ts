@@ -6,33 +6,22 @@ import {
   FileUploadHandlerEvent,
   FileUploadModule,
 } from 'primeng/fileupload';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { DividerModule } from 'primeng/divider';
 import { DialogService } from 'primeng/dynamicdialog';
 import { EmailDialogComponent } from '@shared/components/email-dialog/email-dialog.component';
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
 import { AuthService } from '@core/services/auth/auth.service';
-import { Observable, first, take, throwError } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AsyncPipe, UpperCasePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
-import { DeleteDialogComponent } from '@shared/components/delete-dialog/delete-dialog.component';
+import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [
-    FileUploadModule,
-    InputTextModule,
-    PasswordModule,
-    ButtonModule,
-    DividerModule,
-    AsyncPipe,
-    UpperCasePipe,
-  ],
+  imports: [FileUploadModule, ButtonModule, AsyncPipe, UpperCasePipe],
   providers: [ModalService, DialogService],
   templateUrl: './user-settings.component.html',
   styleUrl: './user-settings.component.scss',
@@ -84,15 +73,34 @@ export class UserSettingsComponent {
   }
 
   showDialog(type: 'password' | 'email' | 'delete'): void {
-    const header = type === 'delete' ? 'Delete account' : `Update your ${type}`;
+    let header: string = '';
+    let component: any = null;
 
-    this.modalService.showDialog(
-      header,
-      type === 'email'
-        ? EmailDialogComponent
-        : type === 'password'
-          ? PasswordDialogComponent
-          : DeleteDialogComponent,
-    );
+    switch (type) {
+      case 'password':
+        header = 'Update your password';
+        component = PasswordDialogComponent;
+
+        break;
+      case 'email':
+        header = 'Update your email';
+        component = EmailDialogComponent;
+
+        break;
+      case 'delete':
+        header = 'Confirm';
+        component = ConfirmDialogComponent;
+
+        break;
+
+      default:
+        header = 'Dialog';
+        component = null;
+        break;
+    }
+
+    this.modalService.showDialog(header, component);
   }
+
+  onDelete(): void {}
 }

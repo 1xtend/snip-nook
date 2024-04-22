@@ -4,17 +4,29 @@
     <p-skeleton height="82px"></p-skeleton>
     <p-skeleton height="82px"></p-skeleton>
   } @else {
-    @if (snippets$ | async; as snippets) {
-      @if (snippets.length > 0) {
-        @for (snippet of snippets; track snippet.uid) {
-          <app-snippet-card
-            [snippet]="snippet"
-            class="snippet"
-          ></app-snippet-card>
+    <div class="snippets__actions">
+      <p-button
+        icon="pi pi-plus"
+        label="Create snippet"
+        size="small"
+        severity="info"
+        [routerLink]="['/snippet', 'create']"
+      ></p-button>
+    </div>
+
+    <div class="snippets__grid">
+      @if (snippets$ | async; as snippets) {
+        @if (snippets.length > 0) {
+          @for (snippet of snippets; track snippet.uid) {
+            <app-snippet-card
+              [snippet]="snippet"
+              class="snippet"
+            ></app-snippet-card>
+          }
+        } @else {
+          There are no snippets.
         }
-      } @else {
-        There are no snippets.
       }
-    }
+    </div>
   }
 </div>

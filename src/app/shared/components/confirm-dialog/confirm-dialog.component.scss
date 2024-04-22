@@ -1,0 +1,13 @@
+@import "../../../../assets/scss/variables";
+
+.warning {
+  line-height: 1.4;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-l;
+  flex-wrap: wrap;
+}

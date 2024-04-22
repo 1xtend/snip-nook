@@ -6,18 +6,25 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BehaviorSubject, EMPTY, combineLatest, switchMap } from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { AsyncPipe } from '@angular/common';
 import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-card.component';
 import { AuthService } from '@core/services/auth/auth.service';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-user-snippets',
   standalone: true,
-  imports: [AsyncPipe, SnippetCardComponent, SkeletonModule],
+  imports: [
+    AsyncPipe,
+    SnippetCardComponent,
+    SkeletonModule,
+    ButtonModule,
+    RouterLink,
+  ],
   templateUrl: './user-snippets.component.html',
   styleUrl: './user-snippets.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
