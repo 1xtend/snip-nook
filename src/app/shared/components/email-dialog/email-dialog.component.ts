@@ -1,3 +1,4 @@
+import { UserUpdateService } from '../../../core/services/auth/user-update.service';
 import { ModalService } from './../../../core/services/modal.service';
 import { Component, OnInit } from '@angular/core';
 import {
@@ -12,9 +13,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
-import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
-import { AuthErrors, AuthForm } from '@shared/models/auth.interface';
+import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -31,9 +31,9 @@ import { MessageService } from 'primeng/api';
   styleUrl: './email-dialog.component.scss',
 })
 export class EmailDialogComponent implements OnInit {
-  form!: FormGroup<AuthForm>;
+  form!: FormGroup<IAuthForm>;
 
-  authErrors: Partial<AuthErrors> | null = null;
+  authErrors: Partial<IAuthErrors> | null = null;
   loading: boolean = false;
 
   get emailControl(): FormControl {
@@ -46,7 +46,7 @@ export class EmailDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private userUpdateService: UserUpdateService,
     private modalService: ModalService,
     private messageService: MessageService,
   ) {}
@@ -56,7 +56,7 @@ export class EmailDialogComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group<AuthForm>({
+    this.form = this.fb.group<IAuthForm>({
       email: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(emailRegex)],
@@ -77,7 +77,7 @@ export class EmailDialogComponent implements OnInit {
     this.form.disable();
     this.loading = true;
 
-    this.authService
+    this.userUpdateService
       .updateEmail(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
@@ -92,7 +92,6 @@ export class EmailDialogComponent implements OnInit {
           });
         },
         error: (err) => {
-          console.log(err);
           this.authErrors = {
             wrongPassword: err.message.includes('auth/wrong-password'),
             emailInUse: err.message.includes('auth/email-already-in-use'),

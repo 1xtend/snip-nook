@@ -11,7 +11,7 @@ import { BehaviorSubject, EMPTY, combineLatest, switchMap } from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { AsyncPipe } from '@angular/common';
 import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-card.component';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({

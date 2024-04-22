@@ -1,3 +1,4 @@
+import { UserUpdateService } from '../../../core/services/auth/user-update.service';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -6,10 +7,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { ModalService } from '@core/services/modal.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
-import { AuthErrors, AuthPasswordsForm } from '@shared/models/auth.interface';
+import { IAuthErrors, IAuthPasswordsForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
@@ -28,9 +29,9 @@ import { take } from 'rxjs';
   styleUrl: './password-dialog.component.scss',
 })
 export class PasswordDialogComponent implements OnInit {
-  form!: FormGroup<AuthPasswordsForm>;
+  form!: FormGroup<IAuthPasswordsForm>;
 
-  authErrors: Partial<AuthErrors> | null = null;
+  authErrors: Partial<IAuthErrors> | null = null;
   loading: boolean = false;
 
   get passwordControl(): FormControl {
@@ -43,7 +44,7 @@ export class PasswordDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private userUpdateService: UserUpdateService,
     private modalService: ModalService,
     private messageService: MessageService,
   ) {}
@@ -53,7 +54,7 @@ export class PasswordDialogComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group<AuthPasswordsForm>({
+    this.form = this.fb.group<IAuthPasswordsForm>({
       newPassword: this.fb.control('', {
         nonNullable: true,
         validators: [
@@ -78,7 +79,7 @@ export class PasswordDialogComponent implements OnInit {
     this.form.disable();
     this.loading = true;
 
-    this.authService
+    this.userUpdateService
       .updatePassword(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({

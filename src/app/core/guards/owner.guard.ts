@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { authState } from '@angular/fire/auth';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { map, take } from 'rxjs';
 
 export const ownerGuard: CanActivateFn = (route, state) => {

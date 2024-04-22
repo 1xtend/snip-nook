@@ -1,7 +1,7 @@
 <section class="create">
   <h2 class="create__title">Create snippet</h2>
 
-  <form class="create__form form" [formGroup]="form">
+  <form class="create__form form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="create__block">
       <div class="form__row">
         <label for="snippet-name" class="form__label">Name</label>

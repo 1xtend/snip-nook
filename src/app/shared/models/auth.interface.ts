@@ -1,26 +1,26 @@
 import { FormControl, FormGroup } from '@angular/forms';
 
-export interface AuthForm {
+export interface IAuthForm {
   email: FormControl<string>;
   password: FormControl<string>;
 }
 
-export interface AuthData {
+export interface IAuthData {
   email: string;
   password: string;
 }
 
-export interface AuthPasswordsForm {
+export interface IAuthPasswordsForm {
   password: FormControl<string>;
   newPassword: FormControl<string>;
 }
 
-export interface AuthPasswords {
+export interface IAuthPasswords {
   password: string;
   newPassword: string;
 }
 
-export interface AuthErrors {
+export interface IAuthErrors {
   emailInUse: boolean;
   invalidCredential: boolean;
   invalidEmail: boolean;
@@ -29,10 +29,10 @@ export interface AuthErrors {
   userNotFound: boolean;
 }
 
-export interface SignUpForm extends AuthForm {
+export interface ISignUpForm extends IAuthForm {
   username: FormControl<string>;
 }
 
-export interface SignUpData extends AuthData {
+export interface ISignUpData extends IAuthData {
   username: string;
 }

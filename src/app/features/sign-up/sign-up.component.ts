@@ -1,3 +1,4 @@
+import { SignUpService } from '../../core/services/auth/sign-up.service';
 import { Component, OnInit } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
@@ -10,10 +11,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthErrors, SignUpForm } from '@shared/models/auth.interface';
+import { IAuthErrors, ISignUpForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { usernameValidator } from '@shared/helpers/username.validator';
 import { take } from 'rxjs';
 
@@ -32,9 +33,9 @@ import { take } from 'rxjs';
   styleUrl: './sign-up.component.scss',
 })
 export class SignUpComponent implements OnInit {
-  form!: FormGroup<SignUpForm>;
+  form!: FormGroup<ISignUpForm>;
 
-  authErrors: Partial<AuthErrors> | null = null;
+  authErrors: Partial<IAuthErrors> | null = null;
   loading: boolean = false;
 
   get emailControl(): FormControl {
@@ -51,6 +52,7 @@ export class SignUpComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private signUpService: SignUpService,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class SignUpComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group<SignUpForm>({
+    this.form = this.fb.group<ISignUpForm>({
       username: this.fb.control('', {
         nonNullable: true,
         validators: [
@@ -94,7 +96,7 @@ export class SignUpComponent implements OnInit {
     this.loading = true;
     this.authErrors = null;
 
-    this.authService
+    this.signUpService
       .signUp(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({

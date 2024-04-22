@@ -1,3 +1,4 @@
+import { UserDeleteService } from '../../../core/services/auth/user-delete.service';
 import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
@@ -7,10 +8,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '@core/services/auth.service';
 import { ModalService } from '@core/services/modal.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
-import { AuthErrors } from '@shared/models/auth.interface';
+import { IAuthErrors } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
@@ -31,7 +31,7 @@ import { take } from 'rxjs';
 export class DeleteDialogComponent implements OnInit {
   form!: FormGroup<{ password: FormControl }>;
 
-  authErrors: Partial<AuthErrors> | null = null;
+  authErrors: Partial<IAuthErrors> | null = null;
   loading: boolean = false;
 
   get passwordControl(): FormControl {
@@ -40,7 +40,7 @@ export class DeleteDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private userDeleteService: UserDeleteService,
     private modalService: ModalService,
     private messageService: MessageService,
     private router: Router,
@@ -68,7 +68,7 @@ export class DeleteDialogComponent implements OnInit {
     this.form.disable();
     this.loading = true;
 
-    this.authService
+    this.userDeleteService
       .deleteUser(this.form.getRawValue().password)
       .pipe(take(1))
       .subscribe({
@@ -85,6 +85,7 @@ export class DeleteDialogComponent implements OnInit {
           this.router.navigate(['home']);
         },
         error: (err) => {
+          console.log(err);
           this.authErrors = {
             wrongPassword: err.message.includes('auth/wrong-password'),
           };

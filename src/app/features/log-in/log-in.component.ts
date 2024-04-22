@@ -1,3 +1,4 @@
+import { LogInService } from '../../core/services/auth/log-in.service';
 import { Component, OnInit } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
@@ -10,10 +11,10 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthErrors, AuthForm } from '@shared/models/auth.interface';
+import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -31,9 +32,9 @@ import { take } from 'rxjs';
   styleUrl: './log-in.component.scss',
 })
 export class LogInComponent implements OnInit {
-  form!: FormGroup<AuthForm>;
+  form!: FormGroup<IAuthForm>;
 
-  authErrors: Partial<AuthErrors> | null = null;
+  authErrors: Partial<IAuthErrors> | null = null;
   loading: boolean = false;
 
   get emailControl(): FormControl {
@@ -46,7 +47,7 @@ export class LogInComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
+    private logInService: LogInService,
     private router: Router,
   ) {}
 
@@ -55,7 +56,7 @@ export class LogInComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group<AuthForm>({
+    this.form = this.fb.group<IAuthForm>({
       email: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(emailRegex)],
@@ -77,7 +78,7 @@ export class LogInComponent implements OnInit {
     this.loading = true;
     this.form.disable();
 
-    this.authService
+    this.logInService
       .logIn(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
@@ -94,8 +95,6 @@ export class LogInComponent implements OnInit {
             userNotFound: err.message.includes('auth/user-not-found'),
             wrongPassword: err.message.includes('auth/wrong-password'),
           };
-
-          console.log(err);
 
           this.form.enable();
           this.loading = false;

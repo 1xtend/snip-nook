@@ -8,7 +8,7 @@ import {
   map,
   switchMap,
 } from 'rxjs';
-import { AuthService } from './../../core/services/auth.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { FirestoreService } from './../../core/services/firestore.service';
 import {
   ChangeDetectionStrategy,

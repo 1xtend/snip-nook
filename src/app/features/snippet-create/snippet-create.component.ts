@@ -1,3 +1,4 @@
+import { FirestoreService } from '@core/services/firestore.service';
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
@@ -56,10 +57,25 @@ export class SnippetCreateComponent implements OnInit {
     return this.form.controls['code'];
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private firestoreService: FirestoreService,
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
+
+    this.firestoreService.addSnippet({
+      author: {
+        name: 'test',
+        uid: 'test',
+      },
+      code: [],
+      description: 'descr',
+      name: 'test',
+      public: false,
+      uid: '',
+    });
 
     this.form.valueChanges.subscribe((value) => {
       console.log(value);
@@ -83,6 +99,12 @@ export class SnippetCreateComponent implements OnInit {
         validators: [Validators.required],
       }),
     });
+  }
+
+  onSubmit(): void {
+    if (!this.form.valid) {
+      return;
+    }
   }
 
   addEditor(): void {

@@ -1,3 +1,4 @@
+import { UserUpdateService } from '../../../core/services/auth/user-update.service';
 import { LoadingService } from './../../../core/services/loading.service';
 import { Component, ViewChild } from '@angular/core';
 import {
@@ -13,7 +14,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { EmailDialogComponent } from '@shared/components/email-dialog/email-dialog.component';
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { Observable, first, take, throwError } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AsyncPipe, UpperCasePipe } from '@angular/common';
@@ -46,6 +47,7 @@ export class UserSettingsComponent {
   constructor(
     private modalService: ModalService,
     private authService: AuthService,
+    private userUpdateService: UserUpdateService,
     private messageService: MessageService,
     private loadingService: LoadingService,
   ) {}
@@ -53,7 +55,7 @@ export class UserSettingsComponent {
   uploadAvatar(e: FileUploadHandlerEvent) {
     this.loadingService.setLoading(true);
 
-    this.authService
+    this.userUpdateService
       .updateAvatar(e.files[0])
       .pipe(take(1))
       .subscribe({

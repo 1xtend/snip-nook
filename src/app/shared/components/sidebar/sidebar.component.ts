@@ -1,3 +1,4 @@
+import { UserDeleteService } from '../../../core/services/auth/user-delete.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +10,7 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
 import { LogoComponent } from '../logo/logo.component';
-import { AuthService } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth/auth.service';
 import { Observable, take } from 'rxjs';
 import { AsyncPipe } from '@angular/common';
 import { User } from 'firebase/auth';
@@ -32,11 +33,12 @@ export class SidebarComponent {
 
   constructor(
     private authService: AuthService,
+    private userDeleteService: UserDeleteService,
     private router: Router,
   ) {}
 
   signOut(): void {
-    this.authService
+    this.userDeleteService
       .signOut()
       .pipe(take(1))
       .subscribe(() => {
