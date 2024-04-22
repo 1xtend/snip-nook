@@ -100,7 +100,13 @@ export class UserDeleteService {
         const batch = writeBatch(this.fs);
 
         res.forEach((docSnapshot) => {
-          const userSnippetRef = doc(snippetsCollection, docSnapshot.id);
+          const userSnippetRef = doc(
+            this.fs,
+            'users',
+            uid,
+            'snippets',
+            docSnapshot.id,
+          );
           batch.delete(userSnippetRef);
 
           const snippetRef = doc(this.fs, 'snippets', docSnapshot.id);

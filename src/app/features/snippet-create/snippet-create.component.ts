@@ -134,6 +134,12 @@ export class SnippetCreateComponent implements OnInit {
           this.router.navigate(['snippet', snippet.uid, 'overview']);
         },
         error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            detail: 'Unexpected error occurred. Try again later',
+            summary: 'Error',
+          });
+
           this.form.enable();
           this.loading = false;
         },
