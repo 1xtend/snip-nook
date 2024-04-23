@@ -1,18 +1,18 @@
 <form
-  class="card"
+  class="auth-card"
   [formGroup]="form"
   (ngSubmit)="onSubmit()"
   focusInvalidInput
   #authForm="ngForm"
 >
-  <h2 class="card__title">Log In</h2>
+  <h2 class="auth-card__title">Log In</h2>
 
-  <div class="card__row">
-    <label for="auth-email" class="card__label">Email</label>
+  <div class="auth-card__row">
+    <label for="auth-email" class="auth-card__label">Email</label>
     <input
       type="email"
       pInputText
-      class="card__input"
+      class="auth-card__input"
       id="auth-email"
       formControlName="email"
     />
@@ -21,27 +21,27 @@
       (emailControl.invalid && emailControl.dirty) ||
       (form.touched && form.invalid && authForm.submitted)
     ) {
-      <small class="card__validation-error">
+      <small class="auth-card__validation-error">
         @if (emailControl.hasError("pattern")) {
-          Please enter an email address
+          Please enter an email address.
         }
       </small>
     }
   </div>
-  <div class="card__row">
-    <label for="auth-password" class="card__label">Password</label>
+  <div class="auth-card__row">
+    <label for="auth-password" class="auth-card__label">Password</label>
     <input
       type="password"
       pPassword
       [feedback]="false"
       id="auth-password"
-      class="card__input"
+      class="auth-card__input"
       formControlName="password"
     />
   </div>
 
   @if (authErrors) {
-    <small class="card__auth-error">
+    <small class="auth-card__auth-error">
       @if (authErrors.invalidCredential) {
         Invalid username or password.
       }
@@ -60,15 +60,10 @@
     </small>
   }
 
-  <p class="card__row">
+  <p class="auth-card__row">
     New to SnipNook?
-    <a routerLink="/signup">Sign Up</a>
+    <a routerLink="/signup" class="p-reset">Sign Up</a>
   </p>
 
-  <p-button
-    type="submit"
-    severity="help"
-    label="Log In"
-    [loading]="loading"
-  ></p-button>
+  <p-button type="submit" label="Log In" [loading]="loading"></p-button>
 </form>

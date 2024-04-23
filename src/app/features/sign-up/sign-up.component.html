@@ -1,18 +1,18 @@
 <form
-  class="card"
+  class="auth-card"
   [formGroup]="form"
   (ngSubmit)="onSubmit()"
   focusInvalidInput
   #authForm="ngForm"
 >
-  <h2 class="card__title">Sign Up</h2>
+  <h2 class="auth-card__title">Sign Up</h2>
 
-  <div class="card__row">
-    <label for="auth-username" class="card__label">Username</label>
+  <div class="auth-card__row">
+    <label for="auth-username" class="auth-card__label">Username</label>
     <input
       type="text"
       pInputText
-      class="card__input"
+      class="auth-card__input"
       id="auth-username"
       formControlName="username"
     />
@@ -21,7 +21,7 @@
       (usernameControl.invalid && usernameControl.dirty) ||
       (form.touched && form.invalid && authForm.submitted)
     ) {
-      <small class="card__validation-error">
+      <small class="auth-card__validation-error">
         @if (usernameControl.hasError("minlength")) {
           Username must contain at least 4 characters.
         }
@@ -34,12 +34,12 @@
       </small>
     }
   </div>
-  <div class="card__row">
-    <label for="auth-email" class="card__label">Email</label>
+  <div class="auth-card__row">
+    <label for="auth-email" class="auth-card__label">Email</label>
     <input
       type="email"
       pInputText
-      class="card__input"
+      class="auth-card__input"
       id="auth-email"
       formControlName="email"
     />
@@ -48,21 +48,21 @@
       (emailControl.invalid && emailControl.dirty) ||
       (form.touched && form.invalid && authForm.submitted)
     ) {
-      <small class="card__validation-error">
+      <small class="auth-card__validation-error">
         @if (emailControl.hasError("pattern")) {
           Please enter an email address
         }
       </small>
     }
   </div>
-  <div class="card__row">
-    <label for="auth-password" class="card__label">Password</label>
+  <div class="auth-card__row">
+    <label for="auth-password" class="auth-card__label">Password</label>
     <input
       type="password"
       pPassword
       [feedback]="false"
       id="auth-password"
-      class="card__input"
+      class="auth-card__input"
       formControlName="password"
     />
 
@@ -70,7 +70,7 @@
       (passwordControl.invalid && passwordControl.dirty) ||
       (form.touched && form.invalid && authForm.submitted)
     ) {
-      <small class="card__validation-error">
+      <small class="auth-card__validation-error">
         @if (passwordControl.hasError("minlength")) {
           Password must contain at least 8 characters.
         }
@@ -82,7 +82,7 @@
   </div>
 
   @if (authErrors) {
-    <small class="card__auth-error">
+    <small class="auth-card__auth-error">
       @if (authErrors.emailInUse) {
         Email is already taken.
       }
@@ -95,14 +95,9 @@
     </small>
   }
 
-  <p class="card__info">
-    Already have an account? <a routerLink="/login">Log In</a>
+  <p class="auth-card__row">
+    Already have an account? <a routerLink="/login" class="p-reset">Log In</a>
   </p>
 
-  <p-button
-    type="submit"
-    severity="help"
-    label="Sign Up"
-    [loading]="loading"
-  ></p-button>
+  <p-button type="submit" label="Sign Up" [loading]="loading"></p-button>
 </form>

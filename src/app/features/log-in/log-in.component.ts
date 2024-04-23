@@ -1,5 +1,10 @@
 import { LogInService } from '../../core/services/auth/log-in.service';
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -30,6 +35,7 @@ import { take } from 'rxjs';
   ],
   templateUrl: './log-in.component.html',
   styleUrl: './log-in.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogInComponent implements OnInit {
   form!: FormGroup<IAuthForm>;
@@ -49,6 +55,7 @@ export class LogInComponent implements OnInit {
     private fb: FormBuilder,
     private logInService: LogInService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -98,6 +105,7 @@ export class LogInComponent implements OnInit {
 
           this.form.enable();
           this.loading = false;
+          this.cdr.markForCheck();
         },
         complete: () => {
           this.loading = false;

@@ -2,16 +2,6 @@
   <app-logo class="header__logo"></app-logo>
 
   <nav class="navbar">
-    @if (user$ | async) {
-      <p-button
-        [routerLink]="['/snippet', 'create']"
-        label="Create"
-        icon="pi pi-plus"
-        class="navbar__link"
-        [text]="true"
-      ></p-button>
-    }
-
     <p-button
       routerLink="/trending"
       label="Trending"
@@ -35,7 +25,11 @@
         }
       </button>
     } @else {
-      <p-button routerLink="/login" label="Log In"></p-button>
+      <p-button
+        routerLink="/login"
+        label="Log In"
+        class="header__button"
+      ></p-button>
     }
   </div>
 </header>

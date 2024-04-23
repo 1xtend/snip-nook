@@ -1,5 +1,5 @@
 import { SignUpService } from '../../core/services/auth/sign-up.service';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -53,6 +53,7 @@ export class SignUpComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private signUpService: SignUpService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -114,6 +115,7 @@ export class SignUpComponent implements OnInit {
 
           this.form.enable();
           this.loading = false;
+          this.cdr.markForCheck();
         },
         complete: () => {
           this.loading = false;

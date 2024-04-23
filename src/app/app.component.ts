@@ -34,6 +34,10 @@ export class AppComponent implements OnInit {
     return this.authService.loading$;
   }
 
+  get hideSidebar(): boolean {
+    return this.hasRoute('login') || this.hasRoute('signup');
+  }
+
   constructor(
     private router: Router,
     private authService: AuthService,

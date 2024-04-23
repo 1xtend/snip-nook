@@ -3,8 +3,13 @@
 .header {
   display: flex;
   align-items: center;
-  padding: $spacing-m;
   gap: $spacing-l;
+  padding: $spacing-xs $spacing-m;
+  height: $header-height;
+
+  @media (max-width: $breakpoint-s) {
+    gap: $spacing-xs;
+  }
 
   &__logo {
     margin-right: auto;
