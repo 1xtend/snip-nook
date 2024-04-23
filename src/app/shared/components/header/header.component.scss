@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   padding: $spacing-m;
-  column-gap: $spacing-l;
+  gap: $spacing-l;
 
   &__logo {
     margin-right: auto;
@@ -17,18 +17,11 @@
 
   &__avatar {
     background: none;
-    padding: 0;
-    border: none;
     cursor: pointer;
+    border-radius: 50%;
   }
 }
 
-.navbar {
-  display: flex;
-  column-gap: $spacing-m;
-
-  &__link {
-    padding: $spacing-xs;
-    text-decoration: none;
-  }
+.navbar__link ::ng-deep .p-button {
+  padding: $spacing-xs $spacing-s;
 }

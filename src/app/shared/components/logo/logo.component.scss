@@ -1,6 +1,6 @@
 @import "../../../../assets/scss/variables";
 
-.logo ::ng-deep .p-button {
+.logo {
   font-size: 1.25rem;
-  padding: $spacing-s;
+  padding: $spacing-xs $spacing-s;
 }

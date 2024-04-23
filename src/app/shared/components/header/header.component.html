@@ -2,14 +2,32 @@
   <app-logo class="header__logo"></app-logo>
 
   <nav class="navbar">
-    <a routerLink="/trending" class="navbar__link p-button p-button-text"
-      >Trending</a
-    >
+    @if (user$ | async) {
+      <p-button
+        [routerLink]="['/snippet', 'create']"
+        label="Create"
+        icon="pi pi-plus"
+        class="navbar__link"
+        [text]="true"
+      ></p-button>
+    }
+
+    <p-button
+      routerLink="/trending"
+      label="Trending"
+      icon="pi pi-sparkles"
+      class="navbar__link"
+      [text]="true"
+    ></p-button>
   </nav>
 
   <div class="header__actions">
     @if (user$ | async; as user) {
-      <button type="button" class="header__avatar" (click)="openSidebar.emit()">
+      <button
+        type="button"
+        class="header__avatar p-reset"
+        (click)="openSidebar.emit()"
+      >
         @if (user.photoURL) {
           <p-avatar [image]="user.photoURL" shape="circle"></p-avatar>
         } @else {
