@@ -1,11 +1,24 @@
 <article class="snippet-card">
-  <h3 class="snippet-card__title">
-    <a
-      [routerLink]="['/snippet', snippet.uid, 'overview']"
-      class="snippet-card__title-link"
-      >{{ snippet.name }}</a
-    >
-  </h3>
+  <header class="snippet-card__header">
+    <h3 class="snippet-card__title">
+      <a
+        [routerLink]="['/snippet', snippet.uid, 'overview']"
+        class="snippet-card__title-link"
+      >
+        {{ snippet.name }}
+      </a>
+    </h3>
+    <small class="snippet-card__author">
+      <a
+        [routerLink]="['/user', snippet.author.uid, 'overview']"
+        class="snippet-card__author-link"
+      >
+        &commat;{{ snippet.author.name }}
+      </a>
+    </small>
+  </header>
 
-  <p class="snippet-card__description">{{ snippet.description }}</p>
+  <p class="snippet-card__description">
+    {{ snippet.description | truncateText: 120 }}
+  </p>
 </article>

@@ -1,14 +1,19 @@
+@import "./themes/dark/_variables";
+
 // Colors
-$color-surface: var(--surface-card);
-$color-surface-hover: var(--surface-hover);
-$color-surface-card: var(--surface-50);
+// $color-surface: var(--surface-card);
+// $color-surface-hover: var(--surface-hover);
+// $color-surface-card: var(--surface-50);
 
-$color-error: var(--red-500);
+// $color-error: var(--red-500);
 
-$color-light-gray: var(--gray-300);
+// $color-light-gray: var(--gray-300);
 
-$color-light: var(--color-surface-900);
-$color-blue-gray: var(--gray-400);
+// $color-light: var(--color-surface-900);
+// $color-blue-gray: var(--bluegray-400);
+
+// $color-primary: var(--primary-400);
+// $color-primary-hover: var(--primary-100);
 
 // Spacing
 $spacing-xs: 0.25rem;

@@ -2,19 +2,10 @@
 
 .snippets {
   padding: $spacing-l 0;
+  display: grid;
+  gap: $spacing-l;
 
-  &__actions {
-    &:not(:last-child) {
-      margin-bottom: $spacing-l;
-    }
-  }
-
-  &__grid {
-    display: grid;
-    gap: $spacing-l;
-
-    @media (min-width: calc($breakpoint-l + 1px)) {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  @media (min-width: calc($breakpoint-l + 1px)) {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

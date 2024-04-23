@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
+import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-card.component';
 
 @Component({
   selector: 'app-root',

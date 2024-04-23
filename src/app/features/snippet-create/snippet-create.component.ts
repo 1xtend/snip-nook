@@ -83,14 +83,14 @@ export class SnippetCreateComponent implements OnInit {
     this.form = this.fb.group<ISnippetCreateForm>({
       name: this.fb.control('', {
         nonNullable: true,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.maxLength(60)],
       }),
       public: this.fb.control(false, {
         nonNullable: true,
       }),
       description: this.fb.control('', {
         nonNullable: true,
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.maxLength(600)],
       }),
       code: this.fb.array<FormControl<ICodeItem>>([], {
         validators: [Validators.required],

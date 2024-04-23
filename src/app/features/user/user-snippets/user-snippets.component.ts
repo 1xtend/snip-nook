@@ -7,7 +7,13 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { BehaviorSubject, EMPTY, combineLatest, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  EMPTY,
+  combineLatest,
+  debounceTime,
+  switchMap,
+} from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { AsyncPipe } from '@angular/common';
 import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-card.component';
@@ -38,6 +44,17 @@ export class UserSnippetsComponent implements OnInit {
 
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
+
+  snippet: ISnippetPreview = {
+    author: {
+      name: 'John_Doe',
+      uid: '1ue3odbnpsncp',
+    },
+    description:
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium quibusdam fugit laboriosam ullam et provident dolore animi possimus hic autem!',
+    name: 'Header component',
+    uid: 'adlkasbndcpksan',
+  };
 
   constructor(
     private route: ActivatedRoute,

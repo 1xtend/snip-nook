@@ -1,10 +1,15 @@
 @import "../../../../assets/scss/variables";
 
 .snippet-card {
-  background-color: $color-surface-card;
+  // background-color: $color-surface-card;
   padding: $spacing-l;
   border-radius: 6px;
-  color: $color-light;
+
+  &__header {
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
 
   &__title {
     margin: 0;
@@ -15,17 +20,25 @@
   }
 
   &__title-link {
-    color: inherit;
+    // color: $color-primary;
+    text-decoration: none;
+    transition: color 150ms ease-in-out;
+
+    &:hover {
+      // color: $color-primary-hover;
+    }
+  }
+
+  &__author-link {
+    color: var(--purple-300);
     text-decoration: none;
 
     &:hover {
       text-decoration: underline;
-      color: $color-blue-gray;
     }
   }
 
   &__description {
     margin: 0;
-    color: $color-light-gray;
   }
 }

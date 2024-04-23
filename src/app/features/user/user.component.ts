@@ -114,11 +114,18 @@ export class UserComponent implements OnInit {
     ];
 
     if (owner) {
-      tabItems.push({
-        label: 'Settings',
-        icon: 'pi pi-fw pi-cog',
-        routerLink: ['settings'],
-      });
+      tabItems.push(
+        {
+          label: 'Create snippet',
+          icon: 'pi pi-fw pi-plus',
+          routerLink: ['/snippet', 'create'],
+        },
+        {
+          label: 'Settings',
+          icon: 'pi pi-fw pi-cog',
+          routerLink: ['settings'],
+        },
+      );
     }
 
     return tabItems;

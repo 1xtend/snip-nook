@@ -10,14 +10,14 @@
 
   <ng-template pTemplate="content">
     @if (user$ | async; as user) {
-      <ul class="sidebar__list">
+      <ul class="sidebar__list p-reset">
         <li class="sidebar__item">
           <a
-            [routerLink]="['/user', user.uid]"
+            [routerLink]="['/user', user.uid, 'overview']"
             class="sidebar__link"
             (click)="closeSidebar.emit()"
           >
-            <span class="sidebar__icon pi pi-user"></span>
+            <span class="sidebar__icon pi pi-use"></span>
             View Profile
           </a>
         </li>

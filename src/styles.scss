@@ -18,7 +18,7 @@ body {
 // Auth card
 .card {
   width: 50vw;
-  background-color: $color-surface;
+  background-color: var(--surface-card);
   padding: $spacing-l;
   border-radius: 0.75rem;
 
@@ -64,13 +64,13 @@ body {
   }
 
   &__validation-error {
-    color: $color-error;
+    color: var(--red-500);
     position: absolute;
     bottom: -20px;
   }
 
   &__auth-error {
-    color: $color-error;
+    color: var(--red-500);
     display: block;
 
     &:not(:last-child) {
@@ -109,13 +109,13 @@ body {
   }
 
   &__validation-error {
-    color: $color-error;
+    color: var(--red-500);
     position: absolute;
     bottom: -20px;
   }
 
   &__auth-error {
-    color: $color-error;
+    color: var(--red-500);
     display: block;
 
     &:not(:last-child) {
