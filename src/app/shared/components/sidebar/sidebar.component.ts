@@ -4,11 +4,11 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnInit,
   Output,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
+import { InputSwitchModule } from 'primeng/inputswitch';
 import { LogoComponent } from '../logo/logo.component';
 import { AuthService } from '@core/services/auth/auth.service';
 import { Observable, take } from 'rxjs';
@@ -18,7 +18,13 @@ import { User } from 'firebase/auth';
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, SidebarModule, LogoComponent, AsyncPipe],
+  imports: [
+    RouterLink,
+    SidebarModule,
+    LogoComponent,
+    AsyncPipe,
+    InputSwitchModule,
+  ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

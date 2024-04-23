@@ -11,20 +11,23 @@
   <ng-template pTemplate="content">
     @if (user$ | async; as user) {
       <ul class="sidebar__list p-reset">
+        <li class="sidebar__sub-header">
+          <span>My Stuff</span>
+        </li>
         <li class="sidebar__item">
           <a
             [routerLink]="['/user', user.uid, 'overview']"
-            class="sidebar__link"
+            class="sidebar__link p-reset"
             (click)="closeSidebar.emit()"
           >
-            <span class="sidebar__icon pi pi-use"></span>
+            <span class="sidebar__icon pi pi-user"></span>
             View Profile
           </a>
         </li>
         <li class="sidebar__item">
           <a
             [routerLink]="['/user', user.uid, 'snippets']"
-            class="sidebar__link"
+            class="sidebar__link p-reset"
             (click)="closeSidebar.emit()"
           >
             <span class="sidebar__icon pi pi-box"></span>
@@ -33,18 +36,8 @@
         </li>
         <li class="sidebar__item">
           <a
-            [routerLink]="['/snippet', 'create']"
-            class="sidebar__link"
-            (click)="closeSidebar.emit()"
-          >
-            <span class="sidebar__icon pi pi-plus"></span>
-            Create snippet
-          </a>
-        </li>
-        <li class="sidebar__item">
-          <a
             [routerLink]="['/user', user.uid, 'saved']"
-            class="sidebar__link"
+            class="sidebar__link p-reset"
             (click)="closeSidebar.emit()"
           >
             <span class="sidebar__icon pi pi-bookmark"></span>
@@ -52,24 +45,36 @@
           </a>
         </li>
         <li class="sidebar__item">
-          <a
-            [routerLink]="['/user', user.uid, 'settings']"
-            class="sidebar__link"
-            (click)="closeSidebar.emit()"
-          >
-            <span class="sidebar__icon pi pi-cog"></span>
-            Settings
-          </a>
-        </li>
-        <li class="sidebar__item">
           <button
             (click)="signOut()"
-            class="sidebar__button"
+            class="sidebar__link p-reset"
             (click)="closeSidebar.emit()"
           >
             <span class="sidebar__icon pi pi-sign-out"></span>
             Log Out
           </button>
+        </li>
+        <li class="sidebar__item sidebar__separator"></li>
+        <li class="sidebar__sub-header">
+          <span>View Options</span>
+        </li>
+        <li class="sidebar__item sidebar__switch-container">
+          <label for="theme-switch" class="sidebar__label">Dark Mode</label>
+          <p-inputSwitch
+            inputId="theme-switch"
+            class="sidebar__switch"
+          ></p-inputSwitch>
+        </li>
+        <li class="sidebar__item sidebar__separator"></li>
+        <li class="sidebar__item">
+          <a
+            [routerLink]="['/user', user.uid, 'settings']"
+            class="sidebar__link p-reset"
+            (click)="closeSidebar.emit()"
+          >
+            <span class="sidebar__icon pi pi-cog"></span>
+            Settings
+          </a>
         </li>
       </ul>
     }

@@ -1,57 +1,53 @@
 @import "../../../../assets/scss/variables";
 
 .sidebar {
-  &__item {
+  &__list {
+    display: block;
+    color: var(--text-color);
+
     &:not(:last-child) {
+      margin-bottom: $spacing-l;
     }
+  }
+
+  &__sub-header {
+    color: #71717a;
+    font-weight: 600;
+    padding: $spacing-s;
+  }
+
+  &__switch-container {
+    display: flex;
+    align-items: center;
+    gap: $spacing-l;
+    padding: $spacing-s;
+  }
+
+  &__separator {
+    border-top: 1px solid var(--gray-700);
+    margin: $spacing-s 0;
   }
 
   &__link {
+    display: block;
+    width: 100%;
+    color: inherit;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    padding: $spacing-s;
+    border-radius: var(--border-radius);
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
     &:hover {
-      background-color: $hoverBg;
+      background-color: var(--surface-hover);
     }
   }
+
+  &__icon {
+    color: #71717a;
+    margin-right: $spacing-s;
+  }
 }
-
-// .sidebar {
-//   &__list {
-//     // list-style: none;
-//     // padding: 0;
-//     // margin: 0;
-//   }
-
-//   &__item {
-//     // color: $color-light;
-//   }
-
-//   &__link {
-//     color: inherit;
-//     display: flex;
-//     align-items: center;
-//     column-gap: $spacing-s;
-//     text-decoration: none;
-//     padding: $spacing-s;
-//   }
-
-//   &__button {
-//     border: none;
-//     color: inherit;
-//     width: 100%;
-//     cursor: pointer;
-//     font-size: inherit;
-//     background: none;
-//   }
-
-//   &__link,
-//   &__button {
-//     display: flex;
-//     column-gap: $spacing-s;
-//     align-items: center;
-//     padding: $spacing-s;
-//     border-radius: 5px;
-
-//     &:hover {
-//       // background-color: $color-surface-hover;
-//     }
-//   }
-// }
