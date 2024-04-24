@@ -1,5 +1,5 @@
 <div class="skeleton">
-  @if (loading$ | async) {
+  @if (loading()) {
     <div class="skeleton__info">
       <p-skeleton
         width="12rem"
@@ -31,7 +31,7 @@
       ></p-skeleton>
     </div>
   } @else {
-    @if (snippet$ | async; as snippet) {
+    @if (snippet(); as snippet) {
       <section class="overview">
         <div class="overview__info">
           <h2 class="overview__name">{{ snippet.name }}</h2>

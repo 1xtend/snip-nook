@@ -1,35 +1,28 @@
 import { SharedService } from './../../core/services/shared.service';
-import {
-  BehaviorSubject,
-  EMPTY,
-  Subject,
-  combineLatest,
-  map,
-  switchMap,
-} from 'rxjs';
+import { EMPTY, combineLatest, map, switchMap } from 'rxjs';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { FirestoreService } from './../../core/services/firestore.service';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  Injector,
   OnInit,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ICodeItem, ISnippet } from '@shared/models/snippet.interface';
-import { AsyncPipe } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { MonacoEditorModule, NgxEditorModel } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-snippet-overview',
   standalone: true,
   imports: [
-    AsyncPipe,
     RouterLink,
     SkeletonModule,
     TabMenuModule,
@@ -55,14 +48,9 @@ export class SnippetOverviewComponent implements OnInit {
     scrollBeyondLastLine: false,
   };
 
-  private snippetSubject = new BehaviorSubject<ISnippet | undefined>(undefined);
-  snippet$ = this.snippetSubject.asObservable();
-
-  private isOwnerSubject = new Subject<boolean>();
-  isOwner$ = this.isOwnerSubject.asObservable();
-
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  loading$ = this.loadingSubject.asObservable();
+  snippet = signal<ISnippet | undefined>(undefined);
+  isOwner = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
   constructor(
     private route: ActivatedRoute,
@@ -70,6 +58,7 @@ export class SnippetOverviewComponent implements OnInit {
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private sharedService: SharedService,
+    private injector: Injector,
   ) {}
 
   ngOnInit(): void {
@@ -85,7 +74,7 @@ export class SnippetOverviewComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(({ user, params }) => {
-          this.loadingSubject.next(true);
+          this.loading.set(true);
 
           const snippetId = params.get('id');
           const userId = user?.uid;
@@ -95,7 +84,7 @@ export class SnippetOverviewComponent implements OnInit {
           return snippetId && userId
             ? this.firestoreService.checkUserSnippet(userId, snippetId).pipe(
                 map((owner) => {
-                  this.isOwnerSubject.next(!!owner);
+                  this.isOwner.set(!!owner);
 
                   return { user, params };
                 }),
@@ -111,8 +100,8 @@ export class SnippetOverviewComponent implements OnInit {
         }),
       )
       .subscribe((snippet) => {
-        this.loadingSubject.next(false);
-        this.snippetSubject.next(snippet);
+        this.loading.set(false);
+        this.snippet.set(snippet);
 
         if (snippet) {
           this.tabItems = this.getTabItems(snippet.code);
@@ -123,7 +112,7 @@ export class SnippetOverviewComponent implements OnInit {
   }
 
   private ownerChanges(): void {
-    this.isOwner$
+    toObservable(this.isOwner, { injector: this.injector })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((owner) => {
         console.log('is owner: ', owner);

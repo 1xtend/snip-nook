@@ -1,21 +1,16 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  Injector,
   OnInit,
+  signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
 import { IUser } from '@shared/models/user.interface';
-import {
-  BehaviorSubject,
-  EMPTY,
-  combineLatest,
-  distinctUntilChanged,
-  switchMap,
-} from 'rxjs';
+import { EMPTY, combineLatest, distinctUntilChanged, switchMap } from 'rxjs';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
@@ -25,14 +20,7 @@ import { FirestoreService } from '@core/services/firestore.service';
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [
-    AsyncPipe,
-    TabMenuModule,
-    AsyncPipe,
-    RouterOutlet,
-    AvatarModule,
-    SkeletonModule,
-  ],
+  imports: [TabMenuModule, RouterOutlet, AvatarModule, SkeletonModule],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,14 +28,9 @@ import { FirestoreService } from '@core/services/firestore.service';
 export class UserComponent implements OnInit {
   tabItems: MenuItem[] = [];
 
-  private loadingSubject = new BehaviorSubject<boolean>(false);
-  loading$ = this.loadingSubject.asObservable();
-
-  private userSubject = new BehaviorSubject<IUser | undefined>(undefined);
-  user$ = this.userSubject.asObservable();
-
-  private isOwnerSubject = new BehaviorSubject<boolean>(false);
-  isOwner$ = this.isOwnerSubject.asObservable();
+  user = signal<IUser | undefined>(undefined);
+  isOwner = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
   constructor(
     public route: ActivatedRoute,
@@ -55,6 +38,7 @@ export class UserComponent implements OnInit {
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private firestoreService: FirestoreService,
+    private injector: Injector,
   ) {}
 
   ngOnInit(): void {
@@ -72,8 +56,8 @@ export class UserComponent implements OnInit {
         switchMap(({ params, user }) => {
           const userId = params.get('id');
 
-          this.loadingSubject.next(true);
-          this.isOwnerSubject.next(user?.uid === userId);
+          this.loading.set(true);
+          this.isOwner.set(user?.uid === userId);
 
           return userId ? this.firestoreService.getUser(userId) : EMPTY;
         }),
@@ -81,13 +65,15 @@ export class UserComponent implements OnInit {
       .subscribe((user) => {
         console.log('***PARAMS CHANGES***');
 
-        this.userSubject.next(user);
-        this.loadingSubject.next(false);
+        // this.userSubject.next(user);
+        // this.loadingSubject.next(false);
+        this.user.set(user);
+        this.loading.set(false);
       });
   }
 
   private ownerChanges(): void {
-    this.isOwner$
+    toObservable(this.isOwner, { injector: this.injector })
       .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
       .subscribe((owner) => {
         this.tabItems = this.getTabItems(owner);

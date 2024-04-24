@@ -1,4 +1,4 @@
-@if (loading$ | async) {
+@if (loading()) {
   <div class="profile__info info">
     <p-skeleton shape="circle" size="4rem"></p-skeleton>
 
@@ -9,7 +9,7 @@
     ></p-skeleton>
   </div>
 } @else {
-  @if (user$ | async; as user) {
+  @if (user(); as user) {
     <section class="profile">
       <div class="profile__info info">
         @if (user.photoURL) {
