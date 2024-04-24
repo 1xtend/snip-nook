@@ -1,5 +1,5 @@
 import { SignUpService } from '../../core/services/auth/sign-up.service';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -35,7 +35,7 @@ import { take } from 'rxjs';
 export class SignUpComponent implements OnInit {
   form!: FormGroup<ISignUpForm>;
 
-  authErrors: Partial<IAuthErrors> | null = null;
+  authErrors = signal<Partial<IAuthErrors> | null>(null);
   loading: boolean = false;
 
   get emailControl(): FormControl {
@@ -53,7 +53,6 @@ export class SignUpComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private signUpService: SignUpService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -95,7 +94,7 @@ export class SignUpComponent implements OnInit {
 
     this.form.disable();
     this.loading = true;
-    this.authErrors = null;
+    this.authErrors.set(null);
 
     this.signUpService
       .signUp(this.form.getRawValue())
@@ -107,15 +106,14 @@ export class SignUpComponent implements OnInit {
           this.router.navigate(['/home']);
         },
         error: (err: Error) => {
-          this.authErrors = {
+          this.authErrors.set({
             emailInUse: err.message.includes('auth/email-already-in-use'),
             invalidEmail: err.message.includes('auth/invalid-email'),
             missingEmail: err.message.includes('auth/missing-email'),
-          };
+          });
 
           this.form.enable();
           this.loading = false;
-          this.cdr.markForCheck();
         },
         complete: () => {
           this.loading = false;

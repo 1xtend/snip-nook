@@ -1,7 +1,6 @@
 import { LogInService } from '../../core/services/auth/log-in.service';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnInit,
   signal,
@@ -20,7 +19,6 @@ import {
 import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
-import { AuthService } from '@core/services/auth/auth.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -41,10 +39,8 @@ import { take } from 'rxjs';
 export class LogInComponent implements OnInit {
   form!: FormGroup<IAuthForm>;
 
-  // authErrors: Partial<IAuthErrors> | null = null;
-  loading: boolean = false;
-
   authErrors = signal<Partial<IAuthErrors> | null>(null);
+  loading: boolean = false;
 
   get emailControl(): FormControl {
     return this.form.controls['email'];
@@ -83,7 +79,6 @@ export class LogInComponent implements OnInit {
       return;
     }
 
-    // this.authErrors = null;
     this.authErrors.set(null);
     this.loading = true;
     this.form.disable();

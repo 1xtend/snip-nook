@@ -81,15 +81,15 @@
     }
   </div>
 
-  @if (authErrors) {
+  @if (authErrors(); as error) {
     <small class="auth-card__auth-error">
-      @if (authErrors.emailInUse) {
+      @if (error.emailInUse) {
         Email is already taken.
       }
-      @if (authErrors.invalidEmail) {
+      @if (error.invalidEmail) {
         Email is invalid.
       }
-      @if (authErrors.missingEmail) {
+      @if (error.missingEmail) {
         Missing email.
       }
     </small>
