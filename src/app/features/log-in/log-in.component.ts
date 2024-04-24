@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  signal,
 } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
@@ -40,8 +41,10 @@ import { take } from 'rxjs';
 export class LogInComponent implements OnInit {
   form!: FormGroup<IAuthForm>;
 
-  authErrors: Partial<IAuthErrors> | null = null;
+  // authErrors: Partial<IAuthErrors> | null = null;
   loading: boolean = false;
+
+  authErrors = signal<Partial<IAuthErrors> | null>(null);
 
   get emailControl(): FormControl {
     return this.form.controls['email'];
@@ -55,7 +58,6 @@ export class LogInComponent implements OnInit {
     private fb: FormBuilder,
     private logInService: LogInService,
     private router: Router,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +83,8 @@ export class LogInComponent implements OnInit {
       return;
     }
 
-    this.authErrors = null;
+    // this.authErrors = null;
+    this.authErrors.set(null);
     this.loading = true;
     this.form.disable();
 
@@ -95,17 +98,16 @@ export class LogInComponent implements OnInit {
           this.router.navigate(['/home']);
         },
         error: (err: Error) => {
-          this.authErrors = {
+          this.authErrors.set({
             invalidCredential: err.message.includes('auth/invalid-credential'),
             invalidEmail: err.message.includes('auth/invalid-email'),
             missingEmail: err.message.includes('auth/missing-email'),
             userNotFound: err.message.includes('auth/user-not-found'),
             wrongPassword: err.message.includes('auth/wrong-password'),
-          };
+          });
 
           this.form.enable();
           this.loading = false;
-          this.cdr.markForCheck();
         },
         complete: () => {
           this.loading = false;

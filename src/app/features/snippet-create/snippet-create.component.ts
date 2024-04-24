@@ -2,7 +2,12 @@ import { MessageService } from 'primeng/api';
 import { SnippetService } from './../../core/services/snippet.service';
 import { FirestoreService } from '@core/services/firestore.service';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -26,6 +31,7 @@ import { DividerModule } from 'primeng/divider';
 import { EditorComponent } from '@shared/components/editor/editor.component';
 import { take } from 'rxjs';
 import { Router } from '@angular/router';
+import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 
 @Component({
   selector: 'app-snippet-create',
@@ -58,8 +64,6 @@ export class SnippetCreateComponent implements OnInit {
     scrollBeyondLastLine: false,
   };
 
-  loading: boolean = false;
-
   get codeArrayControl(): FormArray<FormControl> {
     return this.form.controls['code'];
   }
@@ -69,14 +73,21 @@ export class SnippetCreateComponent implements OnInit {
     private snippetService: SnippetService,
     private router: Router,
     private messageService: MessageService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.initForm();
 
-    this.form.valueChanges.subscribe((value) => {
-      console.log(value);
-    });
+    // this.form.valueChanges.subscribe((value) => {
+    //   console.log(value);
+
+    //   console.log('valid form', this.form.valid);
+
+    //   if (this.form.valid) {
+    //     this.cdr.markForCheck();
+    //   }
+    // });
   }
 
   private initForm(): void {
@@ -93,7 +104,7 @@ export class SnippetCreateComponent implements OnInit {
         validators: [Validators.required, Validators.maxLength(600)],
       }),
       code: this.fb.array<FormControl<ICodeItem>>([], {
-        validators: [Validators.required],
+        validators: [codeEditorValidator()],
       }),
     });
   }
@@ -104,7 +115,6 @@ export class SnippetCreateComponent implements OnInit {
     }
 
     this.form.disable();
-    this.loading = true;
 
     const value = this.form.getRawValue();
 
@@ -120,34 +130,34 @@ export class SnippetCreateComponent implements OnInit {
       uid: '',
     };
 
-    this.snippetService
-      .addSnippet(snippet)
-      .pipe(take(1))
-      .subscribe({
-        next: (snippet) => {
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Snippet was created successfully',
-            summary: 'Success',
-          });
+    console.log(snippet);
 
-          this.router.navigate(['snippet', snippet.uid, 'overview']);
-        },
-        error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            detail: 'Unexpected error occurred. Try again later',
-            summary: 'Error',
-          });
+    // this.snippetService
+    //   .addSnippet(snippet)
+    //   .pipe(take(1))
+    //   .subscribe({
+    //     next: (snippet) => {
+    //       this.messageService.add({
+    //         severity: 'success',
+    //         detail: 'Snippet was created successfully',
+    //         summary: 'Success',
+    //       });
 
-          this.form.enable();
-          this.loading = false;
-        },
-        complete: () => {
-          this.form.enable();
-          this.loading = false;
-        },
-      });
+    //       this.router.navigate(['snippet', snippet.uid, 'overview']);
+    //     },
+    //     error: (err) => {
+    //       this.messageService.add({
+    //         severity: 'error',
+    //         detail: 'Unexpected error occurred. Try again later',
+    //         summary: 'Error',
+    //       });
+
+    //       this.form.enable();
+    //     },
+    //     complete: () => {
+    //       this.form.enable();
+    //     },
+    //   });
   }
 
   addEditor(): void {

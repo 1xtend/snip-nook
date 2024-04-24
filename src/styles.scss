@@ -97,6 +97,16 @@ body {
     }
   }
 
+  &__wrapper {
+    padding: $spacing-l;
+    background-color: var(--surface-card);
+    border-radius: var(--border-radius);
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+
   &__label {
     display: block;
 

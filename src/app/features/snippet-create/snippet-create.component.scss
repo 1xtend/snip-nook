@@ -1,15 +1,19 @@
 @import "../../../assets/scss/variables";
 
 .create {
-  padding: $spacing-l 0;
+  max-width: 600px;
+  margin: 0 auto;
 
-  &__block {
-    max-width: 400px;
-    width: 100%;
+  &__title {
+    margin: 0;
 
     &:not(:last-child) {
-      margin-bottom: $spacing-x;
+      margin-bottom: $spacing-l;
     }
+  }
+
+  &__add-btn:not(:last-child) {
+    margin-bottom: $spacing-l;
   }
 
   &__editor {
@@ -20,3 +24,30 @@
     }
   }
 }
+
+.form__add-btn {
+  ::ng-deep .p-button-icon-only {
+    width: auto;
+  }
+}
+
+// .create {
+//   padding: $spacing-l 0;
+
+//   &__block {
+//     max-width: 400px;
+//     width: 100%;
+
+//     &:not(:last-child) {
+//       margin-bottom: $spacing-x;
+//     }
+//   }
+
+//   &__editor {
+//     display: block;
+
+//     &:not(:last-child) {
+//       margin-bottom: $spacing-l;
+//     }
+//   }
+// }

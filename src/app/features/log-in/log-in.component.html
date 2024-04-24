@@ -40,21 +40,21 @@
     />
   </div>
 
-  @if (authErrors) {
+  @if (authErrors(); as error) {
     <small class="auth-card__auth-error">
-      @if (authErrors.invalidCredential) {
+      @if (error.invalidCredential) {
         Invalid username or password.
       }
-      @if (authErrors.invalidEmail) {
+      @if (error.invalidEmail) {
         Email is invalid.
       }
-      @if (authErrors.missingEmail) {
+      @if (error.missingEmail) {
         Missing email.
       }
-      @if (authErrors.userNotFound) {
+      @if (error.userNotFound) {
         User was not found.
       }
-      @if (authErrors.wrongPassword) {
+      @if (error.wrongPassword) {
         Wrong password.
       }
     </small>

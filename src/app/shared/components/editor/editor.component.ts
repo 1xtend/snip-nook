@@ -82,11 +82,9 @@ export class EditorComponent implements OnInit {
     this.form = this.fb.group({
       code: this.fb.control('', {
         nonNullable: true,
-        validators: [Validators.required],
       }),
-      language: this.fb.control('plaintext', {
+      language: this.fb.control('', {
         nonNullable: true,
-        validators: [Validators.required],
       }),
     });
   }
@@ -95,12 +93,10 @@ export class EditorComponent implements OnInit {
     this.form.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ code, language }) => {
-        if (!code || !language) {
-          return;
-        }
+        console.log('Value changes: ', { code, language });
 
         this.onChange({
-          code: this.formatRawCode(code),
+          code: code ? this.formatRawCode(code) : '',
           language,
         });
       });
