@@ -1,6 +1,5 @@
-import { UserUpdateService } from '../../../core/services/auth/user-update.service';
 import { LoadingService } from './../../../core/services/loading.service';
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
 import {
   FileUpload,
   FileUploadHandlerEvent,
@@ -12,31 +11,30 @@ import { EmailDialogComponent } from '@shared/components/email-dialog/email-dial
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
 import { AuthService } from '@core/services/auth/auth.service';
-import { Observable, take } from 'rxjs';
-import { User } from 'firebase/auth';
-import { AsyncPipe, UpperCasePipe } from '@angular/common';
+import { take } from 'rxjs';
+import { UpperCasePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { UserService } from '@core/services/user.service';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [FileUploadModule, ButtonModule, AsyncPipe, UpperCasePipe],
+  imports: [FileUploadModule, ButtonModule, UpperCasePipe],
   providers: [ModalService, DialogService],
   templateUrl: './user-settings.component.html',
   styleUrl: './user-settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserSettingsComponent {
-  @ViewChild('fileUpload') fileUpload!: FileUpload;
+  fileUpload = viewChild<FileUpload>('fileUpload');
 
-  get user$(): Observable<User | undefined> {
-    return this.authService.user$;
-  }
+  user = this.authService.user.asReadonly();
 
   constructor(
     private modalService: ModalService,
     private authService: AuthService,
-    private userUpdateService: UserUpdateService,
+    private userService: UserService,
     private messageService: MessageService,
     private loadingService: LoadingService,
   ) {}
@@ -44,12 +42,12 @@ export class UserSettingsComponent {
   uploadAvatar(e: FileUploadHandlerEvent) {
     this.loadingService.setLoading(true);
 
-    this.userUpdateService
+    this.userService
       .updateAvatar(e.files[0])
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.fileUpload.clear();
+          this.fileUpload()?.clear();
 
           this.messageService.add({
             severity: 'success',
@@ -101,6 +99,4 @@ export class UserSettingsComponent {
 
     this.modalService.showDialog(header, component);
   }
-
-  onDelete(): void {}
 }

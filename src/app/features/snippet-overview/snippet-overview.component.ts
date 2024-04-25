@@ -6,7 +6,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  Injector,
   OnInit,
   signal,
 } from '@angular/core';
@@ -16,7 +15,7 @@ import { ICodeItem, ISnippet } from '@shared/models/snippet.interface';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
-import { MonacoEditorModule, NgxEditorModel } from 'ngx-monaco-editor-v2';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -52,23 +51,23 @@ export class SnippetOverviewComponent implements OnInit {
   isOwner = signal<boolean>(false);
   loading = signal<boolean>(false);
 
+  user$ = toObservable(this.authService.user);
+
   constructor(
     private route: ActivatedRoute,
     private firestoreService: FirestoreService,
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private sharedService: SharedService,
-    private injector: Injector,
   ) {}
 
   ngOnInit(): void {
     this.paramsChanges();
-    this.ownerChanges();
   }
 
   private paramsChanges(): void {
     combineLatest({
-      user: this.authService.user$,
+      user: this.user$,
       params: this.route.paramMap,
     })
       .pipe(
@@ -78,8 +77,6 @@ export class SnippetOverviewComponent implements OnInit {
 
           const snippetId = params.get('id');
           const userId = user?.uid;
-
-          console.log('snippet id', snippetId);
 
           return snippetId && userId
             ? this.firestoreService.checkUserSnippet(userId, snippetId).pipe(
@@ -108,14 +105,6 @@ export class SnippetOverviewComponent implements OnInit {
           this.activeTab = this.tabItems[0];
           this.setTabCode(snippet.code[0]);
         }
-      });
-  }
-
-  private ownerChanges(): void {
-    toObservable(this.isOwner, { injector: this.injector })
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((owner) => {
-        console.log('is owner: ', owner);
       });
   }
 

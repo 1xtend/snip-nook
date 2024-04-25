@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Signal, effect } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
@@ -17,9 +17,7 @@ import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-ca
   imports: [
     HeaderComponent,
     RouterOutlet,
-    AsyncPipe,
     SidebarComponent,
-    LogoComponent,
     LoaderComponent,
     ProgressSpinnerModule,
     ToastModule,
@@ -30,9 +28,7 @@ import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-ca
 export class AppComponent implements OnInit {
   sidebarVisible: boolean = false;
 
-  get authLoading$(): Observable<boolean> {
-    return this.authService.loading$;
-  }
+  authLoading = this.authService.loading.asReadonly();
 
   get hideSidebar(): boolean {
     return this.hasRoute('login') || this.hasRoute('signup');
@@ -45,10 +41,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.checkIfUserIsAuthenticated();
-
-    this.authService.user$.subscribe((user) => {
-      console.log('USER CHANGES: ', user);
-    });
   }
 
   toggleSidebar(value: boolean): void {

@@ -1,6 +1,10 @@
-import { UserUpdateService } from '../../../core/services/auth/user-update.service';
 import { ModalService } from './../../../core/services/modal.service';
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -16,6 +20,7 @@ import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { take } from 'rxjs';
 import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
+import { UserService } from '@core/services/user.service';
 
 @Component({
   selector: 'app-email-dialog',
@@ -29,11 +34,12 @@ import { MessageService } from 'primeng/api';
   ],
   templateUrl: './email-dialog.component.html',
   styleUrl: './email-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailDialogComponent implements OnInit {
   form!: FormGroup<IAuthForm>;
 
-  authErrors: Partial<IAuthErrors> | null = null;
+  authErrors = signal<Partial<IAuthErrors> | null>(null);
   loading: boolean = false;
 
   get emailControl(): FormControl {
@@ -46,7 +52,7 @@ export class EmailDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private userUpdateService: UserUpdateService,
+    private userService: UserService,
     private modalService: ModalService,
     private messageService: MessageService,
   ) {}
@@ -74,10 +80,11 @@ export class EmailDialogComponent implements OnInit {
       return;
     }
 
+    this.authErrors.set(null);
     this.form.disable();
     this.loading = true;
 
-    this.userUpdateService
+    this.userService
       .updateEmail(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
@@ -92,10 +99,10 @@ export class EmailDialogComponent implements OnInit {
           });
         },
         error: (err) => {
-          this.authErrors = {
+          this.authErrors.set({
             wrongPassword: err.message.includes('auth/wrong-password'),
             emailInUse: err.message.includes('auth/email-already-in-use'),
-          };
+          });
 
           this.loading = false;
           this.form.enable();

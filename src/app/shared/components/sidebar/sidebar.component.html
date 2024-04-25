@@ -9,7 +9,7 @@
   </ng-template>
 
   <ng-template pTemplate="content">
-    @if (user$ | async; as user) {
+    @if (user(); as user) {
       <ul class="sidebar__list p-reset">
         <li class="sidebar__sub-header">
           <span>My Stuff</span>

@@ -1,26 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Firestore, collection, doc } from '@angular/fire/firestore';
-import {
-  EMPTY,
-  Observable,
-  switchMap,
-  take,
-  throwError,
-  map,
-  from,
-} from 'rxjs';
+import { Observable, switchMap, take, throwError, map, from } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AuthService } from './auth/auth.service';
 import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
 import { writeBatch } from 'firebase/firestore';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SnippetService {
-  get user$(): Observable<User | undefined> {
-    return this.authService.user$;
-  }
+  user$ = toObservable(this.authService.user);
 
   constructor(
     private fs: Firestore,

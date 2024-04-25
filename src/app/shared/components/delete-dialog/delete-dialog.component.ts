@@ -1,5 +1,9 @@
-import { UserDeleteService } from '../../../core/services/auth/user-delete.service';
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,6 +13,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ModalService } from '@core/services/modal.service';
+import { UserService } from '@core/services/user.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { IAuthErrors } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
@@ -27,11 +32,12 @@ import { take } from 'rxjs';
   ],
   templateUrl: './delete-dialog.component.html',
   styleUrl: './delete-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeleteDialogComponent implements OnInit {
   form!: FormGroup<{ password: FormControl }>;
 
-  authErrors: Partial<IAuthErrors> | null = null;
+  authErrors = signal<Partial<IAuthErrors> | null>(null);
   loading: boolean = false;
 
   get passwordControl(): FormControl {
@@ -40,7 +46,7 @@ export class DeleteDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private userDeleteService: UserDeleteService,
+    private userService: UserService,
     private modalService: ModalService,
     private messageService: MessageService,
     private router: Router,
@@ -65,10 +71,11 @@ export class DeleteDialogComponent implements OnInit {
       return;
     }
 
+    this.authErrors.set(null);
     this.form.disable();
     this.loading = true;
 
-    this.userDeleteService
+    this.userService
       .deleteUser(this.form.getRawValue().password)
       .pipe(take(1))
       .subscribe({
@@ -86,9 +93,9 @@ export class DeleteDialogComponent implements OnInit {
         },
         error: (err) => {
           console.log(err);
-          this.authErrors = {
+          this.authErrors.set({
             wrongPassword: err.message.includes('auth/wrong-password'),
-          };
+          });
 
           this.loading = false;
           this.form.enable();

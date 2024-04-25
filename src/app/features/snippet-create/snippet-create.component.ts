@@ -32,6 +32,7 @@ import { EditorComponent } from '@shared/components/editor/editor.component';
 import { take } from 'rxjs';
 import { Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
+import { IEditorOptions } from '@shared/models/editor.interface';
 
 @Component({
   selector: 'app-snippet-create',
@@ -55,7 +56,7 @@ export class SnippetCreateComponent implements OnInit {
   form!: FormGroup<ISnippetCreateForm>;
 
   code: string = '';
-  editorOptions = {
+  editorOptions: IEditorOptions = {
     language: 'html',
     minimap: {
       enabled: false,

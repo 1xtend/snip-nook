@@ -1,5 +1,9 @@
-import { UserUpdateService } from '../../../core/services/auth/user-update.service';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,8 +11,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { AuthService } from '@core/services/auth/auth.service';
 import { ModalService } from '@core/services/modal.service';
+import { UserService } from '@core/services/user.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { IAuthErrors, IAuthPasswordsForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
@@ -27,11 +31,12 @@ import { take } from 'rxjs';
   ],
   templateUrl: './password-dialog.component.html',
   styleUrl: './password-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PasswordDialogComponent implements OnInit {
   form!: FormGroup<IAuthPasswordsForm>;
 
-  authErrors: Partial<IAuthErrors> | null = null;
+  authErrors = signal<Partial<IAuthErrors> | null>(null);
   loading: boolean = false;
 
   get passwordControl(): FormControl {
@@ -44,7 +49,7 @@ export class PasswordDialogComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private userUpdateService: UserUpdateService,
+    private userService: UserService,
     private modalService: ModalService,
     private messageService: MessageService,
   ) {}
@@ -76,10 +81,11 @@ export class PasswordDialogComponent implements OnInit {
       return;
     }
 
+    this.authErrors.set(null);
     this.form.disable();
     this.loading = true;
 
-    this.userUpdateService
+    this.userService
       .updatePassword(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
@@ -94,9 +100,9 @@ export class PasswordDialogComponent implements OnInit {
           });
         },
         error: (err) => {
-          this.authErrors = {
+          this.authErrors.set({
             wrongPassword: err.message.includes('auth/wrong-password'),
-          };
+          });
 
           this.loading = false;
           this.form.enable();

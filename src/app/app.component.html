@@ -2,7 +2,7 @@
 
 <p-toast [life]="2000"></p-toast>
 
-@if (authLoading$ | async) {
+@if (authLoading()) {
   <p-progressSpinner
     ariaLabel="loading"
     [style]="{

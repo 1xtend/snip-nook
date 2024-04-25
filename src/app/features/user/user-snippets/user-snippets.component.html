@@ -1,10 +1,10 @@
 <div class="snippets">
-  @if (loading$ | async) {
+  @if (loading()) {
     <p-skeleton height="82px"></p-skeleton>
     <p-skeleton height="82px"></p-skeleton>
     <p-skeleton height="82px"></p-skeleton>
   } @else {
-    @if (snippets$ | async; as snippets) {
+    @if (snippets(); as snippets) {
       @if (snippets.length > 0) {
         @for (snippet of snippets; track snippet.uid) {
           <app-snippet-card

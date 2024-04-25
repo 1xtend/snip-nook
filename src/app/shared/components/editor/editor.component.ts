@@ -2,11 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
+  computed,
   forwardRef,
+  input,
+  output,
+  signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -15,7 +16,6 @@ import {
   FormGroup,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
-  Validators,
 } from '@angular/forms';
 import { ICodeItem } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
@@ -23,6 +23,7 @@ import { languages } from '@shared/helpers/supported-languages';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { SharedService } from '@core/services/shared.service';
+import { IEditorOptions } from '@shared/models/editor.interface';
 
 @Component({
   selector: 'app-editor',
@@ -45,11 +46,17 @@ import { SharedService } from '@core/services/shared.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditorComponent implements OnInit {
-  @Output() deleteEditor = new EventEmitter<void>();
+  deleteEditor = output<void>();
 
-  @Input({ required: true }) options: object = {};
-  @Input() readonly: boolean = false;
-  @Input() height: string = '300px';
+  options = input.required<IEditorOptions>();
+  readonly = input<boolean>(false);
+  height = input<string>('300px');
+
+  language = signal<string>('');
+  editorOptions = computed<IEditorOptions>(() => ({
+    ...this.options(),
+    language: this.language(),
+  }));
 
   form!: FormGroup<{
     code: FormControl<string>;
@@ -74,7 +81,7 @@ export class EditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.formValuesChanges();
+    this.formValueChanges();
     this.languageChanges();
   }
 
@@ -89,12 +96,10 @@ export class EditorComponent implements OnInit {
     });
   }
 
-  private formValuesChanges(): void {
+  private formValueChanges(): void {
     this.form.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(({ code, language }) => {
-        console.log('Value changes: ', { code, language });
-
         this.onChange({
           code: code ? this.formatRawCode(code) : '',
           language,
@@ -106,10 +111,7 @@ export class EditorComponent implements OnInit {
     this.languageControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
-        this.options = {
-          ...this.options,
-          language: value,
-        };
+        this.language.set(value);
       });
   }
 

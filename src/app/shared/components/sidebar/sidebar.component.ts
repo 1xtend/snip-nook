@@ -1,50 +1,39 @@
-import { UserDeleteService } from '../../../core/services/auth/user-delete.service';
+import { UserService } from './../../../core/services/user.service';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  Input,
-  Output,
+  model,
+  output,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { LogoComponent } from '../logo/logo.component';
 import { AuthService } from '@core/services/auth/auth.service';
-import { Observable, take } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
-import { User } from 'firebase/auth';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [
-    RouterLink,
-    SidebarModule,
-    LogoComponent,
-    AsyncPipe,
-    InputSwitchModule,
-  ],
+  imports: [RouterLink, SidebarModule, LogoComponent, InputSwitchModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
-  @Input() visible: boolean = false;
-  @Output() closeSidebar = new EventEmitter<void>();
+  visible = model<boolean>(false);
+  closeSidebar = output<void>();
 
-  get user$(): Observable<User | undefined> {
-    return this.authService.user$;
-  }
+  user = this.authService.user.asReadonly();
 
   constructor(
     private authService: AuthService,
-    private userDeleteService: UserDeleteService,
+    private userService: UserService,
     private router: Router,
   ) {}
 
   signOut(): void {
-    this.userDeleteService
+    this.userService
       .signOut()
       .pipe(take(1))
       .subscribe(() => {

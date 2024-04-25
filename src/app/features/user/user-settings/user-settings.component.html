@@ -19,7 +19,7 @@
   <div class="settings__item">
     <div class="settings__info">
       <h4 class="settings__title">Email address</h4>
-      @if (user$ | async; as user) {
+      @if (user(); as user) {
         <small class="settings__sub">{{ user.email }}</small>
       }
     </div>

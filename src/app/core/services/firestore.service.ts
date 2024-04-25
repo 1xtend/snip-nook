@@ -48,10 +48,6 @@ export class FirestoreService {
     return docData(snippetDoc) as Observable<ISnippet | undefined>;
   }
 
-  addSnippet(snippet: ISnippet) {
-    // ! read about transactions
-  }
-
   // Utils
   checkUserSnippet(userUid: string, snippetUid: string) {
     return docData(doc(this.fs, 'users', userUid, 'snippets', snippetUid));

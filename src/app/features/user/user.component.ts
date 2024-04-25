@@ -2,12 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
-  Injector,
   OnInit,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth/auth.service';
 import { IUser } from '@shared/models/user.interface';
 import { EMPTY, combineLatest, distinctUntilChanged, switchMap } from 'rxjs';
@@ -32,13 +31,14 @@ export class UserComponent implements OnInit {
   isOwner = signal<boolean>(false);
   loading = signal<boolean>(false);
 
+  user$ = toObservable(this.authService.user);
+  isOwner$ = toObservable(this.isOwner);
+
   constructor(
     public route: ActivatedRoute,
-    private router: Router,
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private firestoreService: FirestoreService,
-    private injector: Injector,
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +49,7 @@ export class UserComponent implements OnInit {
   private paramsChanges(): void {
     combineLatest({
       params: this.route.paramMap,
-      user: this.authService.user$,
+      user: this.user$,
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -63,21 +63,15 @@ export class UserComponent implements OnInit {
         }),
       )
       .subscribe((user) => {
-        console.log('***PARAMS CHANGES***');
-
-        // this.userSubject.next(user);
-        // this.loadingSubject.next(false);
         this.user.set(user);
         this.loading.set(false);
       });
   }
 
   private ownerChanges(): void {
-    toObservable(this.isOwner, { injector: this.injector })
-      .pipe(takeUntilDestroyed(this.destroyRef), distinctUntilChanged())
-      .subscribe((owner) => {
-        this.tabItems = this.getTabItems(owner);
-      });
+    this.isOwner$.pipe(distinctUntilChanged()).subscribe((owner) => {
+      this.tabItems = this.getTabItems(owner);
+    });
   }
 
   private getTabItems(owner: boolean): MenuItem[] {

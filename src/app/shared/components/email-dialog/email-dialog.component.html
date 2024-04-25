@@ -37,12 +37,12 @@
     }
   </div>
 
-  @if (authErrors) {
+  @if (authErrors(); as error) {
     <small class="form__auth-error">
-      @if (authErrors.wrongPassword) {
+      @if (error.wrongPassword) {
         Wrong password.
       }
-      @if (authErrors.emailInUse) {
+      @if (error.emailInUse) {
         Email is already taken.
       }
     </small>

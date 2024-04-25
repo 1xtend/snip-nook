@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { TruncateTextPipe } from '@shared/pipes/truncate-text.pipe';
@@ -12,6 +12,6 @@ import { TruncateTextPipe } from '@shared/pipes/truncate-text.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnippetCardComponent {
-  @Input({ required: true }) snippet!: ISnippetPreview;
-  @Input() readonly: boolean = false;
+  snippet = input.required<ISnippetPreview>();
+  readonly = input<boolean>(false);
 }
