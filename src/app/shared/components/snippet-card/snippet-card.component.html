@@ -3,7 +3,7 @@
     <h3 class="snippet-card__title">
       <a
         [routerLink]="['/snippet', snippet().uid, 'overview']"
-        class="snippet-card__title-link"
+        class="snippet-card__title-link p-reset"
       >
         {{ snippet().name }}
       </a>
@@ -11,14 +11,14 @@
     <small class="snippet-card__author">
       <a
         [routerLink]="['/user', snippet().author.uid, 'overview']"
-        class="snippet-card__author-link"
+        class="snippet-card__author-link p-reset"
       >
         &commat;{{ snippet().author.name }}
       </a>
     </small>
   </header>
 
-  <p class="snippet-card__description">
+  <p class="snippet-card__description p-reset">
     {{ snippet().description | truncateText: 120 }}
   </p>
 </article>
