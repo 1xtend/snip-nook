@@ -4,8 +4,11 @@ import {
   DestroyRef,
   OnInit,
   computed,
+  effect,
   forwardRef,
+  inject,
   input,
+  model,
   output,
   signal,
 } from '@angular/core';
@@ -14,13 +17,14 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormsModule,
   NG_VALUE_ACCESSOR,
   ReactiveFormsModule,
 } from '@angular/forms';
 import { ICodeItem } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { languages } from '@shared/helpers/supported-languages';
-import { DropdownModule } from 'primeng/dropdown';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { SharedService } from '@core/services/shared.service';
 import { IEditorOptions } from '@shared/models/editor.interface';
@@ -28,12 +32,7 @@ import { IEditorOptions } from '@shared/models/editor.interface';
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [
-    MonacoEditorModule,
-    ReactiveFormsModule,
-    DropdownModule,
-    ButtonModule,
-  ],
+  imports: [MonacoEditorModule, DropdownModule, ButtonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -45,78 +44,41 @@ import { IEditorOptions } from '@shared/models/editor.interface';
   styleUrl: './editor.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent {
+  private sharedService = inject(SharedService);
+
   deleteEditor = output<void>();
 
   options = input.required<IEditorOptions>();
   readonly = input<boolean>(false);
   height = input<string>('300px');
 
-  language = signal<string>('');
   editorOptions = computed<IEditorOptions>(() => ({
     ...this.options(),
-    language: this.language(),
+    language: this.language() ?? '',
   }));
 
-  form!: FormGroup<{
-    code: FormControl<string>;
-    language: FormControl<string>;
-  }>;
+  language = model<string>();
+  code = model<string>();
+
+  disabled = signal<boolean>(false);
 
   languagesList = languages;
 
   onChange: any = () => {};
   onTouched: any = () => {};
-  disabled: boolean = false;
 
-  get languageControl(): FormControl {
-    return this.form.controls['language'];
-  }
-
-  constructor(
-    private fb: FormBuilder,
-    private sharedService: SharedService,
-    private destroyRef: DestroyRef,
-  ) {}
-
-  ngOnInit(): void {
-    this.initForm();
-    this.formValueChanges();
-    this.languageChanges();
-  }
-
-  private initForm(): void {
-    this.form = this.fb.group({
-      code: this.fb.control('', {
-        nonNullable: true,
-      }),
-      language: this.fb.control('', {
-        nonNullable: true,
-      }),
+  constructor() {
+    effect(() => {
+      this.onChange({
+        language: this.language(),
+        code: this.formatRawCode(this.code()),
+      });
     });
   }
 
-  private formValueChanges(): void {
-    this.form.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ code, language }) => {
-        this.onChange({
-          code: code ? this.formatRawCode(code) : '',
-          language,
-        });
-      });
-  }
-
-  private languageChanges(): void {
-    this.languageControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((value) => {
-        this.language.set(value);
-      });
-  }
-
-  private formatRawCode(code: string): string {
-    return this.sharedService.formatRawCode(code);
+  private formatRawCode(code: string | undefined): string {
+    return code ? this.sharedService.formatRawCode(code) : '';
   }
 
   onDelete(): void {
@@ -124,7 +86,8 @@ export class EditorComponent implements OnInit {
   }
 
   writeValue(value: ICodeItem): void {
-    this.form.setValue(value);
+    this.language.set(value.language);
+    this.code.set(value.code);
   }
 
   registerOnChange(fn: any): void {
@@ -136,10 +99,6 @@ export class EditorComponent implements OnInit {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    if (isDisabled) {
-      this.form.disable();
-    } else {
-      this.form.enable();
-    }
+    this.disabled.set(isDisabled);
   }
 }

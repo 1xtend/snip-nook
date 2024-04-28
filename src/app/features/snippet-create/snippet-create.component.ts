@@ -80,15 +80,9 @@ export class SnippetCreateComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
 
-    // this.form.valueChanges.subscribe((value) => {
-    //   console.log(value);
-
-    //   console.log('valid form', this.form.valid);
-
-    //   if (this.form.valid) {
-    //     this.cdr.markForCheck();
-    //   }
-    // });
+    this.form.valueChanges.subscribe((value) => {
+      console.log('Form value changes', value);
+    });
   }
 
   private initForm(): void {

@@ -1,12 +1,13 @@
-<form [formGroup]="form" class="editor">
+<div class="editor">
   <div class="editor__actions">
     <p-dropdown
-      formControlName="language"
       [options]="languagesList"
       [filter]="true"
       [style]="{
         width: '250px'
       }"
+      [(ngModel)]="language"
+      [disabled]="disabled()"
       placeholder="Language"
       class="editor__dropdown"
     >
@@ -16,16 +17,17 @@
       icon="pi pi-trash"
       severity="danger"
       [outlined]="true"
-      [disabled]="form.disabled"
       (onClick)="onDelete()"
+      [disabled]="disabled()"
     ></p-button>
   </div>
   <ngx-monaco-editor
-    [options]="editorOptions()"
-    formControlName="code"
     [style]="{
-      height: height
+      height: height()
     }"
+    [options]="editorOptions"
+    [(ngModel)]="code"
+    [disabled]="disabled()"
     class="editor__code"
   ></ngx-monaco-editor>
-</form>
+</div>

@@ -5,13 +5,15 @@
   padding: $spacing-l;
   border-radius: var(--border-radius);
 
-  &__header {
+  &__header:not(:last-child) {
+    margin-bottom: $spacing-m;
   }
 
   &__title {
     font-size: 1.5rem;
-    line-height: 1.2;
+    line-height: 1;
     margin: 0;
+    padding: 0;
 
     &:not(:last-child) {
       margin-bottom: $spacing-xs;
@@ -43,12 +45,12 @@
     }
   }
 
-  &__author {
-  }
-
   &__author-link {
-  }
+    color: var(--blue-400);
+    transition: color 0.2s;
 
-  &__description {
+    &:hover {
+      color: var(--blue-700);
+    }
   }
 }

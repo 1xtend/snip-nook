@@ -17,35 +17,27 @@ export function codeEditorValidator(): ValidatorFn {
         return { emptyArray: true };
       }
 
-      array.getRawValue().forEach(({ language, code }: ICodeItem) => {
-        console.log('ITERATE');
+      // array.value.forEach(({ language, code }: ICodeItem) => {
+      //   console.log('ITERATE');
 
-        if (!language || !code) {
-          valid = false;
-        }
-      });
-
-      console.log('Valid: ', valid);
-
-      return valid ? null : { emptyFields: true };
-
-      // let valid: boolean = true;
-
-      // if (!array.controls.length) {
-      //   return null;
-      // }
-
-      // array.controls.forEach((control) => {
-      //   const value = control.value as ICodeItem;
-
-      //   if (!value.code || !value.language) {
+      //   if (!language || !code) {
       //     valid = false;
       //   }
       // });
 
-      // console.log('VALIDATE: ', valid);
+      for (let i = 0; i < array.length; i++) {
+        const { language, code } = array.value[i];
 
-      // return valid ? null : { emptyFields: true };
+        if (!language || !code) {
+          valid = false;
+          console.log('false branch');
+          break;
+        }
+      }
+
+      console.log('Valid: ', valid);
+
+      return valid ? null : { emptyFields: true };
     } else {
       throw new Error('Variable "array" must be an instance of FormArray');
     }
