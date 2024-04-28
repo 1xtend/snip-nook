@@ -1,8 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  DestroyRef,
-  OnInit,
   computed,
   effect,
   forwardRef,
@@ -12,19 +10,11 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ICodeItem } from '@shared/models/snippet.interface';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { languages } from '@shared/helpers/supported-languages';
-import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { SharedService } from '@core/services/shared.service';
 import { IEditorOptions } from '@shared/models/editor.interface';
@@ -53,10 +43,15 @@ export class EditorComponent {
   readonly = input<boolean>(false);
   height = input<string>('300px');
 
-  editorOptions = computed<IEditorOptions>(() => ({
-    ...this.options(),
-    language: this.language() ?? '',
-  }));
+  editorOptions = computed<IEditorOptions>(() => {
+    const language = this.language();
+    console.log('options changed', language);
+
+    return {
+      ...this.options(),
+      language: language ?? '',
+    };
+  });
 
   language = model<string>();
   code = model<string>();

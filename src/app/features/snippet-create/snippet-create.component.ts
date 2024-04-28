@@ -1,19 +1,12 @@
 import { MessageService } from 'primeng/api';
 import { SnippetService } from './../../core/services/snippet.service';
-import { FirestoreService } from '@core/services/firestore.service';
 import { AsyncPipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -22,17 +15,16 @@ import {
   ISnippet,
   ISnippetCreateForm,
 } from '@shared/models/snippet.interface';
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { EditorComponent } from '@shared/components/editor/editor.component';
-import { take } from 'rxjs';
 import { Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import { IEditorOptions } from '@shared/models/editor.interface';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-snippet-create',
@@ -42,7 +34,6 @@ import { IEditorOptions } from '@shared/models/editor.interface';
     ReactiveFormsModule,
     InputTextModule,
     InputTextareaModule,
-    MonacoEditorModule,
     CheckboxModule,
     ButtonModule,
     EditorComponent,
@@ -57,7 +48,7 @@ export class SnippetCreateComponent implements OnInit {
 
   code: string = '';
   editorOptions: IEditorOptions = {
-    language: 'html',
+    language: 'plaintext',
     minimap: {
       enabled: false,
     },
@@ -74,15 +65,10 @@ export class SnippetCreateComponent implements OnInit {
     private snippetService: SnippetService,
     private router: Router,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-
-    this.form.valueChanges.subscribe((value) => {
-      console.log('Form value changes', value);
-    });
   }
 
   private initForm(): void {
@@ -125,34 +111,32 @@ export class SnippetCreateComponent implements OnInit {
       uid: '',
     };
 
-    console.log(snippet);
+    this.snippetService
+      .addSnippet(snippet)
+      .pipe(take(1))
+      .subscribe({
+        next: (snippet) => {
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Snippet was created successfully',
+            summary: 'Success',
+          });
 
-    // this.snippetService
-    //   .addSnippet(snippet)
-    //   .pipe(take(1))
-    //   .subscribe({
-    //     next: (snippet) => {
-    //       this.messageService.add({
-    //         severity: 'success',
-    //         detail: 'Snippet was created successfully',
-    //         summary: 'Success',
-    //       });
+          this.router.navigate(['snippet', snippet.uid, 'overview']);
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            detail: 'Unexpected error occurred. Try again later',
+            summary: 'Error',
+          });
 
-    //       this.router.navigate(['snippet', snippet.uid, 'overview']);
-    //     },
-    //     error: (err) => {
-    //       this.messageService.add({
-    //         severity: 'error',
-    //         detail: 'Unexpected error occurred. Try again later',
-    //         summary: 'Error',
-    //       });
-
-    //       this.form.enable();
-    //     },
-    //     complete: () => {
-    //       this.form.enable();
-    //     },
-    //   });
+          this.form.enable();
+        },
+        complete: () => {
+          this.form.enable();
+        },
+      });
   }
 
   addEditor(): void {

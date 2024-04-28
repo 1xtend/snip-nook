@@ -3,6 +3,6 @@ export interface IEditorOptions {
   minimap: {
     enabled: boolean;
   };
-  contextmenu: boolean;
+  contextmenu?: boolean;
   scrollBeyondLastLine: boolean;
 }
