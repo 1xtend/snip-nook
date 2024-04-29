@@ -43,11 +43,6 @@ export class FirestoreService {
     return collectionData(snippets) as Observable<ISnippetPreview[]>;
   }
 
-  getSnippet(uid: string): Observable<ISnippet | undefined> {
-    const snippetDoc = doc(this.fs, 'snippets', uid);
-    return docData(snippetDoc) as Observable<ISnippet | undefined>;
-  }
-
   // Utils
   checkUserSnippet(userUid: string, snippetUid: string) {
     return docData(doc(this.fs, 'users', userUid, 'snippets', snippetUid));

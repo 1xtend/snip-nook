@@ -12,8 +12,8 @@
     }
   }
 
-  &__add-btn:not(:last-child) {
-    margin-bottom: $spacing-l;
+  &__actions:not(:last-child) {
+    padding-bottom: $spacing-l;
   }
 
   &__editor {
@@ -25,11 +25,11 @@
   }
 }
 
-.form__add-btn {
-  ::ng-deep .p-button-icon-only {
-    width: auto;
-  }
-}
+// .form__add-btn {
+//   ::ng-deep .p-button-icon-only {
+//     width: auto;
+//   }
+// }
 
 // .create {
 //   padding: $spacing-l 0;

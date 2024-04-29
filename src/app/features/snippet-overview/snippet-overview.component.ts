@@ -1,7 +1,7 @@
+import { FirestoreService } from '@core/services/firestore.service';
 import { SharedService } from './../../core/services/shared.service';
-import { EMPTY, combineLatest, map, switchMap } from 'rxjs';
+import { EMPTY, combineLatest, map, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../../core/services/auth/auth.service';
-import { FirestoreService } from './../../core/services/firestore.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,8 +15,10 @@ import { ICodeItem, ISnippet } from '@shared/models/snippet.interface';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
+import { SnippetService } from '@core/services/snippet.service';
 
 @Component({
   selector: 'app-snippet-overview',
@@ -27,6 +29,7 @@ import { FormsModule } from '@angular/forms';
     TabMenuModule,
     MonacoEditorModule,
     FormsModule,
+    ButtonModule,
   ],
   templateUrl: './snippet-overview.component.html',
   styleUrl: './snippet-overview.component.scss',
@@ -55,10 +58,11 @@ export class SnippetOverviewComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private firestoreService: FirestoreService,
+    private snippetService: SnippetService,
     private authService: AuthService,
     private destroyRef: DestroyRef,
     private sharedService: SharedService,
+    private firestoreService: FirestoreService,
   ) {}
 
   ngOnInit(): void {
@@ -73,32 +77,32 @@ export class SnippetOverviewComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(({ user, params }) => {
-          this.loading.set(true);
-
           const snippetId = params.get('id');
           const userId = user?.uid;
 
-          return snippetId && userId
-            ? this.firestoreService.checkUserSnippet(userId, snippetId).pipe(
-                map((owner) => {
-                  this.isOwner.set(!!owner);
+          this.loading.set(true);
 
-                  return { user, params };
+          if (!snippetId) {
+            return throwError(() => new Error('There is no snippet id'));
+          }
+
+          return userId
+            ? this.firestoreService.checkUserSnippet(userId, snippetId).pipe(
+                take(1),
+                switchMap((snippet) => {
+                  this.isOwner.set(!!snippet);
+
+                  return this.snippetService
+                    .getSnippet(snippetId)
+                    .pipe(take(1));
                 }),
               )
-            : EMPTY;
-        }),
-        switchMap(({ user, params }) => {
-          const snippetId = params.get('id');
-
-          return snippetId
-            ? this.firestoreService.getSnippet(snippetId)
-            : EMPTY;
+            : this.snippetService.getSnippet(snippetId).pipe(take(1));
         }),
       )
       .subscribe((snippet) => {
-        this.loading.set(false);
         this.snippet.set(snippet);
+        this.loading.set(false);
 
         if (snippet) {
           this.tabItems = this.getTabItems(snippet.code);

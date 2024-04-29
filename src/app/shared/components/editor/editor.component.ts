@@ -76,6 +76,10 @@ export class EditorComponent {
     return code ? this.sharedService.formatRawCode(code) : '';
   }
 
+  setCode(e: Event) {
+    console.log(e);
+  }
+
   onDelete(): void {
     this.deleteEditor.emit();
   }

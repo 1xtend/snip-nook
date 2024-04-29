@@ -1,4 +1,3 @@
-import { LogInService } from '../../core/services/auth/log-in.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,6 +19,7 @@ import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { take } from 'rxjs';
+import { AuthService } from '@core/services/auth/auth.service';
 
 @Component({
   selector: 'app-log-in',
@@ -52,7 +52,7 @@ export class LogInComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private logInService: LogInService,
+    private authService: AuthService,
     private router: Router,
   ) {}
 
@@ -83,7 +83,7 @@ export class LogInComponent implements OnInit {
     this.loading = true;
     this.form.disable();
 
-    this.logInService
+    this.authService
       .logIn(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({

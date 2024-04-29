@@ -1,5 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import { Firestore, collection, doc } from '@angular/fire/firestore';
+import { Firestore, collection, doc, docData } from '@angular/fire/firestore';
 import { Observable, switchMap, take, throwError, map, from } from 'rxjs';
 import { User } from 'firebase/auth';
 import { AuthService } from './auth/auth.service';
@@ -17,6 +17,11 @@ export class SnippetService {
     private fs: Firestore,
     private authService: AuthService,
   ) {}
+
+  getSnippet(uid: string): Observable<ISnippet | undefined> {
+    const snippetDoc = doc(this.fs, 'snippets', uid);
+    return docData(snippetDoc) as Observable<ISnippet | undefined>;
+  }
 
   addSnippet(snippet: ISnippet): Observable<ISnippet> {
     return this.user$.pipe(

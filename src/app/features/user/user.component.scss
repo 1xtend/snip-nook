@@ -1,13 +1,5 @@
 @import "../../../assets/scss/variables";
 
-.profile {
-  &__tab-menu {
-    ::ng-deep .p-menuitem-link {
-      padding: $spacing-s;
-    }
-  }
-}
-
 .info {
   display: flex;
   align-items: center;

@@ -54,16 +54,17 @@
       }
     }
 
-    <p-button
-      icon="pi pi-plus"
-      size="small"
-      [style]="{
-        width: '100%'
-      }"
-      [outlined]="true"
-      (onClick)="addEditor()"
-      class="create__add-btn"
-    ></p-button>
+    <div class="create__actions">
+      <p-button
+        icon="pi pi-plus"
+        size="small"
+        [style]="{
+          width: '100%'
+        }"
+        [outlined]="true"
+        (onClick)="addEditor()"
+      ></p-button>
+    </div>
 
     @if (form.valid) {
       <p-button type="submit" label="Create snippet"></p-button>

@@ -33,15 +33,28 @@
   } @else {
     @if (snippet(); as snippet) {
       <section class="overview">
-        <div class="overview__info">
-          <h2 class="overview__name">{{ snippet.name }}</h2>
-          <a
-            [routerLink]="['/user', snippet.author.uid]"
-            class="overview__author-link"
-            >&commat;{{ snippet.author.name }}</a
-          >
-          <p class="overview__description">{{ snippet.description }}</p>
-        </div>
+        <header class="overview__header">
+          <div class="overview__info">
+            <h2 class="overview__name">{{ snippet.name }}</h2>
+            <a
+              [routerLink]="['/user', snippet.author.uid]"
+              class="overview__author-link p-reset"
+              >&commat;{{ snippet.author.name }}</a
+            >
+          </div>
+
+          @if (isOwner()) {
+            <p-button
+              [routerLink]="['/snippet', snippet.uid, 'edit']"
+              label="Edit"
+              icon="pi pi-pen-to-square"
+              class="overview__edit-btn"
+              size="small"
+            ></p-button>
+          }
+        </header>
+
+        <p class="overview__description">{{ snippet.description }}</p>
 
         <p-tabMenu
           class="overview__tab-menu"

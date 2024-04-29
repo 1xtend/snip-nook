@@ -1,10 +1,19 @@
 @import "../../../assets/scss/variables";
 
 .overview {
-  &__info {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-l;
+    flex-wrap: wrap;
+
     &:not(:last-child) {
-      margin-bottom: $spacing-x;
+      margin-bottom: $spacing-l;
     }
+  }
+
+  &__info {
   }
 
   &__name {
@@ -16,32 +25,73 @@
   }
 
   &__author-link {
-    display: inline-block;
-    // color: $color-blue-gray;
-
-    &:not(:last-child) {
-      margin-bottom: $spacing-s;
-    }
+    color: var(--blue-400);
+    transition: color 0.2s;
 
     &:hover {
-      text-decoration: none;
+      color: var(--blue-700);
     }
   }
 
   &__description {
-    // color: $color-light-gray;
     margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-xxl;
+    }
   }
 
   &__tab-menu {
     display: block;
-
-    ::ng-deep .p-menuitem-link {
-      padding: $spacing-s;
-    }
 
     &:not(:last-child) {
       margin-bottom: $spacing-l;
     }
   }
 }
+
+// .overview {
+//   &__info {
+//     &:not(:last-child) {
+//       margin-bottom: $spacing-x;
+//     }
+//   }
+
+//   &__name {
+//     margin: 0;
+
+//     &:not(:last-child) {
+//       margin-bottom: $spacing-s;
+//     }
+//   }
+
+//   &__author-link {
+//     display: inline-block;
+//     // color: $color-blue-gray;
+
+//     &:not(:last-child) {
+//       margin-bottom: $spacing-s;
+//     }
+
+//     &:hover {
+//       text-decoration: none;
+//     }
+//   }
+
+//   &__description {
+//     // color: $color-light-gray;
+//     margin: 0;
+//   }
+
+//   &__tab-menu {
+//     display: block;
+
+//     ::ng-deep .p-menuitem-link {
+//       padding: $spacing-s;
+//     }
+
+//     &:not(:last-child) {
+//       margin-bottom: $spacing-l;
+//     }
+//   }
+// }
