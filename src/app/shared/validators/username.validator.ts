@@ -3,7 +3,7 @@ import {
   AsyncValidatorFn,
   ValidationErrors,
 } from '@angular/forms';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { Observable, map, of } from 'rxjs';
 
 export function usernameValidator(authService: AuthService): AsyncValidatorFn {

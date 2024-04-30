@@ -1,21 +1,16 @@
 import { inject } from '@angular/core';
-import { authState } from '@angular/fire/auth';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '@core/services/auth/auth.service';
-import { map, take } from 'rxjs';
+import { AuthService } from '@core/services/auth.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authState(authService.auth).pipe(
-    take(1),
-    map((user) => {
-      if (user) {
-        return true;
-      }
+  const token = authService.token;
 
-      return router.parseUrl('/login');
-    }),
-  );
+  if (token && !authService.isTokenExpired()) {
+    return true;
+  } else {
+    return router.parseUrl('/login');
+  }
 };

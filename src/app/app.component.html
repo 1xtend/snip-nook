@@ -2,33 +2,19 @@
 
 <p-toast [life]="2000"></p-toast>
 
-@if (authLoading()) {
-  <p-progressSpinner
-    ariaLabel="loading"
-    [style]="{
-      width: '60px',
-      height: '60px',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)'
-    }"
-  ></p-progressSpinner>
-} @else {
-  <div class="wrapper">
-    <app-header (openSidebar)="toggleSidebar(true)"></app-header>
+<div class="wrapper">
+  <app-header (openSidebar)="toggleSidebar(true)"></app-header>
 
-    @if (!hideSidebar) {
-      <app-sidebar
-        [visible]="sidebarVisible"
-        (closeSidebar)="toggleSidebar(false)"
-      ></app-sidebar>
-    }
+  @if (!hideSidebar) {
+    <app-sidebar
+      [visible]="sidebarVisible"
+      (closeSidebar)="toggleSidebar(false)"
+    ></app-sidebar>
+  }
 
-    <main class="main">
-      <div class="container">
-        <router-outlet></router-outlet>
-      </div>
-    </main>
-  </div>
-}
+  <main class="main">
+    <div class="container">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

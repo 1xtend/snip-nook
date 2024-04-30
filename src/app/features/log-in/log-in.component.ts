@@ -19,7 +19,7 @@ import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { take } from 'rxjs';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-log-in',

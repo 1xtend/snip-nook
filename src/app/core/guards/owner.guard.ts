@@ -1,7 +1,6 @@
 import { inject } from '@angular/core';
-import { authState } from '@angular/fire/auth';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { map, take } from 'rxjs';
 
 export const ownerGuard: CanActivateFn = (route, state) => {
@@ -10,7 +9,7 @@ export const ownerGuard: CanActivateFn = (route, state) => {
 
   const userId: string = route.parent?.params['id'];
 
-  return authState(authService.auth).pipe(
+  return authService.user$.pipe(
     take(1),
     map((user) => {
       if (user?.uid === userId) {

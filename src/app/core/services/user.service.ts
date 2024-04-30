@@ -16,7 +16,7 @@ import {
   writeBatch,
   updateDoc,
 } from '@angular/fire/firestore';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './auth.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { combineLatest, from, map, switchMap, take, throwError } from 'rxjs';
 import {
@@ -112,10 +112,6 @@ export class UserService {
         );
       }),
     );
-  }
-
-  signOut() {
-    return from(signOut(this.auth));
   }
 
   deleteUser(password: string) {

@@ -24,6 +24,8 @@
           <p-avatar icon="pi pi-user" shape="circle"></p-avatar>
         }
       </button>
+    } @else if (user() === undefined) {
+      <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
     } @else {
       <p-button
         routerLink="/login"

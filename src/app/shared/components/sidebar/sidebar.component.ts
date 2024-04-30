@@ -1,4 +1,3 @@
-import { UserService } from './../../../core/services/user.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -9,7 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { LogoComponent } from '../logo/logo.component';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -24,16 +23,15 @@ export class SidebarComponent {
   visible = model<boolean>(false);
   closeSidebar = output<void>();
 
-  user = this.authService.user.asReadonly();
+  user = this.authService.user;
 
   constructor(
     private authService: AuthService,
-    private userService: UserService,
     private router: Router,
   ) {}
 
   signOut(): void {
-    this.userService
+    this.authService
       .signOut()
       .pipe(take(1))
       .subscribe(() => {

@@ -2,7 +2,7 @@ import { Injectable, Injector } from '@angular/core';
 import { Firestore, collection, doc, docData } from '@angular/fire/firestore';
 import { Observable, switchMap, take, throwError, map, from } from 'rxjs';
 import { User } from 'firebase/auth';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from './auth.service';
 import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
 import { writeBatch } from 'firebase/firestore';
 import { toObservable } from '@angular/core/rxjs-interop';

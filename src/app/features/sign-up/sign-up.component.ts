@@ -1,4 +1,3 @@
-import { SignUpService } from '../../core/services/auth/sign-up.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -19,7 +18,7 @@ import {
 import { IAuthErrors, ISignUpForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { usernameValidator } from '@shared/validators/username.validator';
 import { take } from 'rxjs';
 
@@ -56,9 +55,8 @@ export class SignUpComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService,
     private router: Router,
-    private signUpService: SignUpService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -102,7 +100,7 @@ export class SignUpComponent implements OnInit {
     this.loading = true;
     this.authErrors.set(null);
 
-    this.signUpService
+    this.authService
       .signUp(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({

@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { IUser } from '@shared/models/user.interface';
 import { EMPTY, combineLatest, distinctUntilChanged, switchMap } from 'rxjs';
 import { TabMenuModule } from 'primeng/tabmenu';

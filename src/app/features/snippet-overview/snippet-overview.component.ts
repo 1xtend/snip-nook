@@ -1,7 +1,7 @@
 import { FirestoreService } from '@core/services/firestore.service';
 import { SharedService } from './../../core/services/shared.service';
 import { EMPTY, combineLatest, map, switchMap, take, throwError } from 'rxjs';
-import { AuthService } from '../../core/services/auth/auth.service';
+import { AuthService } from '../../core/services/auth.service';
 import {
   ChangeDetectionStrategy,
   Component,

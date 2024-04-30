@@ -10,7 +10,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 import { EmailDialogComponent } from '@shared/components/email-dialog/email-dialog.component';
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
 import { UpperCasePipe } from '@angular/common';
 import { MessageService } from 'primeng/api';
@@ -29,7 +29,7 @@ import { UserService } from '@core/services/user.service';
 export class UserSettingsComponent {
   fileUpload = viewChild<FileUpload>('fileUpload');
 
-  user = this.authService.user.asReadonly();
+  user = this.authService.user;
 
   constructor(
     private modalService: ModalService,

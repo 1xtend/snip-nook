@@ -1,11 +1,11 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, OnInit, Signal, effect } from '@angular/core';
+import { Component, OnInit, Signal, effect, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { AuthService } from '@core/services/auth/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { SidebarComponent } from '@shared/components/sidebar/sidebar.component';
 import { LogoComponent } from '@shared/components/logo/logo.component';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
@@ -26,21 +26,28 @@ import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-ca
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  sidebarVisible: boolean = false;
+  private router = inject(Router);
+  private authService = inject(AuthService);
 
-  authLoading = this.authService.loading.asReadonly();
+  sidebarVisible: boolean = false;
 
   get hideSidebar(): boolean {
     return this.hasRoute('login') || this.hasRoute('signup');
   }
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-  ) {}
-
   ngOnInit(): void {
-    this.authService.checkIfUserIsAuthenticated();
+    this.authService.checkIfTokenIsSaved();
+
+    this.checkIfTokenIsExpired();
+  }
+
+  private checkIfTokenIsExpired(): void {
+    const token = this.authService.token;
+
+    if (token && this.authService.isTokenExpired()) {
+      this.authService.signOut().subscribe();
+      console.log('User token is expired');
+    }
   }
 
   toggleSidebar(value: boolean): void {
