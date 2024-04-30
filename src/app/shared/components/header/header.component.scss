@@ -19,12 +19,6 @@
     display: flex;
     align-items: center;
   }
-
-  &__avatar {
-    background: none;
-    cursor: pointer;
-    border-radius: 50%;
-  }
 }
 
 .navbar__link ::ng-deep .p-button {

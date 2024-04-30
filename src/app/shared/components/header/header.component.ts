@@ -10,6 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { LogoComponent } from '../logo/logo.component';
+import { AvatarButtonComponent } from '../avatar-button/avatar-button.component';
 
 @Component({
   selector: 'app-header',
@@ -20,6 +21,7 @@ import { LogoComponent } from '../logo/logo.component';
     AvatarModule,
     LogoComponent,
     SkeletonModule,
+    AvatarButtonComponent,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
