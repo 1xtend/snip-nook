@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import {
@@ -35,6 +36,12 @@ import { take } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeleteDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+  private modalService = inject(ModalService);
+  private messageService = inject(MessageService);
+  private router = inject(Router);
+
   form!: FormGroup<{ password: FormControl }>;
 
   authErrors = signal<Partial<IAuthErrors> | null>(null);
@@ -43,14 +50,6 @@ export class DeleteDialogComponent implements OnInit {
   get passwordControl(): FormControl {
     return this.form.controls['password'];
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private modalService: ModalService,
-    private messageService: MessageService,
-    private router: Router,
-  ) {}
 
   ngOnInit(): void {
     this.initForm();

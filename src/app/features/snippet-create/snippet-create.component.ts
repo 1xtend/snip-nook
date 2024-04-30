@@ -1,7 +1,12 @@
 import { MessageService } from 'primeng/api';
 import { SnippetService } from './../../core/services/snippet.service';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -44,6 +49,11 @@ import { take } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnippetCreateComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private snippetService = inject(SnippetService);
+  private router = inject(Router);
+  private messageService = inject(MessageService);
+
   form!: FormGroup<ISnippetCreateForm>;
 
   code: string = '';
@@ -59,13 +69,6 @@ export class SnippetCreateComponent implements OnInit {
   get codeArrayControl(): FormArray<FormControl> {
     return this.form.controls['code'];
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private snippetService: SnippetService,
-    private router: Router,
-    private messageService: MessageService,
-  ) {}
 
   ngOnInit(): void {
     this.initForm();

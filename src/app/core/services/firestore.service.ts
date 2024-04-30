@@ -1,4 +1,4 @@
-import { Injectable, Query } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Firestore,
   collectionData,
@@ -10,15 +10,15 @@ import {
   where,
   writeBatch,
 } from '@angular/fire/firestore';
-import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
+import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { IUser } from '@shared/models/user.interface';
-import { Observable, combineLatest, from, map, switchMap, take } from 'rxjs';
+import { Observable, switchMap, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirestoreService {
-  constructor(private fs: Firestore) {}
+  private fs = inject(Firestore);
 
   // Users
   getUser(uid: string): Observable<IUser | undefined> {

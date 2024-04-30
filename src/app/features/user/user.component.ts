@@ -3,6 +3,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -25,21 +26,19 @@ import { FirestoreService } from '@core/services/firestore.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
+  public route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
+  private firestoreService = inject(FirestoreService);
+
   tabItems: MenuItem[] = [];
 
   user = signal<IUser | undefined>(undefined);
   isOwner = signal<boolean>(false);
   loading = signal<boolean>(false);
 
-  user$ = toObservable(this.authService.user);
+  user$ = this.authService.user$;
   isOwner$ = toObservable(this.isOwner);
-
-  constructor(
-    public route: ActivatedRoute,
-    private authService: AuthService,
-    private destroyRef: DestroyRef,
-    private firestoreService: FirestoreService,
-  ) {}
 
   ngOnInit(): void {
     this.paramsChanges();

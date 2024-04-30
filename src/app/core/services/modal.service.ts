@@ -1,13 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModalService {
-  ref: DynamicDialogRef | undefined = undefined;
+  private dialogService = inject(DialogService);
 
-  constructor(private dialogService: DialogService) {}
+  ref: DynamicDialogRef | undefined = undefined;
 
   showDialog(header: string, component: any): void {
     this.ref = this.dialogService.open(component, {

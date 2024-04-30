@@ -7,6 +7,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -36,6 +37,13 @@ import { SnippetService } from '@core/services/snippet.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnippetOverviewComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private snippetService = inject(SnippetService);
+  private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
+  private sharedService = inject(SharedService);
+  private firestoreService = inject(FirestoreService);
+
   tabItems: MenuItem[] = [];
   activeTab: MenuItem | undefined = undefined;
 
@@ -54,16 +62,7 @@ export class SnippetOverviewComponent implements OnInit {
   isOwner = signal<boolean>(false);
   loading = signal<boolean>(false);
 
-  user$ = toObservable(this.authService.user);
-
-  constructor(
-    private route: ActivatedRoute,
-    private snippetService: SnippetService,
-    private authService: AuthService,
-    private destroyRef: DestroyRef,
-    private sharedService: SharedService,
-    private firestoreService: FirestoreService,
-  ) {}
+  user$ = this.authService.user$;
 
   ngOnInit(): void {
     this.paramsChanges();

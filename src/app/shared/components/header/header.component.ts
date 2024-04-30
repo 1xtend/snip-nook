@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  output,
+  inject,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { ButtonModule } from 'primeng/button';
@@ -21,8 +26,8 @@ import { LogoComponent } from '../logo/logo.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
+  private authService = inject(AuthService);
+
   openSidebar = output<void>();
   user = this.authService.user;
-
-  constructor(private authService: AuthService) {}
 }

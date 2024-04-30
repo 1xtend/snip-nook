@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import {
@@ -37,6 +38,11 @@ import { UserService } from '@core/services/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailDialogComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+  private modalService = inject(ModalService);
+  private messageService = inject(MessageService);
+
   form!: FormGroup<IAuthForm>;
 
   authErrors = signal<Partial<IAuthErrors> | null>(null);
@@ -49,13 +55,6 @@ export class EmailDialogComponent implements OnInit {
   get passwordControl(): FormControl {
     return this.form.controls['password'];
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private modalService: ModalService,
-    private messageService: MessageService,
-  ) {}
 
   ngOnInit(): void {
     this.initForm();

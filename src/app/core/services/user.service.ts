@@ -1,7 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Auth,
-  signOut,
   EmailAuthProvider,
   reauthenticateWithCredential,
   updateEmail,
@@ -17,7 +16,6 @@ import {
   updateDoc,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { combineLatest, from, map, switchMap, take, throwError } from 'rxjs';
 import {
   Storage,
@@ -32,14 +30,12 @@ import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
   providedIn: 'root',
 })
 export class UserService {
-  user$ = toObservable(this.authService.user);
+  private fs = inject(Firestore);
+  private auth = inject(Auth);
+  private storage = inject(Storage);
+  private authService = inject(AuthService);
 
-  constructor(
-    private fs: Firestore,
-    private auth: Auth,
-    private storage: Storage,
-    private authService: AuthService,
-  ) {}
+  user$ = this.authService.user$;
 
   updateEmail({ email, password }: IAuthData) {
     return this.user$.pipe(

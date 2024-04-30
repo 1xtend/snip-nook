@@ -1,5 +1,10 @@
 import { LoadingService } from './../../../core/services/loading.service';
-import { ChangeDetectionStrategy, Component, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  viewChild,
+  inject,
+} from '@angular/core';
 import {
   FileUpload,
   FileUploadHandlerEvent,
@@ -27,17 +32,15 @@ import { UserService } from '@core/services/user.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserSettingsComponent {
+  private modalService = inject(ModalService);
+  private authService = inject(AuthService);
+  private userService = inject(UserService);
+  private messageService = inject(MessageService);
+  private loadingService = inject(LoadingService);
+
   fileUpload = viewChild<FileUpload>('fileUpload');
 
   user = this.authService.user;
-
-  constructor(
-    private modalService: ModalService,
-    private authService: AuthService,
-    private userService: UserService,
-    private messageService: MessageService,
-    private loadingService: LoadingService,
-  ) {}
 
   uploadAvatar(e: FileUploadHandlerEvent) {
     this.loadingService.setLoading(true);

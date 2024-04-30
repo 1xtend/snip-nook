@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  inject,
   model,
   output,
 } from '@angular/core';
@@ -20,15 +21,13 @@ import { take } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   visible = model<boolean>(false);
   closeSidebar = output<void>();
 
   user = this.authService.user;
-
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-  ) {}
 
   signOut(): void {
     this.authService

@@ -1,5 +1,5 @@
 import { ModalService } from '@core/services/modal.service';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DeleteDialogComponent } from '../delete-dialog/delete-dialog.component';
 import { ButtonModule } from 'primeng/button';
 
@@ -12,7 +12,7 @@ import { ButtonModule } from 'primeng/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialogComponent {
-  constructor(private modalService: ModalService) {}
+  private modalService = inject(ModalService);
 
   onConfirm() {
     this.modalService.closeDialog();

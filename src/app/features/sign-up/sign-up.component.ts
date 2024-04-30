@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import { PasswordModule } from 'primeng/password';
@@ -38,6 +39,10 @@ import { take } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   form!: FormGroup<ISignUpForm>;
 
   authErrors = signal<Partial<IAuthErrors> | null>(null);
@@ -52,12 +57,6 @@ export class SignUpComponent implements OnInit {
   get usernameControl(): FormControl {
     return this.form.controls['username'];
   }
-
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private authService: AuthService,
-  ) {}
 
   ngOnInit(): void {
     this.initForm();

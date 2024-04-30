@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { LoadingService } from '@core/services/loading.service';
 import { ProgressBarModule } from 'primeng/progressbar';
 
@@ -11,7 +11,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoaderComponent {
-  loading = this.loadingService.loading;
+  private loadingService = inject(LoadingService);
 
-  constructor(private loadingService: LoadingService) {}
+  loading = this.loadingService.loading;
 }

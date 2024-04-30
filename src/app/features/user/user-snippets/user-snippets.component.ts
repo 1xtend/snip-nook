@@ -4,6 +4,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
@@ -23,18 +24,16 @@ import { SkeletonModule } from 'primeng/skeleton';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserSnippetsComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
+  private firestoreService = inject(FirestoreService);
+  private authService = inject(AuthService);
+
   snippets = signal<ISnippetPreview[]>([]);
   isOwner = signal<boolean>(false);
   loading = signal<boolean>(false);
 
-  user$ = toObservable(this.authService.user);
-
-  constructor(
-    private route: ActivatedRoute,
-    private destroyRef: DestroyRef,
-    private firestoreService: FirestoreService,
-    private authService: AuthService,
-  ) {}
+  user$ = this.authService.user$;
 
   ngOnInit(): void {
     this.paramsChanges();
