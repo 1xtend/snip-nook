@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { EMPTY, combineLatest, switchMap } from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
@@ -29,9 +29,8 @@ export class UserSnippetsComponent implements OnInit {
   private firestoreService = inject(FirestoreService);
   private authService = inject(AuthService);
 
-  snippets = signal<ISnippetPreview[]>([]);
+  snippets = signal<ISnippetPreview[] | undefined>(undefined);
   isOwner = signal<boolean>(false);
-  loading = signal<boolean>(false);
 
   user$ = this.authService.user$;
 
@@ -51,7 +50,6 @@ export class UserSnippetsComponent implements OnInit {
           const owner = user?.uid === userId;
 
           this.isOwner.set(owner);
-          this.loading.set(true);
 
           return userId
             ? this.firestoreService.getUserSnippets(userId, owner)
@@ -59,9 +57,7 @@ export class UserSnippetsComponent implements OnInit {
         }),
       )
       .subscribe((snippets) => {
-        console.log('***SNIPPETS PARAMS CHANGES***');
         this.snippets.set(snippets);
-        this.loading.set(false);
       });
   }
 }

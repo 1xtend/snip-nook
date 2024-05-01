@@ -8,4 +8,15 @@
   @media (min-width: calc($breakpoint-l + 1px)) {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  &__no-user {
+    background-color: var(--surface-card);
+    padding: $spacing-l;
+    border-radius: var(--border-radius);
+
+    span {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+  }
 }

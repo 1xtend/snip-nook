@@ -1,20 +1,15 @@
 <div class="snippets">
-  @if (loading()) {
-    <p-skeleton height="82px"></p-skeleton>
-    <p-skeleton height="82px"></p-skeleton>
-    <p-skeleton height="82px"></p-skeleton>
-  } @else {
-    @if (snippets(); as snippets) {
-      @if (snippets.length > 0) {
-        @for (snippet of snippets; track snippet.uid) {
-          <app-snippet-card
-            [snippet]="snippet"
-            class="snippet"
-          ></app-snippet-card>
-        }
-      } @else {
-        There are no snippets.
-      }
+  @if (snippets(); as snippets) {
+    @for (snippet of snippets; track snippet.uid) {
+      <app-snippet-card [snippet]="snippet" class="snippet"></app-snippet-card>
+    } @empty {
+      <div class="snippets__no-user">
+        <span>There are no snippets.</span>
+      </div>
     }
+  } @else {
+    <p-skeleton height="82px"></p-skeleton>
+    <p-skeleton height="82px"></p-skeleton>
+    <p-skeleton height="82px"></p-skeleton>
   }
 </div>
