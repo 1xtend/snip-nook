@@ -32,4 +32,5 @@ export class HeaderComponent {
 
   openSidebar = output<void>();
   user = this.authService.user;
+  isAuthenticated = this.authService.isAuthenticated;
 }

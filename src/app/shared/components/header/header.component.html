@@ -12,14 +12,17 @@
   </nav>
 
   <div class="header__actions">
-    @if (user(); as user) {
-      <app-avatar
-        (click)="openSidebar.emit()"
-        [url]="user.photoURL"
-        [isButton]="true"
-      ></app-avatar>
-    } @else if (user() === undefined) {
-      <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
+    @if (isAuthenticated()) {
+      @if (user(); as user) {
+        <app-avatar
+          (click)="openSidebar.emit()"
+          [url]="user.photoURL"
+          [isButton]="true"
+        ></app-avatar>
+      }
+      @if (user() === undefined) {
+        <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
+      }
     } @else {
       <p-button
         routerLink="/login"

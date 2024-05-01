@@ -36,12 +36,12 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.authService.checkIfTokenIsSaved();
+    this.authService.userChanges();
 
-    this.checkIfTokenIsExpired();
+    this.checkTokenExpiration();
   }
 
-  private checkIfTokenIsExpired(): void {
+  private checkTokenExpiration(): void {
     const token = this.authService.token;
 
     if (token && this.authService.isTokenExpired()) {

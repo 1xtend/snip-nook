@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Auth,
@@ -12,6 +12,7 @@ import {
 } from '@angular/fire/auth';
 import { Firestore, getDoc, doc } from '@angular/fire/firestore';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import { tapOnce } from '@shared/helpers/tap-once.pipe';
 import { IAuthData, ISignUpData } from '@shared/models/auth.interface';
 import { LocalStorageEnum } from '@shared/models/local-storage.enum';
 import { IUser } from '@shared/models/user.interface';
@@ -22,6 +23,7 @@ import {
   combineLatest,
   from,
   map,
+  of,
   switchMap,
   take,
   tap,
@@ -37,7 +39,14 @@ export class AuthService {
   private jwtHelper = new JwtHelperService();
 
   user$ = user(this.auth);
-  user = toSignal(this.user$, { initialValue: undefined });
+
+  private userSignal = signal<User | null | undefined>(undefined);
+  user = computed(this.userSignal);
+
+  private isAuthenticatedSignal = signal<boolean>(
+    !!this.token && !this.isTokenExpired(),
+  );
+  isAuthenticated = computed(this.isAuthenticatedSignal);
 
   get token(): string | null {
     return localStorage.getItem(LocalStorageEnum.AuthToken);
@@ -51,13 +60,19 @@ export class AuthService {
     return this.jwtHelper.isTokenExpired(this.token);
   }
 
-  checkIfTokenIsSaved(): void {
-    idToken(this.auth)
-      .pipe(take(1))
-      .subscribe((userToken) => {
-        if (!this.token && userToken) {
-          this.setToken(userToken);
-        }
+  userChanges(): void {
+    this.user$
+      .pipe(
+        tapOnce(async (user) => {
+          if (user && !this.token) {
+            const token = await user.getIdToken();
+            this.setToken(token);
+          }
+        }, 0),
+      )
+      .subscribe((user) => {
+        this.userSignal.set(user);
+        this.isAuthenticatedSignal.set(!!user);
       });
   }
 
