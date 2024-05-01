@@ -13,10 +13,11 @@
 
   <div class="header__actions">
     @if (user(); as user) {
-      <app-avatar-button
+      <app-avatar
         (click)="openSidebar.emit()"
         [url]="user.photoURL"
-      ></app-avatar-button>
+        [isButton]="true"
+      ></app-avatar>
     } @else if (user() === undefined) {
       <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
     } @else {

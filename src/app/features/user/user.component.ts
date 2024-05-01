@@ -3,24 +3,32 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  effect,
   inject,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { IUser } from '@shared/models/user.interface';
-import { EMPTY, combineLatest, distinctUntilChanged, switchMap } from 'rxjs';
+import { EMPTY, combineLatest, switchMap } from 'rxjs';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FirestoreService } from '@core/services/firestore.service';
+import { AvatarComponent } from '@shared/components/avatar/avatar.component';
 
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [TabMenuModule, RouterOutlet, AvatarModule, SkeletonModule],
+  imports: [
+    TabMenuModule,
+    RouterOutlet,
+    AvatarModule,
+    SkeletonModule,
+    AvatarComponent,
+  ],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,16 +41,19 @@ export class UserComponent implements OnInit {
 
   tabItems: MenuItem[] = [];
 
-  user = signal<IUser | undefined>(undefined);
+  user = signal<IUser | null | undefined>(null);
   isOwner = signal<boolean>(false);
-  loading = signal<boolean>(false);
 
   user$ = this.authService.user$;
-  isOwner$ = toObservable(this.isOwner);
+
+  constructor() {
+    effect(() => {
+      this.tabItems = this.getTabItems(this.isOwner());
+    });
+  }
 
   ngOnInit(): void {
     this.paramsChanges();
-    this.ownerChanges();
   }
 
   private paramsChanges(): void {
@@ -55,7 +66,6 @@ export class UserComponent implements OnInit {
         switchMap(({ params, user }) => {
           const userId = params.get('id');
 
-          this.loading.set(true);
           this.isOwner.set(user?.uid === userId);
 
           return userId ? this.firestoreService.getUser(userId) : EMPTY;
@@ -63,14 +73,8 @@ export class UserComponent implements OnInit {
       )
       .subscribe((user) => {
         this.user.set(user);
-        this.loading.set(false);
+        console.log(user);
       });
-  }
-
-  private ownerChanges(): void {
-    this.isOwner$.pipe(distinctUntilChanged()).subscribe((owner) => {
-      this.tabItems = this.getTabItems(owner);
-    });
   }
 
   private getTabItems(owner: boolean): MenuItem[] {

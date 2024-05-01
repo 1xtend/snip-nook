@@ -7,14 +7,16 @@ import {
 import { AvatarModule } from 'primeng/avatar';
 
 @Component({
-  selector: 'app-avatar-button',
+  selector: 'app-avatar',
   standalone: true,
   imports: [AvatarModule],
-  templateUrl: './avatar-button.component.html',
-  styleUrl: './avatar-button.component.scss',
+  templateUrl: './avatar.component.html',
+  styleUrl: './avatar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AvatarButtonComponent {
+export class AvatarComponent {
   click = output<void>();
   url = input<string | null>(null);
+  isButton = input<boolean>(false);
+  size = input<'normal' | 'large' | 'xlarge' | undefined>('normal');
 }

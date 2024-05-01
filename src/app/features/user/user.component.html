@@ -1,41 +1,43 @@
-@if (loading()) {
-  <div class="profile__info info">
-    <p-skeleton shape="circle" size="4rem"></p-skeleton>
-
-    <p-skeleton
-      width="8rem"
-      height="1.5rem"
-      class="info__username"
-    ></p-skeleton>
-  </div>
-} @else {
+<section class="profile">
   @if (user(); as user) {
-    <section class="profile">
-      <div class="profile__info info">
-        @if (user.photoURL) {
-          <p-avatar
-            [image]="user.photoURL"
-            size="xlarge"
-            shape="circle"
-          ></p-avatar>
-        } @else {
-          <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
-        }
+    <div class="profile__info info">
+      @if (user.photoURL) {
+        <p-avatar
+          [image]="user.photoURL"
+          size="xlarge"
+          shape="circle"
+        ></p-avatar>
+      } @else {
+        <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
+      }
 
-        <h2 class="info__username">{{ user.username }}</h2>
-      </div>
+      <h2 class="info__username">{{ user.username }}</h2>
+    </div>
 
-      <p-tabMenu
-        [model]="tabItems"
-        [scrollable]="true"
-        class="profile__tab-menu"
-      ></p-tabMenu>
+    <p-tabMenu
+      [model]="tabItems"
+      [scrollable]="true"
+      class="profile__tab-menu"
+    ></p-tabMenu>
 
-      <div class="profile__content content">
-        <router-outlet></router-outlet>
-      </div>
-    </section>
+    <div class="profile__content content">
+      <router-outlet></router-outlet>
+    </div>
+  } @else if (user() === null) {
+    <div class="profile__info info">
+      <p-skeleton shape="circle" width="4rem" height="4rem"></p-skeleton>
+
+      <p-skeleton
+        width="8rem"
+        height="32px"
+        class="info__username"
+      ></p-skeleton>
+    </div>
+
+    <p-skeleton height="33px"></p-skeleton>
   } @else {
-    <div>User doesn't exist</div>
+    <div class="info__no-user">
+      <span>User does not exist</span>
+    </div>
   }
-}
+</section>

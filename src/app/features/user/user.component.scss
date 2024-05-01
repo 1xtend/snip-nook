@@ -8,4 +8,19 @@
   &:not(:last-child) {
     margin-bottom: $spacing-l;
   }
+
+  &__username {
+    margin: 0;
+  }
+
+  &__no-user {
+    background-color: var(--surface-card);
+    padding: $spacing-l;
+    border-radius: var(--border-radius);
+
+    span {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+  }
 }
