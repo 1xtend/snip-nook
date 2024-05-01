@@ -13,14 +13,13 @@ export const snippetOwnerGuard: CanActivateFn = (route, state) => {
 
   return authService.user$.pipe(
     take(1),
-    map((user) => {
+    switchMap((user) => {
       const userId = user?.uid;
 
       return userId
         ? firestoreService.checkUserSnippet(userId, snippetId).pipe(
             take(1),
             map((snippet) => {
-              console.log(snippet);
               return !!snippet;
             }),
           )
