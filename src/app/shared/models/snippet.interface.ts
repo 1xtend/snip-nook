@@ -8,11 +8,11 @@ export interface ISnippetPreview {
     name: string;
     uid: string;
   };
+  public: boolean;
 }
 
 export interface ISnippet extends ISnippetPreview {
   code: ICodeItem[];
-  public: boolean;
 }
 
 export interface ISnippetCreateForm {

@@ -1,6 +1,6 @@
 import { FirestoreService } from '@core/services/firestore.service';
 import { SharedService } from './../../core/services/shared.service';
-import { EMPTY, combineLatest, map, switchMap, take, throwError } from 'rxjs';
+import { combineLatest, switchMap, take, throwError } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import {
   ChangeDetectionStrategy,
@@ -11,7 +11,7 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ICodeItem, ISnippet } from '@shared/models/snippet.interface';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';

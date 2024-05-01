@@ -1,6 +1,5 @@
 import { MessageService } from 'primeng/api';
 import { SnippetService } from './../../core/services/snippet.service';
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -35,7 +34,6 @@ import { take } from 'rxjs';
   selector: 'app-snippet-create',
   standalone: true,
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     InputTextModule,
     InputTextareaModule,
@@ -115,7 +113,7 @@ export class SnippetCreateComponent implements OnInit {
     };
 
     this.snippetService
-      .addSnippet(snippet)
+      .createSnippet(snippet)
       .pipe(take(1))
       .subscribe({
         next: (snippet) => {
@@ -128,6 +126,8 @@ export class SnippetCreateComponent implements OnInit {
           this.router.navigate(['snippet', snippet.uid, 'overview']);
         },
         error: (err) => {
+          console.log(err);
+
           this.messageService.add({
             severity: 'error',
             detail: 'Unexpected error occurred. Try again later',

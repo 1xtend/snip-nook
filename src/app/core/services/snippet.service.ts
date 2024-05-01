@@ -19,7 +19,7 @@ export class SnippetService {
     return docData(snippetDoc) as Observable<ISnippet | undefined>;
   }
 
-  addSnippet(snippet: ISnippet): Observable<ISnippet> {
+  createSnippet(snippet: ISnippet): Observable<ISnippet> {
     return this.user$.pipe(
       take(1),
       switchMap((user) => {
@@ -45,19 +45,14 @@ export class SnippetService {
           description: snippet.description,
           name: snippet.name,
           uid: userSnippetDoc.id,
+          public: snippet.public,
         };
 
         const snippetDoc = doc(this.fs, 'snippets', userSnippetDoc.id);
         const snippetData: ISnippet = {
-          author: {
-            name: user.displayName,
-            uid: user.uid,
-          },
-          description: snippet.description,
-          name: snippet.name,
+          ...userSnippetData,
           uid: userSnippetDoc.id,
           code: snippet.code,
-          public: snippet.public,
         };
 
         batch.set(userSnippetDoc, userSnippetData).set(snippetDoc, snippetData);
