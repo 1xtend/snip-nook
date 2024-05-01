@@ -13,9 +13,6 @@
     }
   }
 
-  &__info {
-  }
-
   &__name {
     margin: 0;
 
@@ -48,50 +45,15 @@
       margin-bottom: $spacing-l;
     }
   }
+
+  &__no-snippet {
+    background-color: var(--surface-card);
+    padding: $spacing-l;
+    border-radius: var(--border-radius);
+
+    span {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+  }
 }
-
-// .overview {
-//   &__info {
-//     &:not(:last-child) {
-//       margin-bottom: $spacing-x;
-//     }
-//   }
-
-//   &__name {
-//     margin: 0;
-
-//     &:not(:last-child) {
-//       margin-bottom: $spacing-s;
-//     }
-//   }
-
-//   &__author-link {
-//     display: inline-block;
-//     // color: $color-blue-gray;
-
-//     &:not(:last-child) {
-//       margin-bottom: $spacing-s;
-//     }
-
-//     &:hover {
-//       text-decoration: none;
-//     }
-//   }
-
-//   &__description {
-//     // color: $color-light-gray;
-//     margin: 0;
-//   }
-
-//   &__tab-menu {
-//     display: block;
-
-//     ::ng-deep .p-menuitem-link {
-//       padding: $spacing-s;
-//     }
-
-//     &:not(:last-child) {
-//       margin-bottom: $spacing-l;
-//     }
-//   }
-// }

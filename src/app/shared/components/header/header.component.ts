@@ -31,6 +31,7 @@ export class HeaderComponent {
   private authService = inject(AuthService);
 
   openSidebar = output<void>();
+
   user = this.authService.user;
   isAuthenticated = this.authService.isAuthenticated;
 }

@@ -73,7 +73,6 @@ export class UserComponent implements OnInit {
       )
       .subscribe((user) => {
         this.user.set(user);
-        console.log(user);
       });
   }
 

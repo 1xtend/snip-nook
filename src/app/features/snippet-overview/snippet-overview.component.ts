@@ -58,9 +58,8 @@ export class SnippetOverviewComponent implements OnInit {
     scrollBeyondLastLine: false,
   };
 
-  snippet = signal<ISnippet | undefined>(undefined);
+  snippet = signal<ISnippet | undefined | null>(null);
   isOwner = signal<boolean>(false);
-  loading = signal<boolean>(false);
 
   user$ = this.authService.user$;
 
@@ -79,15 +78,12 @@ export class SnippetOverviewComponent implements OnInit {
           const snippetId = params.get('id');
           const userId = user?.uid;
 
-          this.loading.set(true);
-
           if (!snippetId) {
             return throwError(() => new Error('There is no snippet id'));
           }
 
           return userId
             ? this.firestoreService.checkUserSnippet(userId, snippetId).pipe(
-                take(1),
                 switchMap((snippet) => {
                   this.isOwner.set(!!snippet);
 
@@ -101,7 +97,6 @@ export class SnippetOverviewComponent implements OnInit {
       )
       .subscribe((snippet) => {
         this.snippet.set(snippet);
-        this.loading.set(false);
 
         if (snippet) {
           this.tabItems = this.getTabItems(snippet.code);
