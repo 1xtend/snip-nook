@@ -41,7 +41,8 @@ export class UserComponent implements OnInit {
 
   tabItems: MenuItem[] = [];
 
-  user = signal<IUser | null | undefined>(null);
+  user = signal<IUser | undefined>(undefined);
+  loading = signal<boolean>(false);
   isOwner = signal<boolean>(false);
 
   user$ = this.authService.user$;
@@ -57,6 +58,8 @@ export class UserComponent implements OnInit {
   }
 
   private paramsChanges(): void {
+    this.loading.set(true);
+
     combineLatest({
       params: this.route.paramMap,
       user: this.user$,
@@ -66,6 +69,7 @@ export class UserComponent implements OnInit {
         switchMap(({ params, user }) => {
           const userId = params.get('id');
 
+          this.loading.set(true);
           this.isOwner.set(user?.uid === userId);
 
           return userId ? this.firestoreService.getUser(userId) : EMPTY;
@@ -73,6 +77,7 @@ export class UserComponent implements OnInit {
       )
       .subscribe((user) => {
         this.user.set(user);
+        this.loading.set(false);
       });
   }
 

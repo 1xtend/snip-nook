@@ -29,7 +29,8 @@ export class UserSnippetsComponent implements OnInit {
   private firestoreService = inject(FirestoreService);
   private authService = inject(AuthService);
 
-  snippets = signal<ISnippetPreview[] | undefined>(undefined);
+  snippets = signal<ISnippetPreview[]>([]);
+  loading = signal<boolean>(false);
   isOwner = signal<boolean>(false);
 
   user$ = this.authService.user$;
@@ -39,6 +40,8 @@ export class UserSnippetsComponent implements OnInit {
   }
 
   private paramsChanges(): void {
+    this.loading.set(true);
+
     combineLatest({
       params: this.route.parent?.paramMap ?? EMPTY,
       user: this.user$,
@@ -49,6 +52,7 @@ export class UserSnippetsComponent implements OnInit {
           const userId = params.get('id');
           const owner = user?.uid === userId;
 
+          this.loading.set(true);
           this.isOwner.set(owner);
 
           return userId
@@ -58,6 +62,7 @@ export class UserSnippetsComponent implements OnInit {
       )
       .subscribe((snippets) => {
         this.snippets.set(snippets);
+        this.loading.set(false);
       });
   }
 }

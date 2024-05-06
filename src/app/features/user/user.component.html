@@ -1,29 +1,5 @@
 <section class="profile">
-  @if (user(); as user) {
-    <div class="profile__info info">
-      @if (user.photoURL) {
-        <p-avatar
-          [image]="user.photoURL"
-          size="xlarge"
-          shape="circle"
-        ></p-avatar>
-      } @else {
-        <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
-      }
-
-      <h2 class="info__username">{{ user.username }}</h2>
-    </div>
-
-    <p-tabMenu
-      [model]="tabItems"
-      [scrollable]="true"
-      class="profile__tab-menu"
-    ></p-tabMenu>
-
-    <div class="profile__content content">
-      <router-outlet></router-outlet>
-    </div>
-  } @else if (user() === null) {
+  @if (loading()) {
     <div class="profile__info info">
       <p-skeleton shape="circle" width="4rem" height="4rem"></p-skeleton>
 
@@ -36,8 +12,34 @@
 
     <p-skeleton height="33px"></p-skeleton>
   } @else {
-    <div class="info__no-user">
-      <span>User does not exist.</span>
-    </div>
+    @if (user(); as user) {
+      <div class="profile__info info">
+        @if (user.photoURL) {
+          <p-avatar
+            [image]="user.photoURL"
+            size="xlarge"
+            shape="circle"
+          ></p-avatar>
+        } @else {
+          <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
+        }
+
+        <h2 class="info__username">{{ user.username }}</h2>
+      </div>
+
+      <p-tabMenu
+        [model]="tabItems"
+        [scrollable]="true"
+        class="profile__tab-menu"
+      ></p-tabMenu>
+
+      <div class="profile__content content">
+        <router-outlet></router-outlet>
+      </div>
+    } @else {
+      <div class="info__no-user">
+        <span>User does not exist.</span>
+      </div>
+    }
   }
 </section>
