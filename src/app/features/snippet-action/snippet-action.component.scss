@@ -1,0 +1,34 @@
+@import "../../../assets/scss/variables";
+
+.create {
+  max-width: 600px;
+  margin: 0 auto;
+
+  &__title {
+    margin: 0;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+
+  &__bottom:not(:last-child) {
+    padding-bottom: $spacing-l;
+  }
+
+  &__editor {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $spacing-l;
+  }
+}

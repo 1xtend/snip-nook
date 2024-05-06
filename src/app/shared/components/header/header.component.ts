@@ -3,6 +3,9 @@ import {
   Component,
   output,
   inject,
+  signal,
+  effect,
+  computed,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -33,5 +36,6 @@ export class HeaderComponent {
   openSidebar = output<void>();
 
   user = this.authService.user;
+  loading = computed<boolean>(() => !this.user());
   isAuthenticated = this.authService.isAuthenticated;
 }

@@ -13,15 +13,16 @@
 
   <div class="header__actions">
     @if (isAuthenticated()) {
-      @if (user(); as user) {
-        <app-avatar
-          (click)="openSidebar.emit()"
-          [url]="user.photoURL"
-          [isButton]="true"
-        ></app-avatar>
-      }
-      @if (user() === undefined) {
+      @if (loading()) {
         <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
+      } @else {
+        @if (user(); as user) {
+          <app-avatar
+            (click)="openSidebar.emit()"
+            [url]="user.photoURL"
+            [isButton]="true"
+          ></app-avatar>
+        }
       }
     } @else {
       <p-button
