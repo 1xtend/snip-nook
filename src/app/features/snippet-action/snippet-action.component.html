@@ -1,6 +1,33 @@
 <section class="create">
   @if (loading()) {
-    <span>loading...</span>
+    <h2 class="create__title">
+      {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
+    </h2>
+
+    <div class="create__form form">
+      <div class="form__wrapper">
+        <div class="form__row">
+          <div class="form__label">Name</div>
+          <p-skeleton height="39px" class="form__input"></p-skeleton>
+        </div>
+        <div class="form__row">
+          <div class="form__label">Description</div>
+          <p-skeleton height="59px" class="form__input"></p-skeleton>
+        </div>
+        <div class="form__row form__row--inline">
+          <p-checkbox [disabled]="true"></p-checkbox>
+          <label class="form__label">Public</label>
+        </div>
+      </div>
+
+      <p-divider align="center">
+        <b>Editors</b>
+      </p-divider>
+
+      <div class="create__editor">
+        <p-skeleton height="450px"></p-skeleton>
+      </div>
+    </div>
   } @else {
     <h2 class="create__title">
       {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
@@ -35,7 +62,7 @@
           <p-checkbox
             inputId="snippet-public"
             formControlName="public"
-            value="false"
+            [binary]="true"
           ></p-checkbox>
           <label for="snippet-public" class="form__label">Public</label>
         </div>

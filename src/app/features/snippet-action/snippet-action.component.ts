@@ -26,20 +26,14 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
+import { SkeletonModule } from 'primeng/skeleton';
 import { EditorComponent } from '@shared/components/editor/editor.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import { IEditorOptions } from '@shared/models/editor.interface';
-import {
-  EMPTY,
-  combineLatest,
-  map,
-  of,
-  switchMap,
-  take,
-  throwError,
-} from 'rxjs';
+import { combineLatest, of, switchMap, take, throwError } from 'rxjs';
 import { ActionType } from '@shared/models/action.type';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-snippet-create',
@@ -52,6 +46,7 @@ import { ActionType } from '@shared/models/action.type';
     ButtonModule,
     EditorComponent,
     DividerModule,
+    SkeletonModule,
   ],
   templateUrl: './snippet-action.component.html',
   styleUrl: './snippet-action.component.scss',
@@ -63,6 +58,7 @@ export class SnippetActionComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private messageService = inject(MessageService);
+  private authService = inject(AuthService);
 
   form!: FormGroup<ISnippetCreateForm>;
 
@@ -93,6 +89,8 @@ export class SnippetActionComponent implements OnInit {
   }
 
   private paramsChanges(): void {
+    this.loading.set(true);
+
     combineLatest({
       params: this.route.paramMap,
       data: this.route.data,
@@ -103,6 +101,7 @@ export class SnippetActionComponent implements OnInit {
 
           this.actionSignal.set(action);
           this.loading.set(true);
+          this.initForm(undefined);
 
           const snippetId = params.get('id');
 
@@ -143,14 +142,9 @@ export class SnippetActionComponent implements OnInit {
 
     if (snippet) {
       const controlsArray: FormArray<FormControl<ICodeItem>> = new FormArray(
-        snippet.code.reduce<FormControl<ICodeItem>[]>((prev, snippet) => {
-          const control = this.fb.control(snippet, {
-            nonNullable: true,
-          });
-          prev.push(control);
-
-          return prev;
-        }, []),
+        snippet.code.map((snippet) =>
+          this.fb.control(snippet, { nonNullable: true }),
+        ),
       );
 
       this.form.setControl('code', controlsArray);
@@ -215,6 +209,22 @@ export class SnippetActionComponent implements OnInit {
       this.snippetService.deleteSnippet(uid).subscribe(() => {
         this.router.navigate(['/home']);
       });
+
+      this.snippetService
+        .deleteSnippet(uid)
+        .pipe(
+          switchMap(() => {
+            return this.authService.user$;
+          }),
+        )
+        .subscribe((user) => {
+          if (!user) {
+            this.router.navigate(['/home']);
+            return;
+          }
+
+          this.router.navigate(['/user', user.uid, 'snippets']);
+        });
     }
   }
 
