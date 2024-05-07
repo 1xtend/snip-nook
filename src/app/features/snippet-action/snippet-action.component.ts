@@ -1,4 +1,4 @@
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { SnippetService } from '../../core/services/snippet.service';
 import {
   ChangeDetectionStrategy,
@@ -27,6 +27,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { EditorComponent } from '@shared/components/editor/editor.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
@@ -47,7 +48,9 @@ import { AuthService } from '@core/services/auth.service';
     EditorComponent,
     DividerModule,
     SkeletonModule,
+    ConfirmDialogModule,
   ],
+  providers: [ConfirmationService],
   templateUrl: './snippet-action.component.html',
   styleUrl: './snippet-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +62,7 @@ export class SnippetActionComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
+  private confirmationService = inject(ConfirmationService);
 
   form!: FormGroup<ISnippetCreateForm>;
 
@@ -198,11 +202,30 @@ export class SnippetActionComponent implements OnInit {
     );
   }
 
-  deleteEditor(index: number) {
+  deleteEditor(index: number): void {
     this.codeArrayControl.removeAt(index);
   }
 
-  deleteSnippet(): void {
+  confirmDeletion(e: Event): void {
+    this.confirmationService.confirm({
+      target: e.target as EventTarget,
+      message: 'Do you want to delete this snippet?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      acceptButtonStyleClass: 'p-button-danger p-button-outlined',
+      rejectButtonStyleClass: 'p-button-outlined',
+      accept: () => {
+        this.deleteSnippet();
+      },
+      reject: () => {
+        this.confirmationService.close();
+      },
+    });
+  }
+
+  private deleteSnippet(): void {
     const uid = this.snippet()?.uid;
 
     if (uid) {
@@ -224,6 +247,12 @@ export class SnippetActionComponent implements OnInit {
           }
 
           this.router.navigate(['/user', user.uid, 'snippets']);
+
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Snippet was successfully deleted.',
+            summary: 'Success',
+          });
         });
     }
   }
