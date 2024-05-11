@@ -1,0 +1,35 @@
+<p-sidebar
+  [(visible)]="visible"
+  [position]="position()"
+  (onHide)="close.emit()"
+  class="sidebar"
+>
+  <ng-template pTemplate="header">
+    <app-logo (click)="close.emit()"></app-logo>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <ul class="sidebar__list p-reset">
+      <li class="sidebar__item">
+        <a
+          [routerLink]="['/home']"
+          class="sidebar__link p-reset"
+          (click)="close.emit()"
+        >
+          <span class="sidebar__icon pi pi-home"></span>
+          Home
+        </a>
+      </li>
+      <li class="sidebar__item">
+        <a
+          [routerLink]="['/explore']"
+          class="sidebar__link p-reset"
+          (click)="close.emit()"
+        >
+          <span class="sidebar__icon pi pi-compass"></span>
+          Explore
+        </a>
+      </li>
+    </ul>
+  </ng-template>
+</p-sidebar>

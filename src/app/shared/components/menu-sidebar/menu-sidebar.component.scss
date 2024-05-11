@@ -1,0 +1,35 @@
+@import "../../../../assets/scss/variables";
+
+.sidebar {
+  &__list {
+    display: block;
+    color: var(--text-color);
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+
+  &__link {
+    display: block;
+    width: 100%;
+    color: inherit;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    padding: $spacing-s;
+    border-radius: var(--border-radius);
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--surface-hover);
+    }
+  }
+
+  &__icon {
+    color: #71717a;
+    margin-right: $spacing-s;
+  }
+}

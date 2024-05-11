@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  input,
   model,
   output,
 } from '@angular/core';
@@ -13,21 +14,24 @@ import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
 
 @Component({
-  selector: 'app-sidebar',
+  selector: 'app-user-sidebar',
   standalone: true,
   imports: [RouterLink, SidebarModule, LogoComponent, InputSwitchModule],
-  templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss',
+  templateUrl: './user-sidebar.component.html',
+  styleUrl: './user-sidebar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SidebarComponent {
+export class UserSidebarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
   visible = model<boolean>(false);
-  closeSidebar = output<void>();
+  position = input<'right' | 'left'>('right');
+  close = output<void>();
 
   user = this.authService.user;
+
+  constructor() {}
 
   signOut(): void {
     this.authService

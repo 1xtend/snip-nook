@@ -3,21 +3,13 @@
 .header {
   display: flex;
   align-items: center;
-  gap: $spacing-l;
-  padding: $spacing-xs $spacing-m;
-  height: $header-height;
-
-  @media (max-width: $breakpoint-s) {
-    gap: $spacing-xs;
-  }
+  gap: $spacing-s;
+  padding: $spacing-s $spacing-m;
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--surface-border);
 
   &__logo {
     margin-right: auto;
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
   }
 }
 

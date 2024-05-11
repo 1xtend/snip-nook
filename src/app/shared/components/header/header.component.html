@@ -1,35 +1,29 @@
 <header class="header">
+  <p-button
+    icon="pi pi-bars"
+    [outlined]="true"
+    size="small"
+    (onClick)="openSidebar.emit('menu')"
+  ></p-button>
   <app-logo class="header__logo"></app-logo>
 
-  <nav class="navbar">
-    <p-button
-      routerLink="/explore"
-      label="Explore"
-      icon="pi pi-compass"
-      class="navbar__link"
-      [text]="true"
-    ></p-button>
-  </nav>
-
-  <div class="header__actions">
-    @if (isAuthenticated()) {
-      @if (loading()) {
-        <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
-      } @else {
-        @if (user(); as user) {
-          <app-avatar
-            (click)="openSidebar.emit()"
-            [url]="user.photoURL"
-            [isButton]="true"
-          ></app-avatar>
-        }
-      }
+  @if (isAuthenticated()) {
+    @if (loading()) {
+      <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
     } @else {
-      <p-button
-        routerLink="/login"
-        label="Log In"
-        class="header__button"
-      ></p-button>
+      @if (user(); as user) {
+        <app-avatar
+          (click)="openSidebar.emit('user')"
+          [url]="user.photoURL"
+          [isButton]="true"
+        ></app-avatar>
+      }
     }
-  </div>
+  } @else {
+    <p-button
+      routerLink="/login"
+      label="Log In"
+      class="header__button"
+    ></p-button>
+  }
 </header>

@@ -1,11 +1,11 @@
 <p-sidebar
   [(visible)]="visible"
-  position="right"
-  (onHide)="closeSidebar.emit()"
+  [position]="position()"
+  (onHide)="close.emit()"
   class="sidebar"
 >
   <ng-template pTemplate="header">
-    <app-logo (click)="closeSidebar.emit()"></app-logo>
+    <app-logo (click)="close.emit()"></app-logo>
   </ng-template>
 
   <ng-template pTemplate="content">
@@ -18,7 +18,7 @@
           <a
             [routerLink]="['/user', user.uid, 'overview']"
             class="sidebar__link p-reset"
-            (click)="closeSidebar.emit()"
+            (click)="close.emit()"
           >
             <span class="sidebar__icon pi pi-user"></span>
             View Profile
@@ -28,7 +28,7 @@
           <a
             [routerLink]="['/user', user.uid, 'snippets']"
             class="sidebar__link p-reset"
-            (click)="closeSidebar.emit()"
+            (click)="close.emit()"
           >
             <span class="sidebar__icon pi pi-box"></span>
             My Snippets
@@ -38,7 +38,7 @@
           <a
             [routerLink]="['/snippet', 'create']"
             class="sidebar__link p-reset"
-            (click)="closeSidebar.emit()"
+            (click)="close.emit()"
           >
             <span class="sidebar__icon pi pi-plus"></span>
             Create
@@ -48,7 +48,7 @@
           <a
             [routerLink]="['/user', user.uid, 'saved']"
             class="sidebar__link p-reset"
-            (click)="closeSidebar.emit()"
+            (click)="close.emit()"
           >
             <span class="sidebar__icon pi pi-bookmark"></span>
             Saved
@@ -58,7 +58,7 @@
           <button
             (click)="signOut()"
             class="sidebar__link p-reset"
-            (click)="closeSidebar.emit()"
+            (click)="close.emit()"
           >
             <span class="sidebar__icon pi pi-sign-out"></span>
             Log Out
@@ -80,7 +80,7 @@
           <a
             [routerLink]="['/user', user.uid, 'settings']"
             class="sidebar__link p-reset"
-            (click)="closeSidebar.emit()"
+            (click)="close.emit()"
           >
             <span class="sidebar__icon pi pi-cog"></span>
             Settings

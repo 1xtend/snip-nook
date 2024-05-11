@@ -33,7 +33,7 @@ import { AvatarComponent } from '../avatar/avatar.component';
 export class HeaderComponent {
   private authService = inject(AuthService);
 
-  openSidebar = output<void>();
+  openSidebar = output<'user' | 'menu'>();
 
   user = this.authService.user;
   loading = computed<boolean>(() => !this.user());
