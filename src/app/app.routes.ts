@@ -71,12 +71,12 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'trending',
+    path: 'explore',
     loadComponent: () =>
-      import('./features/trending/trending.component').then(
-        (m) => m.TrendingComponent,
+      import('./features/explore/explore.component').then(
+        (m) => m.ExploreComponent,
       ),
-    title: 'Trending',
+    title: 'Explore',
   },
   {
     path: 'snippet/:id/overview',
