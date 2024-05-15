@@ -15,6 +15,7 @@ import {
   MonacoEditorModule,
   NgxMonacoEditorConfig,
 } from 'ngx-monaco-editor-v2';
+import { DialogService } from 'primeng/dynamicdialog';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   defaultOptions: {
@@ -45,6 +46,7 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(provideFirestore(() => getFirestore())),
     importProvidersFrom(provideStorage(() => getStorage())),
     MessageService,
+    DialogService,
     provideAnimations(),
     importProvidersFrom(MonacoEditorModule.forRoot(monacoConfig)),
   ],

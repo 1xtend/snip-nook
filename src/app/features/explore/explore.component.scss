@@ -1,0 +1,11 @@
+@import "../../../assets/scss/variables";
+
+.explore {
+  &__tab-menu {
+    display: block;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-l;
+    }
+  }
+}

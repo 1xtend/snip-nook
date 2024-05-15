@@ -1,6 +1,14 @@
 import { Injectable, inject } from '@angular/core';
 import { Firestore, collection, doc, docData } from '@angular/fire/firestore';
-import { Observable, switchMap, take, throwError, map, from } from 'rxjs';
+import {
+  Observable,
+  switchMap,
+  take,
+  throwError,
+  map,
+  from,
+  EMPTY,
+} from 'rxjs';
 import { AuthService } from './auth.service';
 import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
 import { writeBatch } from 'firebase/firestore';
@@ -58,6 +66,59 @@ export class SnippetService {
         batch.set(userSnippetDoc, userSnippetData).set(snippetDoc, snippetData);
 
         return from(batch.commit()).pipe(map(() => snippetData));
+      }),
+    );
+  }
+
+  editSnippet(snippet: ISnippet): Observable<ISnippet> {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('User is not defined'));
+        }
+
+        const batch = writeBatch(this.fs);
+
+        const userSnippetDoc = doc(
+          this.fs,
+          'users',
+          user.uid,
+          'snippets',
+          snippet.uid,
+        );
+        const snippetDoc = doc(this.fs, 'snippets', snippet.uid);
+        const userSnippetData: ISnippetPreview = {
+          author: snippet.author,
+          description: snippet.description,
+          name: snippet.name,
+          public: snippet.public,
+          uid: snippet.uid,
+        };
+
+        batch.set(userSnippetDoc, userSnippetData).set(snippetDoc, snippet);
+
+        return from(batch.commit()).pipe(map(() => snippet));
+      }),
+    );
+  }
+
+  deleteSnippet(uid: string): Observable<void> {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('User is not defined'));
+        }
+
+        const batch = writeBatch(this.fs);
+
+        const userSnippetDoc = doc(this.fs, 'users', user.uid, 'snippets', uid);
+        const snippetDoc = doc(this.fs, 'snippets', uid);
+
+        batch.delete(userSnippetDoc).delete(snippetDoc);
+
+        return batch.commit();
       }),
     );
   }

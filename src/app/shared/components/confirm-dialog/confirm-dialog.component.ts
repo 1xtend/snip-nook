@@ -16,7 +16,9 @@ export class ConfirmDialogComponent {
 
   onConfirm() {
     this.modalService.closeDialog();
-    this.modalService.showDialog('Delete account', DeleteDialogComponent);
+    this.modalService.showDialog(DeleteDialogComponent, {
+      header: 'Delete account',
+    });
   }
 
   onDecline() {

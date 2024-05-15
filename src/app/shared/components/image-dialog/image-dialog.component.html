@@ -1,0 +1,11 @@
+@if (src) {
+  <img
+    [src]="src"
+    [alt]="alt + '-avatar' || 'avatar'"
+    [style]="{
+      width: '100%'
+    }"
+  />
+} @else {
+  <span>There is no image url</span>
+}

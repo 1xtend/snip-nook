@@ -1,9 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   Auth,
   createUserWithEmailAndPassword,
-  idToken,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
@@ -23,9 +21,7 @@ import {
   combineLatest,
   from,
   map,
-  of,
   switchMap,
-  take,
   tap,
   throwError,
 } from 'rxjs';
@@ -40,7 +36,7 @@ export class AuthService {
 
   user$ = user(this.auth);
 
-  private userSignal = signal<User | null | undefined>(undefined);
+  private userSignal = signal<User | null >(null);
   user = computed(this.userSignal);
 
   private isAuthenticatedSignal = signal<boolean>(
@@ -65,12 +61,13 @@ export class AuthService {
       .pipe(
         tapOnce(async (user) => {
           if (user && !this.token) {
-            const token = await user.getIdToken();
+            const token = await user.getIdToken(true);
             this.setToken(token);
           }
         }, 0),
       )
       .subscribe((user) => {
+        console.log('User was changed!', user?.email);
         this.userSignal.set(user);
         this.isAuthenticatedSignal.set(!!user);
       });
@@ -100,7 +97,7 @@ export class AuthService {
     ).pipe(
       map((credential) => credential.user),
       tap(async (user) => {
-        const token = await user.getIdToken(true);
+        const token = await user.getIdToken();
         this.setToken(token);
       }),
       catchError((err) =>

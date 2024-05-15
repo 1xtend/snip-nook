@@ -3,16 +3,22 @@
 <p-toast [life]="2000"></p-toast>
 
 <div class="wrapper">
-  <app-header (openSidebar)="toggleSidebar(true)"></app-header>
+  <app-menu-sidebar
+    [(visible)]="menuSidebarVisible"
+    position="left"
+    (close)="closeSidebar()"
+  ></app-menu-sidebar>
+  <app-header (openSidebar)="openSidebar($event)"></app-header>
 
   @if (!hideSidebar) {
-    <app-sidebar
-      [visible]="sidebarVisible"
-      (closeSidebar)="toggleSidebar(false)"
-    ></app-sidebar>
+    <app-user-sidebar
+      [(visible)]="userSidebarVisible"
+      (close)="closeSidebar()"
+      position="right"
+    ></app-user-sidebar>
   }
 
-  <main class="main">
+  <main class="main-content">
     <div class="container">
       <router-outlet></router-outlet>
     </div>

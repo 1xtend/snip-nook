@@ -1,5 +1,5 @@
 @if (isButton()) {
-  <button type="button" class="p-reset avatar-button" (click)="click.emit()">
+  <button type="button" class="p-reset avatar-button" (click)="onClick.emit()">
     @if (url(); as url) {
       <p-avatar [image]="url" shape="circle" [size]="size()"></p-avatar>
     } @else {

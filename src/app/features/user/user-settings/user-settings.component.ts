@@ -11,7 +11,7 @@ import {
   FileUploadModule,
 } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
-import { DialogService } from 'primeng/dynamicdialog';
+import { DialogService, DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { EmailDialogComponent } from '@shared/components/email-dialog/email-dialog.component';
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
@@ -26,7 +26,7 @@ import { UserService } from '@core/services/user.service';
   selector: 'app-user-settings',
   standalone: true,
   imports: [FileUploadModule, ButtonModule, UpperCasePipe],
-  providers: [ModalService, DialogService],
+  providers: [],
   templateUrl: './user-settings.component.html',
   styleUrl: './user-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,6 +59,8 @@ export class UserSettingsComponent {
           });
         },
         error: (err) => {
+          console.log(err);
+
           this.messageService.add({
             severity: 'error',
             detail: 'Unexpected error occurred. Try again later',
@@ -74,32 +76,32 @@ export class UserSettingsComponent {
   }
 
   showDialog(type: 'password' | 'email' | 'delete'): void {
-    let header: string = '';
+    let config: DynamicDialogConfig;
     let component: any = null;
 
     switch (type) {
       case 'password':
-        header = 'Update your password';
+        config = { header: 'Update your password' };
         component = PasswordDialogComponent;
 
         break;
       case 'email':
-        header = 'Update your email';
+        config = { header: 'Update your email' };
         component = EmailDialogComponent;
 
         break;
       case 'delete':
-        header = 'Confirm';
+        config = { header: 'Confirm deletion' };
         component = ConfirmDialogComponent;
 
         break;
 
       default:
-        header = 'Dialog';
+        config = { header: 'Dialog' };
         component = null;
         break;
     }
 
-    this.modalService.showDialog(header, component);
+    this.modalService.showDialog(component, config);
   }
 }

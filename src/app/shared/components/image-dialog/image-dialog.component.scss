@@ -1,0 +1,16 @@
+@import "../../../../assets/scss/variables";
+
+::ng-deep .image-dialog {
+  .p-dialog-mask {
+    padding: $spacing-l;
+  }
+
+  .p-dialog-header {
+    padding: $spacing-s;
+  }
+
+  .p-dialog-content {
+    max-width: 100%;
+    padding: 0;
+  }
+}

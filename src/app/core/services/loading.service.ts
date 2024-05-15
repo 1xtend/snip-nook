@@ -1,12 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoadingService {
-  loading = signal<boolean>(false);
+  private loadingSignal = signal<boolean>(false);
+  loading = computed(this.loadingSignal);
 
   setLoading(value: boolean): void {
-    this.loading.set(value);
+    this.loadingSignal.set(value);
   }
 }

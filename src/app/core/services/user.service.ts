@@ -14,9 +14,32 @@ import {
   doc,
   writeBatch,
   updateDoc,
+  collectionData,
+  query,
+  startAt,
+  orderBy,
+  limit,
+  count,
+  getCountFromServer,
+  AggregateField,
+  AggregateQuerySnapshot,
+  startAfter,
+  QueryDocumentSnapshot,
+  getDocs,
+  collectionGroup,
+  Query,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
-import { combineLatest, from, map, switchMap, take, throwError } from 'rxjs';
+import {
+  Observable,
+  combineLatest,
+  from,
+  map,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import {
   Storage,
   deleteObject,
@@ -25,6 +48,8 @@ import {
   uploadBytes,
 } from '@angular/fire/storage';
 import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
+import { IUser } from '@shared/models/user.interface';
+import { getDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -155,6 +180,28 @@ export class UserService {
         );
       }),
     );
+  }
+
+  getUsers(pageSize: number, startAfterDoc?: any) {
+    const usersCollection = collection(this.fs, 'users');
+    let usersQuery: Query;
+
+    if (startAfterDoc) {
+      usersQuery = query(
+        usersCollection,
+        orderBy('created_at'),
+        startAfter(startAfter),
+        limit(pageSize),
+      );
+    } else {
+      usersQuery = query(
+        usersCollection,
+        orderBy('created_at'),
+        limit(pageSize),
+      );
+    }
+
+    return collectionData(usersQuery) as Observable<IUser[]>;
   }
 
   private deleteUserSnippets(uid: string) {

@@ -1,3 +1,4 @@
+import { ModalService } from '@core/services/modal.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,6 +19,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FirestoreService } from '@core/services/firestore.service';
 import { AvatarComponent } from '@shared/components/avatar/avatar.component';
+import { ImageDialogComponent } from '@shared/components/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-user',
@@ -38,10 +40,12 @@ export class UserComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private firestoreService = inject(FirestoreService);
+  private modalService = inject(ModalService);
 
   tabItems: MenuItem[] = [];
 
-  user = signal<IUser | null | undefined>(null);
+  user = signal<IUser | undefined>(undefined);
+  loading = signal<boolean>(false);
   isOwner = signal<boolean>(false);
 
   user$ = this.authService.user$;
@@ -57,6 +61,8 @@ export class UserComponent implements OnInit {
   }
 
   private paramsChanges(): void {
+    this.loading.set(true);
+
     combineLatest({
       params: this.route.paramMap,
       user: this.user$,
@@ -66,6 +72,7 @@ export class UserComponent implements OnInit {
         switchMap(({ params, user }) => {
           const userId = params.get('id');
 
+          this.loading.set(true);
           this.isOwner.set(user?.uid === userId);
 
           return userId ? this.firestoreService.getUser(userId) : EMPTY;
@@ -73,6 +80,7 @@ export class UserComponent implements OnInit {
       )
       .subscribe((user) => {
         this.user.set(user);
+        this.loading.set(false);
       });
   }
 
@@ -111,5 +119,19 @@ export class UserComponent implements OnInit {
     }
 
     return tabItems;
+  }
+
+  onAvatarClick(): void {
+    console.log('Avatar click');
+    this.modalService.showDialog(ImageDialogComponent, {
+      data: {
+        src: this.user()?.photoURL,
+        alt: this.user()?.username,
+      },
+      width: 'auto',
+      breakpoints: null,
+      header: `${this.user()?.username} avatar`,
+      styleClass: 'image-dialog',
+    });
   }
 }

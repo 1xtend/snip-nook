@@ -71,12 +71,21 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'trending',
+    path: 'explore',
     loadComponent: () =>
-      import('./features/trending/trending.component').then(
-        (m) => m.TrendingComponent,
+      import('./features/explore/explore.component').then(
+        (m) => m.ExploreComponent,
       ),
-    title: 'Trending',
+    title: 'Explore',
+    children: [
+      {
+        path: 'users',
+        loadComponent: () =>
+          import(
+            './features/explore/explore-users/explore-users.component'
+          ).then((m) => m.ExploreUsersComponent),
+      },
+    ],
   },
   {
     path: 'snippet/:id/overview',
@@ -88,17 +97,23 @@ export const routes: Routes = [
   {
     path: 'snippet/:id/edit',
     loadComponent: () =>
-      import('./features/snippet-edit/snippet-edit.component').then(
-        (m) => m.SnippetEditComponent,
+      import('./features/snippet-action/snippet-action.component').then(
+        (m) => m.SnippetActionComponent,
       ),
     canActivate: [authGuard, snippetOwnerGuard],
+    data: {
+      action: 'edit',
+    },
   },
   {
     path: 'snippet/create',
     loadComponent: () =>
-      import('./features/snippet-create/snippet-create.component').then(
-        (m) => m.SnippetCreateComponent,
+      import('./features/snippet-action/snippet-action.component').then(
+        (m) => m.SnippetActionComponent,
       ),
     canActivate: [authGuard],
+    data: {
+      action: 'create',
+    },
   },
 ];
