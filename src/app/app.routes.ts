@@ -77,6 +77,15 @@ export const routes: Routes = [
         (m) => m.ExploreComponent,
       ),
     title: 'Explore',
+    children: [
+      {
+        path: 'users',
+        loadComponent: () =>
+          import(
+            './features/explore/explore-users/explore-users.component'
+          ).then((m) => m.ExploreUsersComponent),
+      },
+    ],
   },
   {
     path: 'snippet/:id/overview',

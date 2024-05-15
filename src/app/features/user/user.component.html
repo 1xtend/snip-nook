@@ -14,15 +14,12 @@
   } @else {
     @if (user(); as user) {
       <div class="profile__info info">
-        @if (user.photoURL) {
-          <p-avatar
-            [image]="user.photoURL"
-            size="xlarge"
-            shape="circle"
-          ></p-avatar>
-        } @else {
-          <p-avatar icon="pi pi-user" size="xlarge" shape="circle"></p-avatar>
-        }
+        <app-avatar
+          [url]="user.photoURL"
+          size="xlarge"
+          [isButton]="!!user.photoURL"
+          (onClick)="onAvatarClick()"
+        ></app-avatar>
 
         <h2 class="info__username">{{ user.username }}</h2>
       </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { TabMenuModule } from 'primeng/tabmenu';
 
@@ -8,6 +8,7 @@ import { TabMenuModule } from 'primeng/tabmenu';
   imports: [TabMenuModule],
   templateUrl: './explore.component.html',
   styleUrl: './explore.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExploreComponent {
   tabItems: MenuItem[] = [

@@ -1,3 +1,4 @@
+import { ModalService } from './core/services/modal.service';
 import {
   Component,
   OnInit,
@@ -6,7 +7,7 @@ import {
   model,
   signal,
 } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
@@ -14,6 +15,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { UserSidebarComponent } from '@shared/components/user-sidebar/user-sidebar.component';
 import { MenuSidebarComponent } from '@shared/components/menu-sidebar/menu-sidebar.component';
+import { filter, tap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +35,7 @@ import { MenuSidebarComponent } from '@shared/components/menu-sidebar/menu-sideb
 export class AppComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private modalService = inject(ModalService);
 
   menuSidebarVisible = model<boolean>(false);
   userSidebarVisible = model<boolean>(false);

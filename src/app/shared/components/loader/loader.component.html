@@ -1,5 +1,5 @@
 @if (loading()) {
-  <p-progressBar
+  <!-- <p-progressBar
     mode="indeterminate"
     [style]="{
       height: '4px',
@@ -9,5 +9,17 @@
       right: 0,
       borderRadius: 0
     }"
-  ></p-progressBar>
+  ></p-progressBar> -->
+
+  <p-progressSpinner
+    [style]="{
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '60px',
+      height: '60px'
+    }"
+  >
+  </p-progressSpinner>
 }

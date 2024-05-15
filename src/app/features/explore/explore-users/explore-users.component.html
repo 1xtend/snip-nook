@@ -1,0 +1,36 @@
+<div class="users">
+  @if (loading()) {
+    <p-skeleton height="70px"></p-skeleton>
+    <p-skeleton height="70px"></p-skeleton>
+    <p-skeleton height="70px"></p-skeleton>
+  } @else {
+    @if (users(); as users) {
+      @for (user of users; track user.uid) {
+        <a
+          [routerLink]="['/user', user.uid, 'overview']"
+          class="user-card p-reset"
+        >
+          <app-avatar
+            [url]="user.photoURL"
+            size="large"
+            class="user-card__avatar"
+          ></app-avatar>
+          <h3 class="user-card__title">
+            {{ user.username }}
+          </h3>
+        </a>
+      } @empty {
+        <div class="user-card">There are no users.</div>
+      }
+
+      @if (count > rows) {
+        <p-paginator
+          [rows]="rows"
+          [first]="first"
+          [totalRecords]="count"
+          (onPageChange)="onPageEvent($event)"
+        ></p-paginator>
+      }
+    }
+  }
+</div>

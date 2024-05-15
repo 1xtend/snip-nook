@@ -13,7 +13,7 @@
     } @else {
       @if (user(); as user) {
         <app-avatar
-          (click)="openSidebar.emit('user')"
+          (onClick)="openSidebar.emit('user')"
           [url]="user.photoURL"
           [isButton]="true"
         ></app-avatar>

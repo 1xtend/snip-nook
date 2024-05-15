@@ -1,3 +1,4 @@
+import { ModalService } from '@core/services/modal.service';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -18,6 +19,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FirestoreService } from '@core/services/firestore.service';
 import { AvatarComponent } from '@shared/components/avatar/avatar.component';
+import { ImageDialogComponent } from '@shared/components/image-dialog/image-dialog.component';
 
 @Component({
   selector: 'app-user',
@@ -38,6 +40,7 @@ export class UserComponent implements OnInit {
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
   private firestoreService = inject(FirestoreService);
+  private modalService = inject(ModalService);
 
   tabItems: MenuItem[] = [];
 
@@ -116,5 +119,19 @@ export class UserComponent implements OnInit {
     }
 
     return tabItems;
+  }
+
+  onAvatarClick(): void {
+    console.log('Avatar click');
+    this.modalService.showDialog(ImageDialogComponent, {
+      data: {
+        src: this.user()?.photoURL,
+        alt: this.user()?.username,
+      },
+      width: 'auto',
+      breakpoints: null,
+      header: `${this.user()?.username} avatar`,
+      styleClass: 'image-dialog',
+    });
   }
 }
