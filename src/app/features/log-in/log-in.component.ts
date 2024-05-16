@@ -89,7 +89,7 @@ export class LogInComponent implements OnInit {
         next: (user) => {
           this.form.reset();
 
-          this.router.navigate(['/home']);
+          this.router.navigate(['/user', user.uid, 'overview']);
         },
         error: (err: Error) => {
           this.authErrors.set({
