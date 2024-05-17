@@ -54,6 +54,7 @@
   </div>
 
   <div class="settings__row">
+    <p-confirmDialog></p-confirmDialog>
     <p-button
       type="button"
       [rounded]="true"
@@ -61,7 +62,7 @@
       [label]="'delete account' | uppercase"
       [outlined]="true"
       severity="danger"
-      (onClick)="showDialog('delete')"
+      (onClick)="confirm($event)"
     ></p-button>
   </div>
 </section>

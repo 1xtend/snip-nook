@@ -18,15 +18,16 @@ import { ModalService } from '@core/services/modal.service';
 import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
 import { UpperCasePipe } from '@angular/common';
-import { MessageService } from 'primeng/api';
-import { ConfirmDialogComponent } from '@shared/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UserService } from '@core/services/user.service';
+import { DeleteDialogComponent } from '@shared/components/delete-dialog/delete-dialog.component';
 
 @Component({
   selector: 'app-user-settings',
   standalone: true,
-  imports: [FileUploadModule, ButtonModule, UpperCasePipe],
-  providers: [],
+  imports: [FileUploadModule, ButtonModule, UpperCasePipe, ConfirmDialogModule],
+  providers: [ConfirmationService],
   templateUrl: './user-settings.component.html',
   styleUrl: './user-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,6 +37,7 @@ export class UserSettingsComponent {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private messageService = inject(MessageService);
+  private confirmationService = inject(ConfirmationService);
   public loadingService = inject(LoadingService);
 
   fileUpload = viewChild<FileUpload>('fileUpload');
@@ -75,8 +77,28 @@ export class UserSettingsComponent {
       });
   }
 
+  confirm(e: MouseEvent): void {
+    this.confirmationService.confirm({
+      target: e.target as EventTarget,
+      message: 'Do you want to delete your account?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: 'p-button-danger p-button-text',
+      rejectButtonStyleClass: 'p-button-text p-button-text',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      accept: () => {
+        this.confirmationService.close();
+        this.showDialog('delete');
+      },
+      reject: () => {
+        this.confirmationService.close();
+      },
+    });
+  }
+
   showDialog(type: 'password' | 'email' | 'delete'): void {
-    let config: DynamicDialogConfig;
+    let config: DynamicDialogConfig = {};
     let component: any = null;
 
     switch (type) {
@@ -91,8 +113,8 @@ export class UserSettingsComponent {
 
         break;
       case 'delete':
-        config = { header: 'Confirm deletion' };
-        component = ConfirmDialogComponent;
+        config = { header: 'Delete your account' };
+        component = DeleteDialogComponent;
 
         break;
 

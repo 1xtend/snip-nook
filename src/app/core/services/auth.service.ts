@@ -263,9 +263,6 @@ export class AuthService {
     return from(reauthenticateWithCredential(user, credential)).pipe(
       take(1),
       map(({ user }) => user),
-      catchError((error) => {
-        return throwError(() => new Error('Reauthentication failed'));
-      }),
     );
   }
 
