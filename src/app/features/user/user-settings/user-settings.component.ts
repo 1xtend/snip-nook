@@ -36,7 +36,7 @@ export class UserSettingsComponent {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private messageService = inject(MessageService);
-  private loadingService = inject(LoadingService);
+  public loadingService = inject(LoadingService);
 
   fileUpload = viewChild<FileUpload>('fileUpload');
 
