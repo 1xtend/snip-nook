@@ -25,15 +25,12 @@ import { IUser } from '@shared/models/user.interface';
 import { WriteBatch, collection, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import {
-  EMPTY,
   Observable,
   catchError,
-  combineLatest,
   finalize,
   forkJoin,
   from,
   map,
-  of,
   switchMap,
   take,
   tap,
@@ -76,8 +73,7 @@ export class AuthService {
       .pipe(
         tap(async (user) => {
           if (user && !this.token) {
-            const token = await user.getIdToken(true);
-            this.setToken(token);
+            this.setAuthToken(user);
           }
 
           if (!user && this.token) {
@@ -103,10 +99,7 @@ export class AuthService {
       catchError((err) =>
         throwError(() => new Error(`Login failed: ${err.message}`)),
       ),
-      tap(async (user) => {
-        const token = await user.getIdToken(true);
-        this.setToken(token);
-      }),
+      tap((user) => this.setAuthToken(user)),
     );
   }
 
@@ -128,10 +121,7 @@ export class AuthService {
         throwError(() => new Error(`Signup failed: ${err.message}`)),
       ),
       switchMap((user) => this.setupUser(user, username)),
-      tap(async (user) => {
-        const token = await user.getIdToken();
-        this.setToken(token);
-      }),
+      tap((user) => this.setAuthToken(user)),
     );
   }
 
@@ -281,5 +271,10 @@ export class AuthService {
 
   private clearStorage(): void {
     localStorage.removeItem(LocalStorageEnum.AuthToken);
+  }
+
+  private async setAuthToken(user: User) {
+    const token = await user.getIdToken();
+    this.setToken(token);
   }
 }
