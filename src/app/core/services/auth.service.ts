@@ -110,57 +110,6 @@ export class AuthService {
     );
   }
 
-  signUp({ email, password, username }: ISignUpData): Observable<User> {
-    return from(
-      createUserWithEmailAndPassword(this.auth, email, password),
-    ).pipe(
-      map((credential) => credential.user),
-      catchError((err) =>
-        throwError(() => new Error(`Signup failed: ${err.message}`)),
-      ),
-      switchMap((user) => {
-        if (!user.email) {
-          return throwError(() => new Error('There is no email'));
-        }
-
-        // Collect necessary data
-        const userData: IUser = {
-          email: user.email,
-          created_at: new Date().toString(),
-          photoURL: null,
-          uid: user.uid,
-          username,
-        };
-        const usernameData = {
-          uid: user.uid,
-        };
-        const profileData = {
-          displayName: username,
-          photoURL: undefined,
-        };
-
-        // Create docs
-        const userDoc = doc(this.fs, 'users', user.uid);
-        const usernameDoc = doc(this.fs, 'usernames', username);
-
-        // Set docs
-        const batch = writeBatch(this.fs);
-        batch.set(userDoc, userData);
-        batch.set(usernameDoc, usernameData);
-
-        // Add docs and update profile
-        return combineLatest([
-          batch.commit(),
-          updateProfile(user, profileData),
-        ]).pipe(map(() => user));
-      }),
-      tap(async (user) => {
-        const token = await user.getIdToken();
-        this.setToken(token);
-      }),
-    );
-  }
-
   signOut(): Observable<void> {
     return from(signOut(this.auth)).pipe(
       finalize(() => {
@@ -169,7 +118,75 @@ export class AuthService {
     );
   }
 
-  deleteUser(password: string) {
+  // Sign Up
+  signUp({ email, password, username }: ISignUpData) {
+    return from(
+      createUserWithEmailAndPassword(this.auth, email, password),
+    ).pipe(
+      map((credential) => credential.user),
+      catchError((err) =>
+        throwError(() => new Error(`Signup failed: ${err.message}`)),
+      ),
+      switchMap((user) => this.setupUser(user, username)),
+      tap(async (user) => {
+        const token = await user.getIdToken();
+        this.setToken(token);
+      }),
+    );
+  }
+
+  private setupUser(user: User, username: string) {
+    if (!user.email) {
+      return throwError(() => new Error('There is no email'));
+    }
+
+    const userData: IUser = {
+      email: user.email,
+      created_at: new Date().toString(),
+      photoURL: null,
+      uid: user.uid,
+      username,
+    };
+
+    const usernameData: { uid: string } = {
+      uid: user.uid,
+    };
+
+    const profileData: Partial<User> = {
+      displayName: username,
+      photoURL: null,
+    };
+
+    const userDoc = doc(this.fs, 'users', user.uid);
+    const usernameDoc = doc(this.fs, 'usernames', username);
+
+    const batch = writeBatch(this.fs);
+    batch.set(userDoc, userData);
+    batch.set(usernameDoc, usernameData);
+
+    return this.setUserAndProfile(batch, user, profileData);
+  }
+
+  private setUserAndProfile(
+    batch: WriteBatch,
+    user: User,
+    profileData: Partial<User>,
+  ) {
+    return forkJoin([
+      from(batch.commit()),
+      from(updateProfile(user, profileData)),
+    ]).pipe(
+      map(() => user),
+      catchError((error) => {
+        return throwError(
+          () => new Error(`Error during user setup: ${error.message}`),
+        );
+      }),
+    );
+  }
+
+  // Delete user
+  deleteUser(password: string): Observable<unknown> {
     return this.user$.pipe(
       take(1),
       switchMap((user) => this.reauthenticate(user, password)),
@@ -242,6 +259,7 @@ export class AuthService {
     );
   }
 
+  // Helpers
   private reauthenticate(
     user: User | null,
     password: string,
