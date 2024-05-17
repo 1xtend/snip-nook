@@ -13,8 +13,8 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '@core/services/auth.service';
 import { ModalService } from '@core/services/modal.service';
-import { UserService } from '@core/services/user.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { IAuthErrors } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
@@ -37,7 +37,7 @@ import { take } from 'rxjs';
 })
 export class DeleteDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private userService = inject(UserService);
+  private authService = inject(AuthService);
   private modalService = inject(ModalService);
   private messageService = inject(MessageService);
   private router = inject(Router);
@@ -74,21 +74,20 @@ export class DeleteDialogComponent implements OnInit {
     this.form.disable();
     this.loading = true;
 
-    this.userService
+    this.authService
       .deleteUser(this.form.getRawValue().password)
       .pipe(take(1))
       .subscribe({
         next: () => {
-          this.form.reset();
-          this.modalService.closeDialog();
-
           this.messageService.add({
             severity: 'success',
             detail: 'Account has been successfully deleted',
             summary: 'Success',
           });
 
-          this.router.navigate(['home']);
+          this.form.reset();
+          this.modalService.closeDialog();
+          this.router.navigate(['/home']);
         },
         error: (err) => {
           console.log(err);

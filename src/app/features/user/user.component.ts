@@ -15,7 +15,6 @@ import { IUser } from '@shared/models/user.interface';
 import { EMPTY, combineLatest, switchMap } from 'rxjs';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
-import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FirestoreService } from '@core/services/firestore.service';
 import { AvatarComponent } from '@shared/components/avatar/avatar.component';
@@ -24,13 +23,7 @@ import { ImageDialogComponent } from '@shared/components/image-dialog/image-dial
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [
-    TabMenuModule,
-    RouterOutlet,
-    AvatarModule,
-    SkeletonModule,
-    AvatarComponent,
-  ],
+  imports: [TabMenuModule, RouterOutlet, SkeletonModule, AvatarComponent],
   templateUrl: './user.component.html',
   styleUrl: './user.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -122,16 +115,15 @@ export class UserComponent implements OnInit {
   }
 
   onAvatarClick(): void {
-    console.log('Avatar click');
     this.modalService.showDialog(ImageDialogComponent, {
       data: {
         src: this.user()?.photoURL,
         alt: this.user()?.username,
       },
       width: 'auto',
-      breakpoints: null,
       header: `${this.user()?.username} avatar`,
       styleClass: 'image-dialog',
+      breakpoints: null,
     });
   }
 }

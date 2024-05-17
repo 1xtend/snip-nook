@@ -9,6 +9,7 @@
       [maxFileSize]="100000"
       (uploadHandler)="uploadAvatar($event)"
       #fileUpload
+      [disabled]="loadingService.loading()"
     >
       <ng-template pTemplate="content" let-files>
         <div>Drag and drop image here</div>
@@ -53,6 +54,7 @@
   </div>
 
   <div class="settings__row">
+    <p-confirmDialog></p-confirmDialog>
     <p-button
       type="button"
       [rounded]="true"
@@ -60,7 +62,7 @@
       [label]="'delete account' | uppercase"
       [outlined]="true"
       severity="danger"
-      (onClick)="showDialog('delete')"
+      (onClick)="confirm($event)"
     ></p-button>
   </div>
 </section>

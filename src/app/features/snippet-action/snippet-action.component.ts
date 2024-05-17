@@ -32,7 +32,16 @@ import { EditorComponent } from '@shared/components/editor/editor.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import { IEditorOptions } from '@shared/models/editor.interface';
-import { combineLatest, of, switchMap, take, throwError } from 'rxjs';
+import {
+  EMPTY,
+  combineLatest,
+  finalize,
+  map,
+  of,
+  switchMap,
+  take,
+  throwError,
+} from 'rxjs';
 import { ActionType } from '@shared/models/action.type';
 import { AuthService } from '@core/services/auth.service';
 
@@ -178,7 +187,6 @@ export class SnippetActionComponent implements OnInit {
           this.router.navigate(['snippet', snippet.uid, 'overview']);
         },
         error: (err) => {
-          console.log(err);
           this.messageService.add({
             severity: 'error',
             detail: 'Unexpected error occurred. Try again later',
@@ -229,30 +237,42 @@ export class SnippetActionComponent implements OnInit {
     const uid = this.snippet()?.uid;
 
     if (uid) {
-      this.snippetService.deleteSnippet(uid).subscribe(() => {
-        this.router.navigate(['/home']);
-      });
+      this.form.disable();
 
-      this.snippetService
-        .deleteSnippet(uid)
+      this.authService.user$
         .pipe(
-          switchMap(() => {
-            return this.authService.user$;
+          take(1),
+          switchMap((user) => {
+            return user
+              ? this.snippetService.deleteSnippet(uid).pipe(
+                  take(1),
+                  map(() => user),
+                )
+              : EMPTY;
           }),
         )
-        .subscribe((user) => {
-          if (!user) {
-            this.router.navigate(['/home']);
-            return;
-          }
+        .subscribe({
+          next: (user) => {
+            this.router.navigate(['/user', user.uid, 'snippets']);
 
-          this.router.navigate(['/user', user.uid, 'snippets']);
+            this.messageService.add({
+              severity: 'success',
+              detail: 'Snippet was successfully deleted.',
+              summary: 'Success',
+            });
 
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Snippet was successfully deleted.',
-            summary: 'Success',
-          });
+            this.form.enable();
+            this.form.reset();
+          },
+          error: (err) => {
+            this.messageService.add({
+              severity: 'error',
+              detail: 'Unexpected error occurred. Try again later',
+              summary: 'Error',
+            });
+
+            this.form.enable();
+          },
         });
     }
   }
@@ -266,12 +286,12 @@ export class SnippetActionComponent implements OnInit {
   private getSnippet(value: ReturnType<typeof this.form.getRawValue>) {
     return {
       author: {
-        name: this.snippet()?.author.name || '',
+        name: this.snippet()?.author.name.trim() || '',
         uid: this.snippet()?.author.uid || '',
       },
       code: value.code,
-      description: value.description,
-      name: value.name,
+      description: value.description.trim(),
+      name: value.name.trim(),
       public: value.public,
       uid: this.snippet()?.uid || '',
     };
