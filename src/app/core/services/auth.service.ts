@@ -1,27 +1,41 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import {
   Auth,
+  authState,
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
   user,
   User,
 } from '@angular/fire/auth';
-import { Firestore, getDoc, doc } from '@angular/fire/firestore';
+import {
+  Firestore,
+  getDoc,
+  doc,
+  collectionSnapshots,
+} from '@angular/fire/firestore';
+import { Storage } from '@angular/fire/storage';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { tapOnce } from '@shared/helpers/tap-once.pipe';
 import { IAuthData, ISignUpData } from '@shared/models/auth.interface';
 import { LocalStorageEnum } from '@shared/models/local-storage.enum';
 import { IUser } from '@shared/models/user.interface';
-import { writeBatch } from 'firebase/firestore';
+import { WriteBatch, collection, writeBatch } from 'firebase/firestore';
+import { deleteObject, ref } from 'firebase/storage';
 import {
+  EMPTY,
   Observable,
   catchError,
   combineLatest,
+  finalize,
+  forkJoin,
   from,
   map,
+  of,
   switchMap,
+  take,
   tap,
   throwError,
 } from 'rxjs';
@@ -32,11 +46,12 @@ import {
 export class AuthService {
   public auth = inject(Auth);
   private fs = inject(Firestore);
+  private storage = inject(Storage);
   private jwtHelper = new JwtHelperService();
 
   user$ = user(this.auth);
 
-  private userSignal = signal<User | null >(null);
+  private userSignal = signal<User | null>(null);
   user = computed(this.userSignal);
 
   private isAuthenticatedSignal = signal<boolean>(
@@ -57,14 +72,18 @@ export class AuthService {
   }
 
   userChanges(): void {
-    this.user$
+    authState(this.auth)
       .pipe(
-        tapOnce(async (user) => {
+        tap(async (user) => {
           if (user && !this.token) {
             const token = await user.getIdToken(true);
             this.setToken(token);
           }
-        }, 0),
+
+          if (!user && this.token) {
+            this.clearStorage();
+          }
+        }),
       )
       .subscribe((user) => {
         console.log('User was changed!', user?.email);
@@ -81,13 +100,13 @@ export class AuthService {
   logIn({ email, password }: IAuthData): Observable<User> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((credential) => credential.user),
+      catchError((err) =>
+        throwError(() => new Error(`Login failed: ${err.message}`)),
+      ),
       tap(async (user) => {
         const token = await user.getIdToken(true);
         this.setToken(token);
       }),
-      catchError((err) =>
-        throwError(() => new Error(`Login failed: ${err.message}`)),
-      ),
     );
   }
 
@@ -96,10 +115,6 @@ export class AuthService {
       createUserWithEmailAndPassword(this.auth, email, password),
     ).pipe(
       map((credential) => credential.user),
-      tap(async (user) => {
-        const token = await user.getIdToken();
-        this.setToken(token);
-      }),
       catchError((err) =>
         throwError(() => new Error(`Signup failed: ${err.message}`)),
       ),
@@ -111,7 +126,7 @@ export class AuthService {
         // Collect necessary data
         const userData: IUser = {
           email: user.email,
-          created_at: Date.now().toString(),
+          created_at: new Date().toString(),
           photoURL: null,
           uid: user.uid,
           username,
@@ -139,14 +154,114 @@ export class AuthService {
           updateProfile(user, profileData),
         ]).pipe(map(() => user));
       }),
+      tap(async (user) => {
+        const token = await user.getIdToken();
+        this.setToken(token);
+      }),
     );
   }
 
   signOut(): Observable<void> {
     return from(signOut(this.auth)).pipe(
-      tap(() => {
-        localStorage.removeItem(LocalStorageEnum.AuthToken);
+      finalize(() => {
+        this.clearStorage();
       }),
     );
+  }
+
+  deleteUser(password: string) {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => this.reauthenticate(user, password)),
+      switchMap((user) => this.deleteUserData(user)),
+      switchMap((user) => this.deleteUserAccount(user)),
+    );
+  }
+
+  private deleteUserData(user: User): Observable<User> {
+    const batch = writeBatch(this.fs);
+
+    const snippetsCollection = collection(
+      this.fs,
+      'users',
+      user.uid,
+      'snippets',
+    );
+    return collectionSnapshots(snippetsCollection).pipe(
+      take(1),
+      switchMap((snapshot) => {
+        snapshot.forEach((docSnapshot) => {
+          const userSnippetRef = doc(
+            this.fs,
+            'users',
+            user.uid,
+            'snippets',
+            docSnapshot.id,
+          );
+          batch.delete(userSnippetRef);
+
+          const snippetRef = doc(this.fs, 'snippets', docSnapshot.id);
+          batch.delete(snippetRef);
+        });
+
+        if (user.displayName) {
+          const usernameDoc = doc(this.fs, 'usernames', user.displayName);
+          batch.delete(usernameDoc);
+        }
+
+        const userDoc = doc(this.fs, 'users', user.uid);
+        batch.delete(userDoc);
+
+        return from(batch.commit()).pipe(
+          take(1),
+          map(() => user),
+          catchError((error) => {
+            return throwError(() => new Error('Error deleting user data'));
+          }),
+        );
+      }),
+    );
+  }
+
+  private deleteUserAccount(user: User) {
+    const deletionPromises: Promise<any>[] = [];
+
+    if (user.photoURL) {
+      const avatarRef = ref(this.storage, user.photoURL);
+      deletionPromises.push(deleteObject(avatarRef));
+    }
+
+    deletionPromises.push(user.delete());
+
+    return forkJoin(deletionPromises).pipe(
+      take(1),
+      tap(() => this.clearStorage()),
+      catchError((error) => {
+        return throwError(() => new Error('Error deleting user account'));
+      }),
+    );
+  }
+
+  private reauthenticate(
+    user: User | null,
+    password: string,
+  ): Observable<User> {
+    if (!user || !user.email) {
+      return throwError(() => new Error('User is not defined'));
+    }
+
+    const credential = EmailAuthProvider.credential(user.email, password);
+
+    return from(reauthenticateWithCredential(user, credential)).pipe(
+      take(1),
+      map(({ user }) => user),
+      catchError((error) => {
+        return throwError(() => new Error('Reauthentication failed'));
+      }),
+    );
+  }
+
+  private clearStorage(): void {
+    localStorage.removeItem(LocalStorageEnum.AuthToken);
   }
 }

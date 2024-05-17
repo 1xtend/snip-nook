@@ -43,15 +43,10 @@ export class EditorComponent {
   readonly = input<boolean>(false);
   height = input<string>('300px');
 
-  editorOptions = computed<IEditorOptions>(() => {
-    const language = this.language();
-    console.log('options changed', language);
-
-    return {
-      ...this.options(),
-      language: language ?? '',
-    };
-  });
+  editorOptions = computed<IEditorOptions>(() => ({
+    ...this.options(),
+    language: this.language() ?? '',
+  }));
 
   language = model<string>();
   code = model<string>();
@@ -74,10 +69,6 @@ export class EditorComponent {
 
   private formatRawCode(code: string | undefined): string {
     return code ? this.sharedService.formatRawCode(code) : '';
-  }
-
-  setCode(e: Event) {
-    console.log(e);
   }
 
   onDelete(): void {

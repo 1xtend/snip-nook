@@ -2,7 +2,7 @@ import { LoadingService } from './../services/loading.service';
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
-import { map, take, tap } from 'rxjs';
+import { finalize, map, take } from 'rxjs';
 
 export const ownerGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -21,7 +21,7 @@ export const ownerGuard: CanActivateFn = (route, state) => {
 
       return router.parseUrl('/login');
     }),
-    tap(() => {
+    finalize(() => {
       loadingService.setLoading(false);
     }),
   );
