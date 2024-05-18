@@ -1,4 +1,4 @@
-@import "../../../../assets/scss/variables";
+@import "../../../../assets/scss/app-variables";
 
 .sidebar {
   &__list {
@@ -31,5 +31,23 @@
   &__icon {
     color: #71717a;
     margin-right: $spacing-s;
+  }
+
+  &__sub-header {
+    color: #71717a;
+    font-weight: 600;
+    padding: $spacing-s;
+  }
+
+  &__switch-container {
+    display: flex;
+    align-items: center;
+    gap: $spacing-l;
+    padding: $spacing-s;
+  }
+
+  &__separator {
+    border-top: 1px solid var(--gray-700);
+    margin: $spacing-s 0;
   }
 }

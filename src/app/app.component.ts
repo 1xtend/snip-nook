@@ -1,3 +1,4 @@
+import { ThemeService } from './core/services/theme.service';
 import { ModalService } from './core/services/modal.service';
 import {
   Component,
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private modalService = inject(ModalService);
+  private themeService = inject(ThemeService);
 
   menuSidebarVisible = model<boolean>(false);
   userSidebarVisible = model<boolean>(false);
@@ -48,6 +50,11 @@ export class AppComponent implements OnInit {
     this.authService.userChanges();
 
     this.checkTokenExpiration();
+    this.checkTheme();
+  }
+
+  private checkTheme(): void {
+    this.themeService.checkSavedTheme();
   }
 
   private checkTokenExpiration(): void {

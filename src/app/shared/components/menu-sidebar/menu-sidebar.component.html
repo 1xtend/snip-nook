@@ -30,6 +30,18 @@
           Explore
         </a>
       </li>
+      <li class="sidebar__item sidebar__separator"></li>
+      <li class="sidebar__sub-header">
+        <span>View Options</span>
+      </li>
+      <li class="sidebar__item sidebar__switch-container">
+        <label for="theme-switch" class="sidebar__label">Dark Mode</label>
+        <p-inputSwitch
+          inputId="theme-switch"
+          class="sidebar__switch"
+          [formControl]="themeControl"
+        ></p-inputSwitch>
+      </li>
     </ul>
   </ng-template>
 </p-sidebar>
