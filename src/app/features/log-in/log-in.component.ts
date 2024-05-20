@@ -21,6 +21,8 @@ import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { take } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
+import { User } from 'firebase/auth';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-log-in',
@@ -41,11 +43,11 @@ export class LogInComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private messageService = inject(MessageService);
 
   form!: FormGroup<IAuthForm>;
 
-  authErrors = signal<Partial<IAuthErrors> | null>(null);
-  loading: boolean = false;
+  loading = signal<boolean>(false);
 
   get emailControl(): FormControl {
     return this.form.controls['email'];
@@ -78,35 +80,33 @@ export class LogInComponent implements OnInit {
       return;
     }
 
-    this.authErrors.set(null);
-    this.loading = true;
+    this.loading.set(true);
     this.form.disable();
 
     this.authService
       .logIn(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: (user) => {
-          this.form.reset();
-
-          this.router.navigate(['/user', user.uid, 'overview']);
-        },
-        error: (err: Error) => {
-          this.authErrors.set({
-            invalidCredential: err.message.includes('auth/invalid-credential'),
-            invalidEmail: err.message.includes('auth/invalid-email'),
-            missingEmail: err.message.includes('auth/missing-email'),
-            userNotFound: err.message.includes('auth/user-not-found'),
-            wrongPassword: err.message.includes('auth/wrong-password'),
-          });
-
-          this.form.enable();
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-          this.form.enable();
-        },
+        next: (user) => this.handleLoginNext(user),
+        error: (err: Error) => this.handleLoginError(err),
       });
+  }
+
+  private handleLoginNext(user: User): void {
+    this.loading.set(false);
+    this.form.reset();
+    this.form.enable();
+    this.router.navigate(['/user', user.uid, 'overview']);
+  }
+
+  private handleLoginError(error: Error): void {
+    this.messageService.add({
+      severity: 'error',
+      detail: error.message,
+      summary: 'Auth Error',
+      life: 4000,
+    });
+    this.form.enable();
+    this.loading.set(false);
   }
 }

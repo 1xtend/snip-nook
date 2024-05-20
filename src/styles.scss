@@ -62,11 +62,11 @@ body {
   }
 
   &__input {
-    display: block;
     width: 100%;
   }
 
   &__validation-error {
+    display: block;
     color: var(--red-500);
     position: absolute;
     bottom: -20px;
@@ -79,10 +79,6 @@ body {
     &:not(:last-child) {
       margin-bottom: $spacing-l;
     }
-  }
-
-  &__link {
-    // color: var(--primary-color);
   }
 }
 

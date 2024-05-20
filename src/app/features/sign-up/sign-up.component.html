@@ -9,13 +9,22 @@
 
   <div class="auth-card__row">
     <label for="auth-username" class="auth-card__label">Username</label>
-    <input
-      type="text"
-      pInputText
-      class="auth-card__input"
-      id="auth-username"
-      formControlName="username"
-    />
+    <p-iconField iconPosition="right">
+      <input
+        type="text"
+        pInputText
+        class="auth-card__input"
+        id="auth-username"
+        formControlName="username"
+      />
+
+      @if (usernameControl.pending) {
+        <p-inputIcon styleClass="pi pi-spinner pi-spin"></p-inputIcon>
+      }
+      @if (usernameControl.valid) {
+        <p-inputIcon styleClass="pi pi-check"></p-inputIcon>
+      }
+    </p-iconField>
 
     @if (
       (usernameControl.invalid && usernameControl.dirty) ||
@@ -81,24 +90,10 @@
     }
   </div>
 
-  @if (authErrors(); as error) {
-    <small class="auth-card__auth-error">
-      @if (error.emailInUse) {
-        Email is already taken.
-      }
-      @if (error.invalidEmail) {
-        Email is invalid.
-      }
-      @if (error.missingEmail) {
-        Missing email.
-      }
-    </small>
-  }
-
   <p class="auth-card__row">
     Already have an account?
     <a routerLink="/login" class="auth-card__link p-reset">Log In</a>
   </p>
 
-  <p-button type="submit" label="Sign Up" [loading]="loading"></p-button>
+  <p-button type="submit" label="Sign Up" [loading]="loading()"></p-button>
 </form>

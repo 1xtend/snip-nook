@@ -36,6 +36,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ import {
 export class AuthService {
   public auth = inject(Auth);
   private fs = inject(Firestore);
+  private errorService = inject(ErrorService);
   private storage = inject(Storage);
   private jwtHelper = new JwtHelperService();
 
@@ -96,9 +98,7 @@ export class AuthService {
   logIn({ email, password }: IAuthData): Observable<User> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((credential) => credential.user),
-      catchError((err) =>
-        throwError(() => new Error(`Login failed: ${err.message}`)),
-      ),
+      catchError((err) => this.errorService.handleError(err)),
       tap((user) => this.setAuthToken(user)),
     );
   }
@@ -117,9 +117,7 @@ export class AuthService {
       createUserWithEmailAndPassword(this.auth, email, password),
     ).pipe(
       map((credential) => credential.user),
-      catchError((err) =>
-        throwError(() => new Error(`Signup failed: ${err.message}`)),
-      ),
+      catchError((err) => this.errorService.handleError(err)),
       switchMap((user) => this.createUser(user, username)),
       tap((user) => this.setAuthToken(user)),
     );

@@ -40,30 +40,10 @@
     />
   </div>
 
-  @if (authErrors(); as error) {
-    <small class="auth-card__auth-error">
-      @if (error.invalidCredential) {
-        Invalid username or password.
-      }
-      @if (error.invalidEmail) {
-        Email is invalid.
-      }
-      @if (error.missingEmail) {
-        Missing email.
-      }
-      @if (error.userNotFound) {
-        User was not found.
-      }
-      @if (error.wrongPassword) {
-        Wrong password.
-      }
-    </small>
-  }
-
   <p class="auth-card__row">
     New to SnipNook?
     <a routerLink="/signup" class="auth-card__link p-reset">Sign Up</a>
   </p>
 
-  <p-button type="submit" label="Log In" [loading]="loading"></p-button>
+  <p-button type="submit" label="Log In" [loading]="loading()"></p-button>
 </form>
