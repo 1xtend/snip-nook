@@ -89,7 +89,7 @@ export class SnippetOverviewComponent implements OnInit {
       )
       .subscribe({
         next: (snippet) => {
-          this.handleSnippetNext(snippet);
+          this.handleParamsNext(snippet);
           this.loading.set(false);
         },
         error: (err) => {
@@ -122,7 +122,7 @@ export class SnippetOverviewComponent implements OnInit {
       : this.snippetService.getSnippet(snippetId);
   }
 
-  private handleSnippetNext(snippet: ISnippet | undefined): void {
+  private handleParamsNext(snippet: ISnippet | undefined): void {
     this.snippet.set(snippet);
 
     if (snippet) {

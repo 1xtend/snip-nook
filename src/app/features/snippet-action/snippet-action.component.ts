@@ -30,7 +30,7 @@ import { DividerModule } from 'primeng/divider';
 import { SkeletonModule } from 'primeng/skeleton';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { EditorComponent } from '@shared/components/editor/editor.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import { IEditorOptions } from '@shared/models/editor.interface';
 import {
@@ -115,30 +115,42 @@ export class SnippetActionComponent implements OnInit {
       data: this.route.data,
     })
       .pipe(
-        switchMap(({ params, data }) => {
-          const action: ActionType = data['action'] || 'create';
-
-          this.actionSignal.set(action);
-          this.loading.set(true);
-          this.initForm(undefined);
-
-          const snippetId = params.get('id');
-
-          return action === 'create'
-            ? of(undefined)
-            : snippetId
-              ? this.snippetService.getSnippet(snippetId)
-              : throwError(
-                  () => new Error("Route doesn't contain snippet uid"),
-                );
-        }),
+        switchMap(({ params, data }) => this.handleParamsChange(params, data)),
       )
-      .subscribe((snippet) => {
-        this.initForm(snippet);
-
-        this.snippetSignal.set(snippet);
-        this.loading.set(false);
+      .subscribe({
+        next: (snippet) => {
+          this.handleParamsNext(snippet);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          this.loading.set(false);
+        },
       });
+  }
+
+  private handleParamsChange(params: ParamMap, data: Data) {
+    this.loading.set(true);
+
+    const action: ActionType = data['action'] || 'create';
+    this.actionSignal.set(action);
+    this.initForm(undefined);
+
+    const snippetId = params.get('id');
+
+    if (action === 'create') {
+      return of(undefined);
+    }
+
+    if (!snippetId) {
+      return throwError(() => new Error("Route doesn't contain snippet uid"));
+    }
+
+    return this.snippetService.getSnippet(snippetId);
+  }
+
+  private handleParamsNext(snippet: ISnippet | undefined): void {
+    this.initForm(snippet);
+    this.snippetSignal.set(snippet);
   }
 
   private initForm(snippet: ISnippet | undefined): void {
