@@ -20,15 +20,6 @@ export interface IAuthPasswords {
   newPassword: string;
 }
 
-export interface IAuthErrors {
-  emailInUse: boolean;
-  invalidCredential: boolean;
-  invalidEmail: boolean;
-  missingEmail: boolean;
-  wrongPassword: boolean;
-  userNotFound: boolean;
-}
-
 export interface ISignUpForm extends IAuthForm {
   username: FormControl<string>;
 }

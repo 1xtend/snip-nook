@@ -16,7 +16,6 @@ import { Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { ModalService } from '@core/services/modal.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
-import { IAuthErrors } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
@@ -44,8 +43,7 @@ export class DeleteDialogComponent implements OnInit {
 
   form!: FormGroup<{ password: FormControl }>;
 
-  authErrors = signal<Partial<IAuthErrors> | null>(null);
-  loading: boolean = false;
+  loading = signal<boolean>(false);
 
   get passwordControl(): FormControl {
     return this.form.controls['password'];
@@ -70,38 +68,40 @@ export class DeleteDialogComponent implements OnInit {
       return;
     }
 
-    this.authErrors.set(null);
+    this.loading.set(true);
     this.form.disable();
-    this.loading = true;
 
     this.authService
       .deleteUser(this.form.getRawValue().password)
       .pipe(take(1))
       .subscribe({
-        next: () => {
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Account has been successfully deleted',
-            summary: 'Success',
-          });
-
-          this.form.reset();
-          this.modalService.closeDialog();
-          this.router.navigate(['/home']);
-        },
-        error: (err) => {
-          console.log(err);
-          this.authErrors.set({
-            wrongPassword: err.message.includes('auth/wrong-password'),
-          });
-
-          this.loading = false;
-          this.form.enable();
-        },
-        complete: () => {
-          this.loading = false;
-          this.form.enable();
-        },
+        next: () => this.handleDeleteNext(),
+        error: (err) => this.handleDeleteError(err),
       });
+  }
+
+  private handleDeleteNext(): void {
+    this.loading.set(false);
+    this.form.reset();
+    this.form.enable();
+    this.modalService.closeDialog();
+    this.router.navigate(['/home']);
+
+    this.messageService.add({
+      severity: 'success',
+      detail: 'Account has been successfully deleted',
+      summary: 'Success',
+    });
+  }
+
+  private handleDeleteError(error: Error): void {
+    this.loading.set(false);
+    this.form.enable();
+    this.messageService.add({
+      severity: 'error',
+      detail: error.message,
+      summary: 'Auth Error',
+      life: 4000,
+    });
   }
 }

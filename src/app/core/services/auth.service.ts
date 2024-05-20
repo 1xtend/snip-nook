@@ -176,6 +176,7 @@ export class AuthService {
       switchMap((user) => this.reauthenticate(user, password)),
       switchMap((user) => this.deleteUserData(user)),
       switchMap((user) => this.deleteUserAccount(user)),
+      catchError((err) => this.errorService.handleError(err)),
     );
   }
 

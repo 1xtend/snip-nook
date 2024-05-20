@@ -25,6 +25,7 @@ import {
 import { AuthService } from './auth.service';
 import {
   Observable,
+  catchError,
   combineLatest,
   forkJoin,
   from,
@@ -42,15 +43,16 @@ import {
 import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
 import { getDoc } from 'firebase/firestore';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private fs = inject(Firestore);
-  private auth = inject(Auth);
   private storage = inject(Storage);
   private authService = inject(AuthService);
+  private errorService = inject(ErrorService);
 
   user$ = this.authService.user$;
 
@@ -74,6 +76,7 @@ export class UserService {
 
             return combineLatest([userUpdate$, emailUpdate$]);
           }),
+          catchError((err) => this.errorService.handleError(err)),
         );
       }),
     );
@@ -95,6 +98,7 @@ export class UserService {
             // Update user password
             return updatePassword(user, newPassword);
           }),
+          catchError((err) => this.errorService.handleError(err)),
         );
       }),
     );
