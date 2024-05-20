@@ -20,7 +20,7 @@ export const snippetOwnerGuard: CanActivateFn = (route, state) => {
       const userId = user?.uid;
 
       return userId
-        ? firestoreService.checkUserSnippet(userId, snippetId).pipe(
+        ? firestoreService.checkSnippetOwner(userId, snippetId).pipe(
             take(1),
             map((snippet) => {
               return !!snippet;

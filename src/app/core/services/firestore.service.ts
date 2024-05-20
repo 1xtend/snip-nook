@@ -12,7 +12,7 @@ import {
 } from '@angular/fire/firestore';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { IUser } from '@shared/models/user.interface';
-import { Observable, switchMap, take } from 'rxjs';
+import { Observable, map, switchMap, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -44,8 +44,10 @@ export class FirestoreService {
   }
 
   // Utils
-  checkUserSnippet(userUid: string, snippetUid: string) {
-    return docData(doc(this.fs, 'users', userUid, 'snippets', snippetUid));
+  checkSnippetOwner(userUid: string, snippetUid: string): Observable<boolean> {
+    return docData(doc(this.fs, 'users', userUid, 'snippets', snippetUid)).pipe(
+      map((snippet) => !!snippet),
+    );
   }
 
   deleteCollection(path: string, ...pathSegments: string[]) {
