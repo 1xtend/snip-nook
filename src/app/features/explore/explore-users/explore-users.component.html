@@ -23,9 +23,9 @@
         <div class="user-card">There are no users.</div>
       }
 
-      @if (count > rows) {
+      @if (count > perPage) {
         <p-paginator
-          [rows]="rows"
+          [rows]="perPage"
           [first]="first"
           [totalRecords]="count"
           (onPageChange)="onPageEvent($event)"

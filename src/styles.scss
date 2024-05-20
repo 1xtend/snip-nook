@@ -31,6 +31,7 @@ body {
   background-color: var(--surface-card);
   border-radius: var(--border-radius);
   padding: $spacing-l;
+  border: 1px solid var(--surface-border);
 
   @media (max-width: $breakpoint-l) {
     width: 70vw;
@@ -78,6 +79,10 @@ body {
     &:not(:last-child) {
       margin-bottom: $spacing-l;
     }
+  }
+
+  &__link {
+    // color: var(--primary-color);
   }
 }
 

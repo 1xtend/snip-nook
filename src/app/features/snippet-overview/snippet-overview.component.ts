@@ -7,6 +7,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -20,6 +21,9 @@ import { ButtonModule } from 'primeng/button';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
 import { SnippetService } from '@core/services/snippet.service';
+import { ThemeService } from '@core/services/theme.service';
+import { defaultEditorOptions } from '@shared/helpers/default-editor-options';
+import { IEditorOptions } from '@shared/models/editor.interface';
 
 @Component({
   selector: 'app-snippet-overview',
@@ -43,23 +47,26 @@ export class SnippetOverviewComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private sharedService = inject(SharedService);
   private firestoreService = inject(FirestoreService);
+  private themeService = inject(ThemeService);
+
+  private defaultEditorOptions = signal<IEditorOptions>(defaultEditorOptions);
+  private activeTheme = this.themeService.activeTheme;
 
   tabItems: MenuItem[] = [];
   activeTab: MenuItem | undefined = undefined;
 
   code: string = '';
-  editorOptions = {
-    language: '',
-    minimap: {
-      enabled: false,
-    },
-    contextmenu: false,
-    readOnly: true,
-    scrollBeyondLastLine: false,
-  };
+  editorOptions = computed<IEditorOptions>(() => ({
+    ...this.defaultEditorOptions(),
+    theme:
+      !this.activeTheme() || this.activeTheme() === 'dark'
+        ? 'vs-dark'
+        : 'vs-light',
+  }));
 
   snippet = signal<ISnippet | undefined | null>(null);
   isOwner = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
   user$ = this.authService.user$;
 
@@ -68,6 +75,8 @@ export class SnippetOverviewComponent implements OnInit {
   }
 
   private paramsChanges(): void {
+    this.loading.set(true);
+
     combineLatest({
       user: this.user$,
       params: this.route.paramMap,
@@ -75,6 +84,8 @@ export class SnippetOverviewComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         switchMap(({ user, params }) => {
+          this.loading.set(true);
+
           const snippetId = params.get('id');
           const userId = user?.uid;
 
@@ -103,6 +114,8 @@ export class SnippetOverviewComponent implements OnInit {
           this.activeTab = this.tabItems[0];
           this.setTabCode(snippet.code[0]);
         }
+
+        this.loading.set(false);
       });
   }
 
@@ -119,9 +132,9 @@ export class SnippetOverviewComponent implements OnInit {
 
   private setTabCode(item: ICodeItem) {
     this.code = this.sharedService.formatProcessedCode(item.code);
-    this.editorOptions = {
-      ...this.editorOptions,
+    this.defaultEditorOptions.update((prev) => ({
+      ...prev,
       language: item.language,
-    };
+    }));
   }
 }

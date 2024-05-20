@@ -1,3 +1,4 @@
+import { defaultEditorOptions } from './../../shared/helpers/default-editor-options';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { SnippetService } from '../../core/services/snippet.service';
 import {
@@ -44,6 +45,7 @@ import {
 } from 'rxjs';
 import { ActionType } from '@shared/models/action.type';
 import { AuthService } from '@core/services/auth.service';
+import { ThemeService } from '@core/services/theme.service';
 
 @Component({
   selector: 'app-snippet-create',
@@ -72,18 +74,13 @@ export class SnippetActionComponent implements OnInit {
   private messageService = inject(MessageService);
   private authService = inject(AuthService);
   private confirmationService = inject(ConfirmationService);
+  private themeService = inject(ThemeService);
+
+  private readonly defaultOptions = defaultEditorOptions;
 
   form!: FormGroup<ISnippetCreateForm>;
 
   code: string = '';
-  editorOptions: IEditorOptions = {
-    language: 'plaintext',
-    minimap: {
-      enabled: false,
-    },
-    contextmenu: false,
-    scrollBeyondLastLine: false,
-  };
 
   private actionSignal = signal<ActionType>('create');
   action = computed(this.actionSignal);
@@ -91,7 +88,16 @@ export class SnippetActionComponent implements OnInit {
   private snippetSignal = signal<ISnippet | undefined>(undefined);
   snippet = computed(this.snippetSignal);
 
+  private activeTheme = this.themeService.activeTheme;
   loading = signal<boolean>(false);
+
+  editorOptions = computed<IEditorOptions>(() => ({
+    ...this.defaultOptions,
+    theme:
+      !this.activeTheme() || this.activeTheme() === 'dark'
+        ? 'vs-dark'
+        : 'vs-light',
+  }));
 
   get codeArrayControl(): FormArray<FormControl> {
     return this.form.controls['code'];

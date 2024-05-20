@@ -18,12 +18,17 @@ import {
   limit,
   startAfter,
   Query,
+  QueryDocumentSnapshot,
+  DocumentData,
+  getDocs,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import {
   Observable,
   combineLatest,
+  forkJoin,
   from,
+  map,
   switchMap,
   take,
   throwError,
@@ -36,6 +41,7 @@ import {
 } from '@angular/fire/storage';
 import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
+import { getDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -121,25 +127,75 @@ export class UserService {
     );
   }
 
-  getUsers(pageSize: number, startAfterDoc?: any) {
+  getUsers(
+    perPage: number,
+    startAfterDoc?: QueryDocumentSnapshot<DocumentData>,
+  ) {
     const usersCollection = collection(this.fs, 'users');
-    let usersQuery: Query;
+    let usersQuery = query(
+      usersCollection,
+      orderBy('created_at'),
+      limit(perPage),
+    );
 
     if (startAfterDoc) {
       usersQuery = query(
         usersCollection,
         orderBy('created_at'),
-        startAfter(startAfter),
-        limit(pageSize),
-      );
-    } else {
-      usersQuery = query(
-        usersCollection,
-        orderBy('created_at'),
-        limit(pageSize),
+        startAfter(startAfterDoc),
+        limit(perPage),
       );
     }
 
-    return collectionData(usersQuery) as Observable<IUser[]>;
+    return forkJoin({
+      snapshot: getDocs(usersQuery),
+      count: this.getUsersCount(),
+    }).pipe(
+      map(({ snapshot, count }) => {
+        const users = snapshot.docs.map(
+          (doc) =>
+            ({
+              uid: doc.id,
+              ...doc.data(),
+            }) as IUser,
+        );
+
+        return { users, count };
+      }),
+    );
+
+    // return forkJoin([
+    //   getDocs(usersQuery),
+    //   this.getUsersCount()
+    // ]).pipe(
+    //   map(([users]) => {
+
+    //   })
+    // )
+
+    // return from(getDocs(usersQuery)).pipe(
+    //   switchMap(async (snapshot) => {
+    //     const count = await getDocs(usersQuery);
+    // const users = snapshot.docs.map(
+    //   (doc) =>
+    //     ({
+    //       uid: doc.id,
+    //       ...doc.data(),
+    //     }) as IUser,
+    // );
+
+    //     return {
+    //       count: count.size,
+    //       users,
+    //     };
+    //   }),
+    // );
+  }
+
+  private async getUsersCount(): Promise<number> {
+    const usersCollection = collection(this.fs, 'users');
+    const users = await getDocs(usersCollection);
+
+    return users.size;
   }
 }

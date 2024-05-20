@@ -38,8 +38,10 @@ export class MenuSidebarComponent implements OnInit {
   position = input<'right' | 'left'>('right');
   close = output<void>();
 
+  private theme = this.themeService.theme;
+
   themeControl = new FormControl<boolean>(
-    this.themeService.theme === 'dark' ? true : false,
+    !this.theme || this.theme === 'dark' ? true : false,
     { nonNullable: true },
   );
 

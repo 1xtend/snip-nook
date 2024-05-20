@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Injectable, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { LocalStorageEnum } from '@shared/models/local-storage.enum';
 import { ThemeType } from '@shared/models/theme.type';
 
@@ -9,12 +9,16 @@ import { ThemeType } from '@shared/models/theme.type';
 export class ThemeService {
   private document = inject(DOCUMENT);
 
+  private activeThemeSignal = signal<ThemeType | null>(null);
+  activeTheme = computed(this.activeThemeSignal);
+
   get theme(): ThemeType | null {
     return localStorage.getItem(LocalStorageEnum.Theme) as ThemeType | null;
   }
 
   setTheme(theme: ThemeType): void {
     localStorage.setItem(LocalStorageEnum.Theme, theme);
+    this.activeThemeSignal.set(theme);
   }
 
   switchTheme(theme: ThemeType) {
@@ -32,7 +36,6 @@ export class ThemeService {
     if (this.theme) {
       this.switchTheme(this.theme);
     } else {
-      this.setTheme('dark');
       this.switchTheme('dark');
     }
   }

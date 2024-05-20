@@ -19,7 +19,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   defaultOptions: {
-    theme: 'vs-dark',
+    base: 'vs-dark',
     lineNumbers: true,
   },
   onMonacoLoad: () => {

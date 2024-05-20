@@ -13,6 +13,7 @@
     background-color: var(--surface-card);
     padding: $spacing-l;
     border-radius: var(--border-radius);
+    border: 1px solid var(--surface-border);
 
     span {
       font-size: 1.25rem;

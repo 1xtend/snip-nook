@@ -120,12 +120,12 @@ export class AuthService {
       catchError((err) =>
         throwError(() => new Error(`Signup failed: ${err.message}`)),
       ),
-      switchMap((user) => this.setupUser(user, username)),
+      switchMap((user) => this.createUser(user, username)),
       tap((user) => this.setAuthToken(user)),
     );
   }
 
-  private setupUser(user: User, username: string) {
+  private createUser(user: User, username: string) {
     if (!user.email) {
       return throwError(() => new Error('There is no email'));
     }
@@ -154,14 +154,10 @@ export class AuthService {
     batch.set(userDoc, userData);
     batch.set(usernameDoc, usernameData);
 
-    return this.setUserAndProfile(batch, user, profileData);
+    return this.setupUser(batch, user, profileData);
   }
 
-  private setUserAndProfile(
-    batch: WriteBatch,
-    user: User,
-    profileData: Partial<User>,
-  ) {
+  private setupUser(batch: WriteBatch, user: User, profileData: Partial<User>) {
     return forkJoin([
       from(batch.commit()),
       from(updateProfile(user, profileData)),
