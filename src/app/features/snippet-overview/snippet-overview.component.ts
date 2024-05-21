@@ -88,13 +88,8 @@ export class SnippetOverviewComponent implements OnInit {
         switchMap(({ user, params }) => this.handleParamsChange(user, params)),
       )
       .subscribe({
-        next: (snippet) => {
-          this.handleParamsNext(snippet);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          this.loading.set(false);
-        },
+        next: (snippet) => this.handleParamsNext(snippet),
+        error: (err) => this.handleParamsError(err),
       });
   }
 
@@ -123,6 +118,7 @@ export class SnippetOverviewComponent implements OnInit {
   }
 
   private handleParamsNext(snippet: ISnippet | undefined): void {
+    this.loading.set(false);
     this.snippet.set(snippet);
 
     if (snippet) {
@@ -130,6 +126,10 @@ export class SnippetOverviewComponent implements OnInit {
       this.activeTab = this.tabItems[0];
       this.setTabCode(snippet.code[0]);
     }
+  }
+
+  private handleParamsError(error: Error): void {
+    this.loading.set(false);
   }
 
   private getTabItems(code: ICodeItem[]): MenuItem[] {

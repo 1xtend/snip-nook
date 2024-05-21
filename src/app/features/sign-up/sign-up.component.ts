@@ -23,7 +23,6 @@ import { AuthService } from '@core/services/auth.service';
 import { usernameValidator } from '@shared/validators/username.validator';
 import { take } from 'rxjs';
 import { User } from 'firebase/auth';
-import { MessageService } from 'primeng/api';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 
@@ -48,7 +47,6 @@ export class SignUpComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private messageService = inject(MessageService);
 
   form!: FormGroup<ISignUpForm>;
 
@@ -120,12 +118,6 @@ export class SignUpComponent implements OnInit {
   }
 
   private handleSignupError(error: Error): void {
-    this.messageService.add({
-      severity: 'error',
-      detail: error.message,
-      summary: 'Auth Error',
-      life: 4000,
-    });
     this.form.enable();
     this.loading.set(false);
   }

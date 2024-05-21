@@ -1,3 +1,4 @@
+import { MessageService } from 'primeng/api';
 import { FirestoreService } from '@core/services/firestore.service';
 import {
   ChangeDetectionStrategy,
@@ -8,12 +9,13 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
-import { EMPTY, combineLatest, switchMap } from 'rxjs';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { EMPTY, Observable, combineLatest, switchMap } from 'rxjs';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
 import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-card.component';
 import { AuthService } from '@core/services/auth.service';
 import { SkeletonModule } from 'primeng/skeleton';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-user-snippets',
@@ -28,6 +30,7 @@ export class UserSnippetsComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private firestoreService = inject(FirestoreService);
   private authService = inject(AuthService);
+  private messageService = inject(MessageService);
 
   snippets = signal<ISnippetPreview[]>([]);
   loading = signal<boolean>(false);
@@ -48,21 +51,35 @@ export class UserSnippetsComponent implements OnInit {
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        switchMap(({ params, user }) => {
-          const userId = params.get('id');
-          const owner = user?.uid === userId;
-
-          this.loading.set(true);
-          this.isOwner.set(owner);
-
-          return userId
-            ? this.firestoreService.getUserSnippets(userId, owner)
-            : EMPTY;
-        }),
+        switchMap(({ params, user }) => this.handleParamsChange(params, user)),
       )
-      .subscribe((snippets) => {
-        this.snippets.set(snippets);
-        this.loading.set(false);
+      .subscribe({
+        next: (snippets) => this.handleParamsNext(snippets),
+        error: (err) => this.handleParamsError(err),
       });
+  }
+
+  private handleParamsChange(
+    params: ParamMap,
+    user: User | null,
+  ): Observable<ISnippetPreview[]> {
+    const userId = params.get('id');
+    const owner = user?.uid === userId;
+
+    this.loading.set(true);
+    this.isOwner.set(owner);
+
+    return userId
+      ? this.firestoreService.getUserSnippets(userId, owner)
+      : EMPTY;
+  }
+
+  private handleParamsNext(snippets: ISnippetPreview[]): void {
+    this.loading.set(false);
+    this.snippets.set(snippets);
+  }
+
+  private handleParamsError(error: Error): void {
+    this.loading.set(false);
   }
 }

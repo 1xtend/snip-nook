@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { Injectable, inject } from '@angular/core';
 import { AuthErrorCodes } from 'firebase/auth';
 import { Observable, throwError } from 'rxjs';
 
@@ -6,14 +7,21 @@ import { Observable, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class ErrorService {
-  handleError(error: Error) {
-    console.log('HANDLE ERROR WAS CALLED');
+  private messageService = inject(MessageService);
 
+  handleError(error: Error) {
     const message = error.message;
 
     if (message.includes('auth')) {
       return this.handleAuthError(message);
     }
+
+    this.messageService.add({
+      severity: 'error',
+      detail: message,
+      summary: 'Auth Error',
+      life: 4000,
+    });
 
     return throwError(() => new Error(error.message));
   }
@@ -50,6 +58,13 @@ export class ErrorService {
         errorMessage = 'Unexpected error occured.';
         break;
     }
+
+    this.messageService.add({
+      severity: 'error',
+      detail: errorMessage,
+      summary: 'Auth Error',
+      life: 4000,
+    });
 
     return throwError(() => new Error(errorMessage));
   }

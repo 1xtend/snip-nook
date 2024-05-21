@@ -117,8 +117,8 @@ export class AuthService {
       createUserWithEmailAndPassword(this.auth, email, password),
     ).pipe(
       map((credential) => credential.user),
-      catchError((err) => this.errorService.handleError(err)),
       switchMap((user) => this.createUser(user, username)),
+      catchError((err) => this.errorService.handleError(err)),
       tap((user) => this.setAuthToken(user)),
     );
   }
@@ -159,14 +159,7 @@ export class AuthService {
     return forkJoin([
       from(batch.commit()),
       from(updateProfile(user, profileData)),
-    ]).pipe(
-      map(() => user),
-      catchError((error) => {
-        return throwError(
-          () => new Error(`Error during user setup: ${error.message}`),
-        );
-      }),
-    );
+    ]).pipe(map(() => user));
   }
 
   // Delete user

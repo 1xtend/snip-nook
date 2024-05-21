@@ -35,6 +35,7 @@ import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import { IEditorOptions } from '@shared/models/editor.interface';
 import {
   EMPTY,
+  Observable,
   combineLatest,
   finalize,
   map,
@@ -46,6 +47,7 @@ import {
 import { ActionType } from '@shared/models/action.type';
 import { AuthService } from '@core/services/auth.service';
 import { ThemeService } from '@core/services/theme.service';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-snippet-create',
@@ -118,13 +120,8 @@ export class SnippetActionComponent implements OnInit {
         switchMap(({ params, data }) => this.handleParamsChange(params, data)),
       )
       .subscribe({
-        next: (snippet) => {
-          this.handleParamsNext(snippet);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          this.loading.set(false);
-        },
+        next: (snippet) => this.handleParamsNext(snippet),
+        error: (err) => this.handleParamsError(err),
       });
   }
 
@@ -149,8 +146,13 @@ export class SnippetActionComponent implements OnInit {
   }
 
   private handleParamsNext(snippet: ISnippet | undefined): void {
+    this.loading.set(false);
     this.initForm(snippet);
     this.snippetSignal.set(snippet);
+  }
+
+  private handleParamsError(error: Error): void {
+    this.loading.set(false);
   }
 
   private initForm(snippet: ISnippet | undefined): void {
@@ -195,28 +197,26 @@ export class SnippetActionComponent implements OnInit {
     this.handleSnippet(snippet)
       .pipe(take(1))
       .subscribe({
-        next: (snippet) => {
-          this.messageService.add({
-            severity: 'success',
-            detail: `Snippet was ${this.action() === 'create' ? 'created' : 'edited'} successfully`,
-            summary: 'Success',
-          });
-
-          this.router.navigate(['snippet', snippet.uid, 'overview']);
-        },
-        error: (err) => {
-          this.messageService.add({
-            severity: 'error',
-            detail: 'Unexpected error occurred. Try again later',
-            summary: 'Error',
-          });
-
-          this.form.enable();
-        },
-        complete: () => {
-          this.form.enable();
-        },
+        next: (snippet) => this.handleSnippetNext(snippet),
+        error: (err) => this.handleSnippetError(err),
       });
+  }
+
+  private handleSnippetNext(snippet: ISnippet): void {
+    this.form.reset();
+    this.form.enable();
+
+    this.messageService.add({
+      severity: 'success',
+      detail: `Snippet was ${this.action() === 'create' ? 'created' : 'edited'} successfully`,
+      summary: 'Success',
+    });
+
+    this.router.navigate(['snippet', snippet.uid, 'overview']);
+  }
+
+  private handleSnippetError(error: Error): void {
+    this.form.enable();
   }
 
   addEditor(): void {
@@ -260,39 +260,38 @@ export class SnippetActionComponent implements OnInit {
       this.authService.user$
         .pipe(
           take(1),
-          switchMap((user) => {
-            return user
-              ? this.snippetService.deleteSnippet(uid).pipe(
-                  take(1),
-                  map(() => user),
-                )
-              : EMPTY;
-          }),
+          switchMap((user) => this.handleDeleteChange(user, uid)),
         )
         .subscribe({
-          next: (user) => {
-            this.router.navigate(['/user', user.uid, 'snippets']);
-
-            this.messageService.add({
-              severity: 'success',
-              detail: 'Snippet was successfully deleted.',
-              summary: 'Success',
-            });
-
-            this.form.enable();
-            this.form.reset();
-          },
-          error: (err) => {
-            this.messageService.add({
-              severity: 'error',
-              detail: 'Unexpected error occurred. Try again later',
-              summary: 'Error',
-            });
-
-            this.form.enable();
-          },
+          next: (user) => this.handleDeleteNext(user),
+          error: (err) => this.handleDeleteError(err),
         });
     }
+  }
+
+  private handleDeleteChange(user: User | null, uid: string): Observable<User> {
+    return user
+      ? this.snippetService.deleteSnippet(uid).pipe(
+          take(1),
+          map(() => user),
+        )
+      : EMPTY;
+  }
+
+  private handleDeleteNext(user: User): void {
+    this.form.reset();
+    this.form.enable();
+
+    this.messageService.add({
+      severity: 'success',
+      detail: 'Snippet was successfully deleted.',
+      summary: 'Success',
+    });
+    this.router.navigate(['/user', user.uid, 'snippets']);
+  }
+
+  private handleDeleteError(error: Error): void {
+    this.form.enable();
   }
 
   private handleSnippet(snippet: ISnippet) {

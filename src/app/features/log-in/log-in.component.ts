@@ -22,7 +22,6 @@ import { emailRegex } from '@shared/helpers/regex';
 import { take } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
 import { User } from 'firebase/auth';
-import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-log-in',
@@ -43,7 +42,6 @@ export class LogInComponent implements OnInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private messageService = inject(MessageService);
 
   form!: FormGroup<IAuthForm>;
 
@@ -100,12 +98,6 @@ export class LogInComponent implements OnInit {
   }
 
   private handleLoginError(error: Error): void {
-    this.messageService.add({
-      severity: 'error',
-      detail: error.message,
-      summary: 'Auth Error',
-      life: 4000,
-    });
     this.form.enable();
     this.loading.set(false);
   }

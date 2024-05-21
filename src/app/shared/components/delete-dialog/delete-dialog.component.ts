@@ -97,11 +97,5 @@ export class DeleteDialogComponent implements OnInit {
   private handleDeleteError(error: Error): void {
     this.loading.set(false);
     this.form.enable();
-    this.messageService.add({
-      severity: 'error',
-      detail: error.message,
-      summary: 'Auth Error',
-      life: 4000,
-    });
   }
 }

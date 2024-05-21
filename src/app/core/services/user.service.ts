@@ -128,6 +128,7 @@ export class UserService {
           }),
         );
       }),
+      catchError((err) => this.errorService.handleError(err)),
     );
   }
 
@@ -166,6 +167,7 @@ export class UserService {
 
         return { users, count };
       }),
+      catchError((err) => this.errorService.handleError(err)),
     );
 
     // return forkJoin([
