@@ -80,6 +80,7 @@ export class SignUpComponent implements OnInit {
       email: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(emailRegex)],
+        updateOn: 'blur',
       }),
       password: this.fb.control('', {
         nonNullable: true,
@@ -88,6 +89,7 @@ export class SignUpComponent implements OnInit {
           Validators.minLength(8),
           Validators.maxLength(16),
         ],
+        updateOn: 'blur',
       }),
     });
   }
