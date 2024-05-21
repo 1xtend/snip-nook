@@ -16,20 +16,12 @@
     />
   </div>
 
-  @if (authErrors(); as error) {
-    <small class="form__auth-error">
-      @if (error.wrongPassword) {
-        Wrong current password.
-      }
-    </small>
-  }
-
   <p-button
     type="submit"
     severity="danger"
     label="Delete"
     class="form__button"
     size="small"
-    [loading]="loading"
+    [loading]="loading()"
   ></p-button>
 </form>

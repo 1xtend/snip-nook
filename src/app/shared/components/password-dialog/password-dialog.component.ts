@@ -15,7 +15,7 @@ import {
 import { ModalService } from '@core/services/modal.service';
 import { UserService } from '@core/services/user.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
-import { IAuthErrors, IAuthPasswordsForm } from '@shared/models/auth.interface';
+import { IAuthPasswordsForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
@@ -42,8 +42,7 @@ export class PasswordDialogComponent implements OnInit {
 
   form!: FormGroup<IAuthPasswordsForm>;
 
-  authErrors = signal<Partial<IAuthErrors> | null>(null);
-  loading: boolean = false;
+  loading = signal<boolean>(false);
 
   get passwordControl(): FormControl {
     return this.form.controls['password'];
@@ -80,36 +79,34 @@ export class PasswordDialogComponent implements OnInit {
       return;
     }
 
-    this.authErrors.set(null);
     this.form.disable();
-    this.loading = true;
+    this.loading.set(true);
 
     this.userService
       .updatePassword(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: () => {
-          this.form.reset();
-          this.modalService.closeDialog();
-
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Password has been changed successfully',
-            summary: 'Success',
-          });
-        },
-        error: (err) => {
-          this.authErrors.set({
-            wrongPassword: err.message.includes('auth/wrong-password'),
-          });
-
-          this.loading = false;
-          this.form.enable();
-        },
-        complete: () => {
-          this.loading = false;
-          this.form.enable();
-        },
+        next: () => this.handleUpdateNext(),
+        error: (err) => this.handleUpdateError(err),
       });
+  }
+
+  private handleUpdateNext(): void {
+    this.loading.set(false);
+    this.form.reset();
+    this.form.enable();
+
+    this.modalService.closeDialog();
+
+    this.messageService.add({
+      severity: 'success',
+      detail: 'Password has been changed successfully',
+      summary: 'Success',
+    });
+  }
+
+  private handleUpdateError(error: Error): void {
+    this.loading.set(false);
+    this.form.enable();
   }
 }

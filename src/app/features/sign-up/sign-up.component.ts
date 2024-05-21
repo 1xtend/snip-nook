@@ -16,12 +16,15 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IAuthErrors, ISignUpForm } from '@shared/models/auth.interface';
+import { ISignUpForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { AuthService } from '@core/services/auth.service';
 import { usernameValidator } from '@shared/validators/username.validator';
 import { take } from 'rxjs';
+import { User } from 'firebase/auth';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
 
 @Component({
   selector: 'app-sign-up',
@@ -33,6 +36,8 @@ import { take } from 'rxjs';
     RouterLink,
     ReactiveFormsModule,
     FormFocusDirective,
+    IconFieldModule,
+    InputIconModule,
   ],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss',
@@ -45,8 +50,7 @@ export class SignUpComponent implements OnInit {
 
   form!: FormGroup<ISignUpForm>;
 
-  authErrors = signal<Partial<IAuthErrors> | null>(null);
-  loading: boolean = false;
+  loading = signal<boolean>(false);
 
   get emailControl(): FormControl {
     return this.form.controls['email'];
@@ -72,7 +76,6 @@ export class SignUpComponent implements OnInit {
           Validators.maxLength(16),
         ],
         asyncValidators: [usernameValidator(this.authService)],
-        updateOn: 'blur',
       }),
       email: this.fb.control('', {
         nonNullable: true,
@@ -90,38 +93,32 @@ export class SignUpComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.form.valid) {
+    if (!this.form.valid || this.form.pending) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.form.disable();
-    this.loading = true;
-    this.authErrors.set(null);
+    this.loading.set(true);
 
     this.authService
       .signUp(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: (user) => {
-          this.form.reset();
-
-          this.router.navigate(['/user', user.uid, 'overview']);
-        },
-        error: (err: Error) => {
-          this.authErrors.set({
-            emailInUse: err.message.includes('auth/email-already-in-use'),
-            invalidEmail: err.message.includes('auth/invalid-email'),
-            missingEmail: err.message.includes('auth/missing-email'),
-          });
-
-          this.form.enable();
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-          this.form.enable();
-        },
+        next: (user) => this.handleSignupNext(user),
+        error: (err: Error) => this.handleSignupError(err),
       });
+  }
+
+  private handleSignupNext(user: User): void {
+    this.loading.set(false);
+    this.form.reset();
+    this.form.enable();
+    this.router.navigate(['/user', user.uid, 'overview']);
+  }
+
+  private handleSignupError(error: Error): void {
+    this.form.enable();
+    this.loading.set(false);
   }
 }

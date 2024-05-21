@@ -37,23 +37,12 @@
     }
   </div>
 
-  @if (authErrors(); as error) {
-    <small class="form__auth-error">
-      @if (error.wrongPassword) {
-        Wrong password.
-      }
-      @if (error.emailInUse) {
-        Email is already taken.
-      }
-    </small>
-  }
-
   <p-button
     type="submit"
     severity="help"
     label="Save email"
     class="form__button"
     size="small"
-    [loading]="loading"
+    [loading]="loading()"
   ></p-button>
 </form>

@@ -11,7 +11,7 @@ import {
   FileUploadModule,
 } from 'primeng/fileupload';
 import { ButtonModule } from 'primeng/button';
-import { DialogService, DynamicDialogConfig } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { EmailDialogComponent } from '@shared/components/email-dialog/email-dialog.component';
 import { PasswordDialogComponent } from '@shared/components/password-dialog/password-dialog.component';
 import { ModalService } from '@core/services/modal.service';
@@ -51,30 +51,23 @@ export class UserSettingsComponent {
       .updateAvatar(e.files[0])
       .pipe(take(1))
       .subscribe({
-        next: () => {
-          this.fileUpload()?.clear();
-
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Avatar has been changed successfully',
-            summary: 'Success',
-          });
-        },
-        error: (err) => {
-          console.log(err);
-
-          this.messageService.add({
-            severity: 'error',
-            detail: 'Unexpected error occurred. Try again later',
-            summary: 'Error',
-          });
-
-          this.loadingService.setLoading(false);
-        },
-        complete: () => {
-          this.loadingService.setLoading(false);
-        },
+        next: () => this.handleUploadNext(),
+        error: (err) => this.handleUploadError(err),
       });
+  }
+
+  private handleUploadNext(): void {
+    this.loadingService.setLoading(false);
+    this.fileUpload()?.clear();
+    this.messageService.add({
+      severity: 'success',
+      detail: 'Avatar has been changed successfully',
+      summary: 'Success',
+    });
+  }
+
+  private handleUploadError(error: Error): void {
+    this.loadingService.setLoading(false);
   }
 
   confirm(e: MouseEvent): void {

@@ -1,4 +1,4 @@
-@import "../../../../assets/scss/variables";
+@import "../../../../assets/scss/app-variables";
 
 .snippets {
   padding: $spacing-l 0;
@@ -13,6 +13,7 @@
     background-color: var(--surface-card);
     padding: $spacing-l;
     border-radius: var(--border-radius);
+    border: 1px solid var(--surface-border);
 
     span {
       font-size: 1.25rem;

@@ -9,16 +9,17 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, ParamMap, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { IUser } from '@shared/models/user.interface';
-import { EMPTY, combineLatest, switchMap } from 'rxjs';
+import { EMPTY, Observable, combineLatest, switchMap } from 'rxjs';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { SkeletonModule } from 'primeng/skeleton';
 import { FirestoreService } from '@core/services/firestore.service';
 import { AvatarComponent } from '@shared/components/avatar/avatar.component';
 import { ImageDialogComponent } from '@shared/components/image-dialog/image-dialog.component';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-user',
@@ -62,19 +63,33 @@ export class UserComponent implements OnInit {
     })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        switchMap(({ params, user }) => {
-          const userId = params.get('id');
-
-          this.loading.set(true);
-          this.isOwner.set(user?.uid === userId);
-
-          return userId ? this.firestoreService.getUser(userId) : EMPTY;
-        }),
+        switchMap(({ params, user }) => this.handleParamsChange(params, user)),
       )
-      .subscribe((user) => {
-        this.user.set(user);
-        this.loading.set(false);
+      .subscribe({
+        next: (user) => this.handleParamsNext(user),
+        error: (err) => this.handleParamsError(err),
       });
+  }
+
+  private handleParamsChange(
+    params: ParamMap,
+    user: User | null,
+  ): Observable<IUser | undefined> {
+    const userId = params.get('id');
+
+    this.loading.set(true);
+    this.isOwner.set(user?.uid === userId);
+
+    return userId ? this.firestoreService.getUser(userId) : EMPTY;
+  }
+
+  private handleParamsNext(user: IUser | undefined): void {
+    this.user.set(user);
+    this.loading.set(false);
+  }
+
+  private handleParamsError(error: Error): void {
+    this.loading.set(false);
   }
 
   private getTabItems(owner: boolean): MenuItem[] {

@@ -74,7 +74,7 @@
 
       @for (item of codeArrayControl.controls; track item; let i = $index) {
         <app-editor
-          [options]="editorOptions"
+          [options]="editorOptions()"
           [formControl]="codeArrayControl.controls[i]"
           height="400px"
           class="create__editor"
@@ -105,7 +105,7 @@
           <p-button
             type="submit"
             severity="success"
-            [label]="action() === 'edit' ? 'Edit snippet' : 'Create snippet'"
+            [label]="action() === 'edit' ? 'Save' : 'Create snippet'"
           ></p-button>
 
           @if (action() === "edit") {

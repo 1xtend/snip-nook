@@ -38,7 +38,7 @@
               {
                 "input": "src/assets/scss/themes/dark/theme.scss",
                 "bundleName": "dark",
-                "inject": true
+                "inject": false
               },
               {
                 "input": "src/assets/scss/themes/light/theme.scss",

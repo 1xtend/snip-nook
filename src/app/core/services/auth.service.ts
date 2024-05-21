@@ -36,6 +36,7 @@ import {
   tap,
   throwError,
 } from 'rxjs';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ import {
 export class AuthService {
   public auth = inject(Auth);
   private fs = inject(Firestore);
+  private errorService = inject(ErrorService);
   private storage = inject(Storage);
   private jwtHelper = new JwtHelperService();
 
@@ -96,9 +98,7 @@ export class AuthService {
   logIn({ email, password }: IAuthData): Observable<User> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((credential) => credential.user),
-      catchError((err) =>
-        throwError(() => new Error(`Login failed: ${err.message}`)),
-      ),
+      catchError((err) => this.errorService.handleError(err)),
       tap((user) => this.setAuthToken(user)),
     );
   }
@@ -117,15 +117,13 @@ export class AuthService {
       createUserWithEmailAndPassword(this.auth, email, password),
     ).pipe(
       map((credential) => credential.user),
-      catchError((err) =>
-        throwError(() => new Error(`Signup failed: ${err.message}`)),
-      ),
-      switchMap((user) => this.setupUser(user, username)),
+      switchMap((user) => this.createUser(user, username)),
+      catchError((err) => this.errorService.handleError(err)),
       tap((user) => this.setAuthToken(user)),
     );
   }
 
-  private setupUser(user: User, username: string) {
+  private createUser(user: User, username: string) {
     if (!user.email) {
       return throwError(() => new Error('There is no email'));
     }
@@ -154,25 +152,14 @@ export class AuthService {
     batch.set(userDoc, userData);
     batch.set(usernameDoc, usernameData);
 
-    return this.setUserAndProfile(batch, user, profileData);
+    return this.setupUser(batch, user, profileData);
   }
 
-  private setUserAndProfile(
-    batch: WriteBatch,
-    user: User,
-    profileData: Partial<User>,
-  ) {
+  private setupUser(batch: WriteBatch, user: User, profileData: Partial<User>) {
     return forkJoin([
       from(batch.commit()),
       from(updateProfile(user, profileData)),
-    ]).pipe(
-      map(() => user),
-      catchError((error) => {
-        return throwError(
-          () => new Error(`Error during user setup: ${error.message}`),
-        );
-      }),
-    );
+    ]).pipe(map(() => user));
   }
 
   // Delete user
@@ -182,6 +169,7 @@ export class AuthService {
       switchMap((user) => this.reauthenticate(user, password)),
       switchMap((user) => this.deleteUserData(user)),
       switchMap((user) => this.deleteUserAccount(user)),
+      catchError((err) => this.errorService.handleError(err)),
     );
   }
 

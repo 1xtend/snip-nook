@@ -16,11 +16,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
+import { IAuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { take } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-log-in',
@@ -44,8 +45,7 @@ export class LogInComponent implements OnInit {
 
   form!: FormGroup<IAuthForm>;
 
-  authErrors = signal<Partial<IAuthErrors> | null>(null);
-  loading: boolean = false;
+  loading = signal<boolean>(false);
 
   get emailControl(): FormControl {
     return this.form.controls['email'];
@@ -78,35 +78,27 @@ export class LogInComponent implements OnInit {
       return;
     }
 
-    this.authErrors.set(null);
-    this.loading = true;
+    this.loading.set(true);
     this.form.disable();
 
     this.authService
       .logIn(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: (user) => {
-          this.form.reset();
-
-          this.router.navigate(['/user', user.uid, 'overview']);
-        },
-        error: (err: Error) => {
-          this.authErrors.set({
-            invalidCredential: err.message.includes('auth/invalid-credential'),
-            invalidEmail: err.message.includes('auth/invalid-email'),
-            missingEmail: err.message.includes('auth/missing-email'),
-            userNotFound: err.message.includes('auth/user-not-found'),
-            wrongPassword: err.message.includes('auth/wrong-password'),
-          });
-
-          this.form.enable();
-          this.loading = false;
-        },
-        complete: () => {
-          this.loading = false;
-          this.form.enable();
-        },
+        next: (user) => this.handleLoginNext(user),
+        error: (err: Error) => this.handleLoginError(err),
       });
+  }
+
+  private handleLoginNext(user: User): void {
+    this.loading.set(false);
+    this.form.reset();
+    this.form.enable();
+    this.router.navigate(['/user', user.uid, 'overview']);
+  }
+
+  private handleLoginError(error: Error): void {
+    this.form.enable();
+    this.loading.set(false);
   }
 }

@@ -19,7 +19,7 @@ import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { take } from 'rxjs';
-import { IAuthErrors, IAuthForm } from '@shared/models/auth.interface';
+import { IAuthForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { UserService } from '@core/services/user.service';
 
@@ -45,8 +45,7 @@ export class EmailDialogComponent implements OnInit {
 
   form!: FormGroup<IAuthForm>;
 
-  authErrors = signal<Partial<IAuthErrors> | null>(null);
-  loading: boolean = false;
+  loading = signal<boolean>(false);
 
   get emailControl(): FormControl {
     return this.form.controls['email'];
@@ -79,37 +78,33 @@ export class EmailDialogComponent implements OnInit {
       return;
     }
 
-    this.authErrors.set(null);
     this.form.disable();
-    this.loading = true;
+    this.loading.set(true);
 
     this.userService
       .updateEmail(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: () => {
-          this.form.reset();
-          this.modalService.closeDialog();
-
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Email has been changed successfully',
-            summary: 'Success',
-          });
-        },
-        error: (err) => {
-          this.authErrors.set({
-            wrongPassword: err.message.includes('auth/wrong-password'),
-            emailInUse: err.message.includes('auth/email-already-in-use'),
-          });
-
-          this.loading = false;
-          this.form.enable();
-        },
-        complete: () => {
-          this.loading = false;
-          this.form.enable();
-        },
+        next: () => this.handleUpdateNext(),
+        error: (err) => this.handleUpdateError(err),
       });
+  }
+
+  private handleUpdateNext(): void {
+    this.loading.set(false);
+    this.form.reset();
+    this.form.enable();
+    this.modalService.closeDialog();
+
+    this.messageService.add({
+      severity: 'success',
+      detail: 'Email has been changed successfully',
+      summary: 'Success',
+    });
+  }
+
+  private handleUpdateError(error: Error): void {
+    this.loading.set(false);
+    this.form.enable();
   }
 }

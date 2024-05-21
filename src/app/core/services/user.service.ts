@@ -18,12 +18,18 @@ import {
   limit,
   startAfter,
   Query,
+  QueryDocumentSnapshot,
+  DocumentData,
+  getDocs,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import {
   Observable,
+  catchError,
   combineLatest,
+  forkJoin,
   from,
+  map,
   switchMap,
   take,
   throwError,
@@ -36,15 +42,17 @@ import {
 } from '@angular/fire/storage';
 import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
+import { getDoc } from 'firebase/firestore';
+import { ErrorService } from './error.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private fs = inject(Firestore);
-  private auth = inject(Auth);
   private storage = inject(Storage);
   private authService = inject(AuthService);
+  private errorService = inject(ErrorService);
 
   user$ = this.authService.user$;
 
@@ -68,6 +76,7 @@ export class UserService {
 
             return combineLatest([userUpdate$, emailUpdate$]);
           }),
+          catchError((err) => this.errorService.handleError(err)),
         );
       }),
     );
@@ -89,6 +98,7 @@ export class UserService {
             // Update user password
             return updatePassword(user, newPassword);
           }),
+          catchError((err) => this.errorService.handleError(err)),
         );
       }),
     );
@@ -118,28 +128,80 @@ export class UserService {
           }),
         );
       }),
+      catchError((err) => this.errorService.handleError(err)),
     );
   }
 
-  getUsers(pageSize: number, startAfterDoc?: any) {
+  getUsers(
+    perPage: number,
+    startAfterDoc?: QueryDocumentSnapshot<DocumentData>,
+  ) {
     const usersCollection = collection(this.fs, 'users');
-    let usersQuery: Query;
+    let usersQuery = query(
+      usersCollection,
+      orderBy('created_at'),
+      limit(perPage),
+    );
 
     if (startAfterDoc) {
       usersQuery = query(
         usersCollection,
         orderBy('created_at'),
-        startAfter(startAfter),
-        limit(pageSize),
-      );
-    } else {
-      usersQuery = query(
-        usersCollection,
-        orderBy('created_at'),
-        limit(pageSize),
+        startAfter(startAfterDoc),
+        limit(perPage),
       );
     }
 
-    return collectionData(usersQuery) as Observable<IUser[]>;
+    return forkJoin({
+      snapshot: getDocs(usersQuery),
+      count: this.getUsersCount(),
+    }).pipe(
+      map(({ snapshot, count }) => {
+        const users = snapshot.docs.map(
+          (doc) =>
+            ({
+              uid: doc.id,
+              ...doc.data(),
+            }) as IUser,
+        );
+
+        return { users, count };
+      }),
+      catchError((err) => this.errorService.handleError(err)),
+    );
+
+    // return forkJoin([
+    //   getDocs(usersQuery),
+    //   this.getUsersCount()
+    // ]).pipe(
+    //   map(([users]) => {
+
+    //   })
+    // )
+
+    // return from(getDocs(usersQuery)).pipe(
+    //   switchMap(async (snapshot) => {
+    //     const count = await getDocs(usersQuery);
+    // const users = snapshot.docs.map(
+    //   (doc) =>
+    //     ({
+    //       uid: doc.id,
+    //       ...doc.data(),
+    //     }) as IUser,
+    // );
+
+    //     return {
+    //       count: count.size,
+    //       users,
+    //     };
+    //   }),
+    // );
+  }
+
+  private async getUsersCount(): Promise<number> {
+    const usersCollection = collection(this.fs, 'users');
+    const users = await getDocs(usersCollection);
+
+    return users.size;
   }
 }

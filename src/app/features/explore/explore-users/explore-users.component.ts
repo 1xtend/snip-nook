@@ -15,7 +15,13 @@ import { IUser } from '@shared/models/user.interface';
 import { SkeletonModule } from 'primeng/skeleton';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { take } from 'rxjs';
-import { Firestore, doc, docSnapshots } from '@angular/fire/firestore';
+import {
+  DocumentData,
+  Firestore,
+  QueryDocumentSnapshot,
+  doc,
+  docSnapshots,
+} from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-explore-users',
@@ -35,41 +41,68 @@ export class ExploreUsersComponent implements OnInit {
 
   loading = signal<boolean>(false);
 
-  rows: number = 5;
+  // Pagination
+  readonly perPage: number = 2;
   first: number = 0;
   count: number = 0;
+
+  private lastVisibleDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+  private firstVisibleDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+  isNextPageAvailable: boolean = true;
+  private activePage: number = 0;
+  private startAfterDoc: QueryDocumentSnapshot<DocumentData> | undefined =
+    undefined;
 
   ngOnInit(): void {
     this.getUsers();
   }
 
-  private getUsers(lastDoc: any = 0): void {
+  private getUsers(index: number = 0): void {
+    console.log('Received index: ', index);
+
     this.loading.set(true);
+    console.log(this.startAfterDoc);
 
     this.userService
-      .getUsers(this.rows, 0)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (users) => {
-          this.usersSignal.set(users);
-          this.loading.set(false);
-          console.log(users);
-        },
-        error: (err) => {
-          this.loading.set(false);
-        },
+      .getUsers(this.perPage, this.startAfterDoc)
+      .pipe(take(1))
+      .subscribe(({ users }) => {
+        this.usersSignal.set(users);
+        this.loading.set(false);
+
+        // if (users.length > 0) {
+        //   this.lastVisibleDoc = users[
+        //     users.length - 1
+        //   ] as unknown as QueryDocumentSnapshot<DocumentData>;
+        //   this.firstVisibleDoc =
+        //     users[0] as unknown as QueryDocumentSnapshot<DocumentData>;
+        //   this.isNextPageAvailable = users.length === this.perPage;
+        // } else {
+        //   this.isNextPageAvailable = false;
+        // }
+
+        // this.usersSignal.set(users);
+        // this.loading.set(false);
+        // this.count = count;
+        // console.log('Users', users);
       });
+
+    // this.userService
+    //   .getUsers(this.rows, 0)
+    //   .pipe(takeUntilDestroyed(this.destroyRef))
+    //   .subscribe({
+    //     next: (users) => {
+    //       this.usersSignal.set(users);
+    //       this.loading.set(false);
+    //       console.log(users);
+    //     },
+    //     error: (err) => {
+    //       this.loading.set(false);
+    //     },
+    //   });
   }
 
   onPageEvent(e: PaginatorState): void {
-    this.first = e.first!;
-    this.rows = e.rows!;
-
-    console.log('page: ', e.page);
-    console.log('rows: ', e.rows);
-    console.log('first: ', e.first);
-    console.log('pageCount: ', e.pageCount);
-
-    // this.getUsers(lastDoc);
+    this.getUsers(e.page);
   }
 }

@@ -10,6 +10,9 @@
 
   <ng-template pTemplate="content">
     <ul class="sidebar__list p-reset">
+      <li class="sidebar__sub-header">
+        <span>Navigation</span>
+      </li>
       <li class="sidebar__item">
         <a
           [routerLink]="['/home']"
@@ -29,6 +32,18 @@
           <span class="sidebar__icon pi pi-compass"></span>
           Explore
         </a>
+      </li>
+      <li class="sidebar__item sidebar__separator"></li>
+      <li class="sidebar__sub-header">
+        <span>View Options</span>
+      </li>
+      <li class="sidebar__item sidebar__switch-container">
+        <label for="theme-switch" class="sidebar__label">Dark Mode</label>
+        <p-inputSwitch
+          inputId="theme-switch"
+          class="sidebar__switch"
+          [formControl]="themeControl"
+        ></p-inputSwitch>
       </li>
     </ul>
   </ng-template>
