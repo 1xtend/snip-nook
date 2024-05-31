@@ -12,17 +12,19 @@ import {
 } from '@angular/core';
 import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ICodeItem } from '@shared/models/snippet.interface';
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { languages } from '@shared/helpers/supported-languages';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { SharedService } from '@core/services/shared.service';
-import { IEditorOptions } from '@shared/models/editor.interface';
+import {
+  MonacoEditorComponent,
+  NgEditorOptions,
+} from '@1xtend/ng-monaco-editor';
 
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [MonacoEditorModule, DropdownModule, ButtonModule, FormsModule],
+  imports: [MonacoEditorComponent, DropdownModule, ButtonModule, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -39,11 +41,11 @@ export class EditorComponent {
 
   deleteEditor = output<void>();
 
-  options = input.required<IEditorOptions>();
+  options = input.required<NgEditorOptions>();
   readonly = input<boolean>(false);
   height = input<string>('300px');
 
-  editorOptions = computed<IEditorOptions>(() => ({
+  editorOptions = computed<NgEditorOptions>(() => ({
     ...this.options(),
     language: this.language() ?? '',
   }));

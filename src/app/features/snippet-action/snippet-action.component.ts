@@ -1,4 +1,3 @@
-import { defaultEditorOptions } from './../../shared/helpers/default-editor-options';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { SnippetService } from '../../core/services/snippet.service';
 import {
@@ -32,7 +31,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { EditorComponent } from '@shared/components/editor/editor.component';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
-import { IEditorOptions } from '@shared/models/editor.interface';
 import {
   EMPTY,
   Observable,
@@ -48,6 +46,8 @@ import { ActionType } from '@shared/models/action.type';
 import { AuthService } from '@core/services/auth.service';
 import { ThemeService } from '@core/services/theme.service';
 import { User } from 'firebase/auth';
+import { DeviceDetectorService } from 'ngx-device-detector';
+import { NgEditorOptions } from '@1xtend/ng-monaco-editor';
 
 @Component({
   selector: 'app-snippet-create',
@@ -77,12 +77,14 @@ export class SnippetActionComponent implements OnInit {
   private authService = inject(AuthService);
   private confirmationService = inject(ConfirmationService);
   private themeService = inject(ThemeService);
+  private deviceService = inject(DeviceDetectorService);
 
-  private readonly defaultOptions = defaultEditorOptions;
+  // private readonly defaultOptions = defaultEditorOptions;
 
   form!: FormGroup<ISnippetCreateForm>;
 
   code: string = '';
+  isMobile = this.deviceService.isMobile();
 
   private actionSignal = signal<ActionType>('create');
   action = computed(this.actionSignal);
@@ -93,8 +95,8 @@ export class SnippetActionComponent implements OnInit {
   private activeTheme = this.themeService.activeTheme;
   loading = signal<boolean>(false);
 
-  editorOptions = computed<IEditorOptions>(() => ({
-    ...this.defaultOptions,
+  editorOptions = computed<NgEditorOptions>(() => ({
+    // ...this.defaultOptions,
     theme:
       !this.activeTheme() || this.activeTheme() === 'dark'
         ? 'vs-dark'

@@ -18,13 +18,14 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { FormsModule } from '@angular/forms';
 import { SnippetService } from '@core/services/snippet.service';
 import { ThemeService } from '@core/services/theme.service';
-import { defaultEditorOptions } from '@shared/helpers/default-editor-options';
-import { IEditorOptions } from '@shared/models/editor.interface';
 import { User } from 'firebase/auth';
+import {
+  MonacoEditorComponent,
+  NgEditorOptions,
+} from '@1xtend/ng-monaco-editor';
 
 @Component({
   selector: 'app-snippet-overview',
@@ -33,9 +34,9 @@ import { User } from 'firebase/auth';
     RouterLink,
     SkeletonModule,
     TabMenuModule,
-    MonacoEditorModule,
     FormsModule,
     ButtonModule,
+    MonacoEditorComponent,
   ],
   templateUrl: './snippet-overview.component.html',
   styleUrl: './snippet-overview.component.scss',
@@ -50,21 +51,23 @@ export class SnippetOverviewComponent implements OnInit {
   private firestoreService = inject(FirestoreService);
   private themeService = inject(ThemeService);
 
-  private defaultEditorOptions = signal<IEditorOptions>(defaultEditorOptions);
+  // private defaultEditorOptions = signal<NgEditorOptions>(defaultEditorOptions);
   private activeTheme = this.themeService.activeTheme;
 
   tabItems: MenuItem[] = [];
   activeTab: MenuItem | undefined = undefined;
 
   code: string = '';
-  editorOptions = computed<IEditorOptions>(() => ({
-    ...this.defaultEditorOptions(),
+  editorOptions = computed<NgEditorOptions>(() => ({
+    // ...this.defaultEditorOptions(),
     readOnly: true,
     theme:
       !this.activeTheme() || this.activeTheme() === 'dark'
         ? 'vs-dark'
         : 'vs-light',
+    language: this.language(),
   }));
+  private language = signal<string>('plaintext');
 
   snippet = signal<ISnippet | undefined>(undefined);
   isOwner = signal<boolean>(false);
@@ -145,9 +148,10 @@ export class SnippetOverviewComponent implements OnInit {
 
   private setTabCode(item: ICodeItem) {
     this.code = this.sharedService.formatProcessedCode(item.code);
-    this.defaultEditorOptions.update((prev) => ({
-      ...prev,
-      language: item.language,
-    }));
+    // this.defaultEditorOptions.update((prev) => ({
+    //   ...prev,
+    //   language: item.language,
+    // }));
+    this.language.set(item.language);
   }
 }

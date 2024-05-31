@@ -11,16 +11,15 @@ import { initializeApp } from 'firebase/app';
 
 import { environment } from '@environments/environment';
 import { MessageService } from 'primeng/api';
-import {
-  MonacoEditorModule,
-  NgxMonacoEditorConfig,
-} from 'ngx-monaco-editor-v2';
 import { DialogService } from 'primeng/dynamicdialog';
+import {
+  NG_MONACO_EDITOR_CONFIG,
+  NgMonacoEditorConfig,
+} from '@1xtend/ng-monaco-editor';
 
-const monacoConfig: NgxMonacoEditorConfig = {
+const monacoConfig: NgMonacoEditorConfig = {
   defaultOptions: {
-    base: 'vs-dark',
-    lineNumbers: true,
+    theme: 'vs-dark',
   },
   onMonacoLoad: () => {
     const monaco = (<any>window).monaco;
@@ -48,6 +47,9 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     DialogService,
     provideAnimations(),
-    importProvidersFrom(MonacoEditorModule.forRoot(monacoConfig)),
+    {
+      provide: NG_MONACO_EDITOR_CONFIG,
+      useValue: monacoConfig,
+    },
   ],
 };
