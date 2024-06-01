@@ -14,6 +14,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { SkeletonModule } from 'primeng/skeleton';
 import { LogoComponent } from '../logo/logo.component';
 import { AvatarComponent } from '../avatar/avatar.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-header',
@@ -35,7 +36,11 @@ export class HeaderComponent {
 
   openSidebar = output<'user' | 'menu'>();
 
-  user = this.authService.user;
+  user = toSignal(this.authService.user$);
+  isAuthenticated = toSignal(this.authService.isAuthenticated$);
   loading = computed<boolean>(() => !this.user());
-  isAuthenticated = this.authService.isAuthenticated;
+
+  // user = this.authService.user;
+  // loading = computed<boolean>(() => !this.user());
+  // isAuthenticated = this.authService.isAuthenticated;
 }

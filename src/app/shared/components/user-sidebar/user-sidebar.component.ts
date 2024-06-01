@@ -11,6 +11,7 @@ import { SidebarModule } from 'primeng/sidebar';
 import { LogoComponent } from '../logo/logo.component';
 import { AuthService } from '@core/services/auth.service';
 import { take } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-user-sidebar',
@@ -28,7 +29,7 @@ export class UserSidebarComponent {
   position = input<'right' | 'left'>('right');
   close = output<void>();
 
-  user = this.authService.user;
+  user = toSignal(this.authService.user$);
 
   signOut(): void {
     this.authService

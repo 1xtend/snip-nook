@@ -22,6 +22,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UserService } from '@core/services/user.service';
 import { DeleteDialogComponent } from '@shared/components/delete-dialog/delete-dialog.component';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-user-settings',
@@ -42,7 +43,7 @@ export class UserSettingsComponent {
 
   fileUpload = viewChild<FileUpload>('fileUpload');
 
-  user = this.authService.user;
+  user = toSignal(this.authService.user$);
 
   uploadAvatar(e: FileUploadHandlerEvent) {
     this.loadingService.setLoading(true);

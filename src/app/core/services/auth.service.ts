@@ -25,16 +25,24 @@ import { IUser } from '@shared/models/user.interface';
 import { WriteBatch, collection, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import {
+  BehaviorSubject,
   Observable,
   catchError,
+  concat,
+  distinctUntilChanged,
   finalize,
   forkJoin,
   from,
   map,
+  merge,
+  of,
+  skip,
+  startWith,
   switchMap,
   take,
   tap,
   throwError,
+  zip,
 } from 'rxjs';
 import { ErrorService } from './error.service';
 
@@ -48,15 +56,13 @@ export class AuthService {
   private storage = inject(Storage);
   private jwtHelper = new JwtHelperService();
 
-  user$ = user(this.auth);
+  private userSubject = new BehaviorSubject<User | null>(null);
+  user$ = this.userSubject.asObservable();
 
-  private userSignal = signal<User | null>(null);
-  user = computed(this.userSignal);
-
-  private isAuthenticatedSignal = signal<boolean>(
-    !!this.token && !this.isTokenExpired(),
-  );
-  isAuthenticated = computed(this.isAuthenticatedSignal);
+  isAuthenticated$ = merge(
+    of(!!this.token && !this.isTokenExpired()).pipe(take(1)),
+    this.user$.pipe(map((user) => !!user)).pipe(skip(1)),
+  ).pipe(distinctUntilChanged());
 
   get token(): string | null {
     return localStorage.getItem(LocalStorageEnum.AuthToken);
@@ -85,8 +91,7 @@ export class AuthService {
       )
       .subscribe((user) => {
         console.log('User was changed!', user?.email);
-        this.userSignal.set(user);
-        this.isAuthenticatedSignal.set(!!user);
+        this.userSubject.next(user);
       });
   }
 
