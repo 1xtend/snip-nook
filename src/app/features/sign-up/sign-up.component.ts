@@ -16,13 +16,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ISignUpForm } from '@shared/models/auth.interface';
+import { ISignUpData, ISignUpForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { AuthService } from '@core/services/auth.service';
 import { usernameValidator } from '@shared/validators/username.validator';
 import { take } from 'rxjs';
-import { User } from 'firebase/auth';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 
@@ -80,6 +79,7 @@ export class SignUpComponent implements OnInit {
       email: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(emailRegex)],
+        updateOn: 'blur',
       }),
       password: this.fb.control('', {
         nonNullable: true,
@@ -88,6 +88,7 @@ export class SignUpComponent implements OnInit {
           Validators.minLength(8),
           Validators.maxLength(16),
         ],
+        updateOn: 'blur',
       }),
     });
   }
@@ -101,24 +102,24 @@ export class SignUpComponent implements OnInit {
     this.form.disable();
     this.loading.set(true);
 
+    this.signUp(this.form.getRawValue());
+  }
+
+  private signUp(data: ISignUpData): void {
     this.authService
-      .signUp(this.form.getRawValue())
+      .signUp(data)
       .pipe(take(1))
       .subscribe({
-        next: (user) => this.handleSignupNext(user),
-        error: (err: Error) => this.handleSignupError(err),
+        next: (user) => {
+          this.loading.set(false);
+          this.form.reset();
+          this.form.enable();
+          this.router.navigate(['/user', user.uid, 'overview']);
+        },
+        error: () => {
+          this.form.enable();
+          this.loading.set(false);
+        },
       });
-  }
-
-  private handleSignupNext(user: User): void {
-    this.loading.set(false);
-    this.form.reset();
-    this.form.enable();
-    this.router.navigate(['/user', user.uid, 'overview']);
-  }
-
-  private handleSignupError(error: Error): void {
-    this.form.enable();
-    this.loading.set(false);
   }
 }
