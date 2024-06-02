@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Auth,
   authState,
@@ -8,7 +8,6 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
-  user,
   User,
 } from '@angular/fire/auth';
 import {
@@ -25,12 +24,9 @@ import { IUser } from '@shared/models/user.interface';
 import { WriteBatch, collection, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import {
-  BehaviorSubject,
   Observable,
   ReplaySubject,
-  Subject,
   catchError,
-  concat,
   distinctUntilChanged,
   finalize,
   forkJoin,
@@ -38,13 +34,10 @@ import {
   map,
   merge,
   of,
-  skip,
-  startWith,
   switchMap,
   take,
   tap,
   throwError,
-  zip,
 } from 'rxjs';
 import { ErrorService } from './error.service';
 
@@ -81,7 +74,7 @@ export class AuthService {
   userChanges(): void {
     authState(this.auth)
       .pipe(
-        tap(async (user) => {
+        tap((user) => {
           if (user && !this.token) {
             this.setAuthToken(user);
           }

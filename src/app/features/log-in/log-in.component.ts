@@ -16,12 +16,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { IAuthForm } from '@shared/models/auth.interface';
+import { IAuthData, IAuthForm } from '@shared/models/auth.interface';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { emailRegex } from '@shared/helpers/regex';
 import { take } from 'rxjs';
 import { AuthService } from '@core/services/auth.service';
-import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-log-in',
@@ -64,10 +63,12 @@ export class LogInComponent implements OnInit {
       email: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required, Validators.pattern(emailRegex)],
+        updateOn: 'blur',
       }),
       password: this.fb.control('', {
         nonNullable: true,
         validators: [Validators.required],
+        updateOn: 'blur',
       }),
     });
   }
@@ -81,24 +82,24 @@ export class LogInComponent implements OnInit {
     this.loading.set(true);
     this.form.disable();
 
+    this.login(this.form.getRawValue());
+  }
+
+  private login(data: IAuthData): void {
     this.authService
-      .logIn(this.form.getRawValue())
+      .logIn(data)
       .pipe(take(1))
       .subscribe({
-        next: (user) => this.handleLoginNext(user),
-        error: (err: Error) => this.handleLoginError(err),
+        next: (user) => {
+          this.loading.set(false);
+          this.form.reset();
+          this.form.enable();
+          this.router.navigate(['/user', user.uid, 'overview']);
+        },
+        error: () => {
+          this.form.enable();
+          this.loading.set(false);
+        },
       });
-  }
-
-  private handleLoginNext(user: User): void {
-    this.loading.set(false);
-    this.form.reset();
-    this.form.enable();
-    this.router.navigate(['/user', user.uid, 'overview']);
-  }
-
-  private handleLoginError(error: Error): void {
-    this.form.enable();
-    this.loading.set(false);
   }
 }
