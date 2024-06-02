@@ -48,6 +48,7 @@ import { ThemeService } from '@core/services/theme.service';
 import { User } from 'firebase/auth';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NgEditorOptions } from '@1xtend/ng-monaco-editor';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-snippet-create',
@@ -92,8 +93,15 @@ export class SnippetActionComponent implements OnInit {
   private snippetSignal = signal<ISnippet | undefined>(undefined);
   snippet = computed(this.snippetSignal);
 
-  private activeTheme = this.themeService.activeTheme;
+  private activeTheme$ = this.themeService.activeTheme$;
+
+  action$: Observable<ActionType> = this.route.data.pipe(
+    map((data) => data['action'] || 'create'),
+  );
+
   loading = signal<boolean>(false);
+
+  activeTheme = toSignal(this.themeService.activeTheme$);
 
   editorOptions = computed<NgEditorOptions>(() => ({
     // ...this.defaultOptions,

@@ -20,7 +20,7 @@ export class SnippetService {
   private fs = inject(Firestore);
   private authService = inject(AuthService);
 
-  user$ = this.authService.user$;
+  private user$ = this.authService.user$;
 
   getSnippet(uid: string): Observable<ISnippet | undefined> {
     const snippetDoc = doc(this.fs, 'snippets', uid);

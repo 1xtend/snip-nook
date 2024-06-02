@@ -52,8 +52,8 @@ export class AppComponent implements OnInit {
     this.checkTokenExpiration();
     this.checkTheme();
 
-    this.authService.isAuthenticated$.subscribe((value) => {
-      console.log('isAuthenticated', value);
+    this.authService.user$.subscribe((user) => {
+      console.log('User: ', user);
     });
   }
 

@@ -27,6 +27,8 @@ import { deleteObject, ref } from 'firebase/storage';
 import {
   BehaviorSubject,
   Observable,
+  ReplaySubject,
+  Subject,
   catchError,
   concat,
   distinctUntilChanged,
@@ -56,12 +58,12 @@ export class AuthService {
   private storage = inject(Storage);
   private jwtHelper = new JwtHelperService();
 
-  private userSubject = new BehaviorSubject<User | null>(null);
+  private userSubject = new ReplaySubject<User | null>(1);
   user$ = this.userSubject.asObservable();
 
   isAuthenticated$ = merge(
-    of(!!this.token && !this.isTokenExpired()).pipe(take(1)),
-    this.user$.pipe(map((user) => !!user)).pipe(skip(1)),
+    of(!!this.token && !this.isTokenExpired()),
+    this.user$.pipe(map((user) => !!user)),
   ).pipe(distinctUntilChanged());
 
   get token(): string | null {

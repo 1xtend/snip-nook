@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { LocalStorageEnum } from '@shared/models/local-storage.enum';
 import { ThemeType } from '@shared/models/theme.type';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,8 +10,8 @@ import { ThemeType } from '@shared/models/theme.type';
 export class ThemeService {
   private document = inject(DOCUMENT);
 
-  private activeThemeSignal = signal<ThemeType | null>(null);
-  activeTheme = computed(this.activeThemeSignal);
+  private activeThemeSubject = new BehaviorSubject<ThemeType | null>(null);
+  activeTheme$ = this.activeThemeSubject.asObservable();
 
   get theme(): ThemeType | null {
     return localStorage.getItem(LocalStorageEnum.Theme) as ThemeType | null;
@@ -18,7 +19,7 @@ export class ThemeService {
 
   setTheme(theme: ThemeType): void {
     localStorage.setItem(LocalStorageEnum.Theme, theme);
-    this.activeThemeSignal.set(theme);
+    this.activeThemeSubject.next(theme);
   }
 
   switchTheme(theme: ThemeType) {

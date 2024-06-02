@@ -12,7 +12,7 @@ import {
   signal,
 } from '@angular/core';
 import { ActivatedRoute, ParamMap, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ICodeItem, ISnippet } from '@shared/models/snippet.interface';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TabMenuModule } from 'primeng/tabmenu';
@@ -52,7 +52,7 @@ export class SnippetOverviewComponent implements OnInit {
   private themeService = inject(ThemeService);
 
   // private defaultEditorOptions = signal<NgEditorOptions>(defaultEditorOptions);
-  private activeTheme = this.themeService.activeTheme;
+  private activeTheme = toSignal(this.themeService.activeTheme$);
 
   tabItems: MenuItem[] = [];
   activeTab: MenuItem | undefined = undefined;

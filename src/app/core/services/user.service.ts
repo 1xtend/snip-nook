@@ -54,7 +54,7 @@ export class UserService {
   private authService = inject(AuthService);
   private errorService = inject(ErrorService);
 
-  user$ = this.authService.user$;
+  private user$ = this.authService.user$;
 
   updateEmail({ email, password }: IAuthData) {
     return this.user$.pipe(
