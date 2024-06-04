@@ -14,6 +14,7 @@ import { FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { ICodeItem } from '@shared/models/snippet.interface';
 import { languages } from '@shared/helpers/supported-languages';
 import { DropdownModule } from 'primeng/dropdown';
+import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
 import { SharedService } from '@core/services/shared.service';
 import {
@@ -24,7 +25,13 @@ import {
 @Component({
   selector: 'app-editor',
   standalone: true,
-  imports: [MonacoEditorComponent, DropdownModule, ButtonModule, FormsModule],
+  imports: [
+    MonacoEditorComponent,
+    DropdownModule,
+    ButtonModule,
+    FormsModule,
+    SkeletonModule,
+  ],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -47,13 +54,14 @@ export class EditorComponent {
 
   editorOptions = computed<NgEditorOptions>(() => ({
     ...this.options(),
-    language: this.language() ?? '',
+    language: this.language() || 'plaintext',
   }));
 
   language = model<string>();
   code = model<string>();
 
   disabled = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
   languagesList = languages;
 
@@ -69,6 +77,10 @@ export class EditorComponent {
     });
   }
 
+  setLoading(value: boolean): void {
+    this.loading.set(value);
+  }
+
   private formatRawCode(code: string | undefined): string {
     return code ? this.sharedService.formatRawCode(code) : '';
   }
@@ -77,9 +89,9 @@ export class EditorComponent {
     this.deleteEditor.emit();
   }
 
-  writeValue(value: ICodeItem): void {
-    this.language.set(value.language);
-    this.code.set(value.code);
+  writeValue({ language, code }: ICodeItem): void {
+    this.language.set(language);
+    this.code.set(code);
   }
 
   registerOnChange(fn: any): void {

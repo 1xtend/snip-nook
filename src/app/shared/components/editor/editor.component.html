@@ -21,12 +21,21 @@
       [disabled]="disabled()"
     ></p-button>
   </div>
-  <!-- <ngx-monaco-editor
-    [style]="{
-      height: height()
-    }"
+
+  <ng-monaco-editor
+    [style]="{ height: height(), display: loading() ? 'none' : 'block' }"
     [options]="editorOptions()"
     [(ngModel)]="code"
     class="editor__code"
-  ></ngx-monaco-editor> -->
+    (editorBlur)="onTouched()"
+    (loading)="setLoading($event)"
+  ></ng-monaco-editor>
+
+  @if (loading()) {
+    <p-skeleton
+      width="100%"
+      [height]="height()"
+      class="editor__code"
+    ></p-skeleton>
+  }
 </div>

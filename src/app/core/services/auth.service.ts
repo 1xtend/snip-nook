@@ -34,6 +34,7 @@ import {
   map,
   merge,
   of,
+  shareReplay,
   switchMap,
   take,
   tap,
@@ -54,10 +55,16 @@ export class AuthService {
   private userSubject = new ReplaySubject<User | null>(1);
   user$ = this.userSubject.asObservable();
 
-  isAuthenticated$ = merge(
+  isAuthenticated$: Observable<boolean> = merge(
     of(!!this.token && !this.isTokenExpired()),
     this.user$.pipe(map((user) => !!user)),
-  ).pipe(distinctUntilChanged());
+  ).pipe(
+    distinctUntilChanged(),
+    shareReplay(1),
+    tap((value) => {
+      console.log('isAuthenticated', value);
+    }),
+  );
 
   get token(): string | null {
     return localStorage.getItem(LocalStorageEnum.AuthToken);

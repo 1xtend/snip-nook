@@ -15,7 +15,7 @@ export interface ISnippet extends ISnippetPreview {
   code: ICodeItem[];
 }
 
-export interface ISnippetCreateForm {
+export interface ISnippetActionForm {
   description: FormControl<string>;
   name: FormControl<string>;
   public: FormControl<boolean>;

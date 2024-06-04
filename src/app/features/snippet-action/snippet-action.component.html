@@ -1,136 +1,91 @@
-@if (action() === "create" && isMobile) {
-  <p>You can't create a new snippet from mobile device.</p>
-} @else {
-  <section class="create">
-    @if (loading()) {
-      <h2 class="create__title">
-        {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
-      </h2>
+<section class="create">
+  <h2 class="create__title">
+    {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
+  </h2>
 
-      <div class="create__form form">
-        <div class="form__wrapper">
-          <div class="form__row">
-            <div class="form__label">Name</div>
-            <p-skeleton height="39px" class="form__input"></p-skeleton>
-          </div>
-          <div class="form__row">
-            <div class="form__label">Description</div>
-            <p-skeleton height="59px" class="form__input"></p-skeleton>
-          </div>
-          <div class="form__row form__row--inline">
-            <p-checkbox [disabled]="true"></p-checkbox>
-            <label class="form__label">Public</label>
-          </div>
-        </div>
-
-        <p-divider align="center">
-          <b>Editors</b>
-        </p-divider>
-
-        <div class="create__editor">
-          <p-skeleton height="450px"></p-skeleton>
-        </div>
+  <form class="create__form form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form__wrapper">
+      <div class="form__row">
+        <label for="snippet-name" class="form__label">Name</label>
+        <input
+          type="text"
+          pInputText
+          id="snippet-name"
+          formControlName="name"
+          class="form__input"
+        />
       </div>
-    } @else {
-      <h2 class="create__title">
-        {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
-      </h2>
+      <div class="form__row">
+        <label for="snippet-description" class="form__label">Description</label>
+        <textarea
+          type="text"
+          pInputTextarea
+          id="snippet-description"
+          formControlName="description"
+          [autoResize]="true"
+          class="form__input"
+        ></textarea>
+      </div>
+      <div class="form__row form__row--inline">
+        <p-checkbox
+          inputId="snippet-public"
+          formControlName="public"
+          [binary]="true"
+        ></p-checkbox>
+        <label for="snippet-public" class="form__label">Public</label>
+      </div>
+    </div>
 
-      <form
-        class="create__form form"
-        [formGroup]="form"
-        (ngSubmit)="onSubmit()"
-      >
-        <div class="form__wrapper">
-          <div class="form__row">
-            <label for="snippet-name" class="form__label">Name</label>
-            <input
-              type="text"
-              pInputText
-              id="snippet-name"
-              formControlName="name"
-              class="form__input"
-            />
-          </div>
-          <div class="form__row">
-            <label for="snippet-description" class="form__label"
-              >Description</label
-            >
-            <textarea
-              type="text"
-              pInputTextarea
-              id="snippet-description"
-              formControlName="description"
-              [autoResize]="true"
-              class="form__input"
-            ></textarea>
-          </div>
-          <div class="form__row form__row--inline">
-            <p-checkbox
-              inputId="snippet-public"
-              formControlName="public"
-              [binary]="true"
-            ></p-checkbox>
-            <label for="snippet-public" class="form__label">Public</label>
-          </div>
-        </div>
+    <p-divider align="center">
+      <b>Editors</b>
+    </p-divider>
 
-        @if (!isMobile) {
-          <p-divider align="center">
-            <b>Editors</b>
-          </p-divider>
-
-          @for (item of codeArrayControl.controls; track item; let i = $index) {
-            <app-editor
-              [options]="editorOptions()"
-              [formControl]="codeArrayControl.controls[i]"
-              height="400px"
-              class="create__editor"
-              (deleteEditor)="deleteEditor(i)"
-            ></app-editor>
-            @if (
-              codeArrayControl.controls.length > 1 &&
-              i !== codeArrayControl.controls.length - 1
-            ) {
-              <p-divider></p-divider>
-            }
-          }
-
-          <div class="create__bottom">
-            <p-button
-              icon="pi pi-plus"
-              size="small"
-              [style]="{
-                width: '100%'
-              }"
-              [outlined]="true"
-              (onClick)="addEditor()"
-            ></p-button>
-          </div>
-        } @else {
-          <p>Editors are not supported on mobile devices.</p>
-        }
-
-        @if (form.valid) {
-          <div class="create__actions">
-            <p-button
-              type="submit"
-              severity="success"
-              [label]="action() === 'edit' ? 'Save' : 'Create snippet'"
-            ></p-button>
-
-            @if (action() === "edit") {
-              <p-confirmDialog />
-              <p-button
-                type="button"
-                severity="danger"
-                label="Delete snippet"
-                (onClick)="confirmDeletion($event)"
-              ></p-button>
-            }
-          </div>
-        }
-      </form>
+    @for (item of codeArrayControl.controls; track item; let i = $index) {
+      <app-editor
+        [options]="editorOptions()"
+        [formControl]="codeArrayControl.controls[i]"
+        height="400px"
+        class="create__editor"
+        (deleteEditor)="deleteEditor(i)"
+      ></app-editor>
+      @if (
+        codeArrayControl.controls.length > 1 &&
+        i !== codeArrayControl.controls.length - 1
+      ) {
+        <p-divider></p-divider>
+      }
     }
-  </section>
-}
+
+    <div class="create__bottom">
+      <p-button
+        icon="pi pi-plus"
+        size="small"
+        [style]="{
+          width: '100%'
+        }"
+        [outlined]="true"
+        (onClick)="addEditor()"
+      ></p-button>
+    </div>
+
+    @if (form.valid) {
+      <div class="create__actions">
+        <p-button
+          type="submit"
+          severity="success"
+          [label]="action() === 'edit' ? 'Save' : 'Create snippet'"
+        ></p-button>
+
+        @if (action() === "edit") {
+          <p-confirmDialog />
+          <p-button
+            type="button"
+            severity="danger"
+            label="Delete snippet"
+            (onClick)="confirmDeletion($event)"
+          ></p-button>
+        }
+      </div>
+    }
+  </form>
+</section>

@@ -5,18 +5,16 @@
 <div class="wrapper">
   <app-menu-sidebar
     [(visible)]="menuSidebarVisible"
-    position="left"
     (close)="closeSidebar()"
+    position="left"
   ></app-menu-sidebar>
   <app-header (openSidebar)="openSidebar($event)"></app-header>
 
-  @if (!hideSidebar) {
-    <app-user-sidebar
-      [(visible)]="userSidebarVisible"
-      (close)="closeSidebar()"
-      position="right"
-    ></app-user-sidebar>
-  }
+  <app-user-sidebar
+    [(visible)]="userSidebarVisible"
+    (close)="closeSidebar()"
+    position="right"
+  ></app-user-sidebar>
 
   <main class="main-content">
     <div class="container">

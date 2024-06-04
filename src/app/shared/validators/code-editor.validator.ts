@@ -26,7 +26,7 @@ export function codeEditorValidator(): ValidatorFn {
 
       return valid ? null : { emptyFields: true };
     } else {
-      throw new Error('Variable "array" must be an instance of FormArray');
+      throw new Error('Parameter "array" must be an instance of FormArray');
     }
   };
 }
