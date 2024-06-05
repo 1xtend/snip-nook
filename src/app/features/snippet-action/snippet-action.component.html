@@ -3,12 +3,7 @@
     {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
   </h2>
 
-  <form
-    class="create__form form"
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    focusInvalidInput
-  >
+  <form class="create__form form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="form__wrapper">
       <div class="form__row">
         <label for="snippet-name" class="form__label">Name</label>

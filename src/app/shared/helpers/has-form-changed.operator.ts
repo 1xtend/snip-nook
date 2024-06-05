@@ -28,8 +28,12 @@ export function hasFormChanged<T>(
 
           observer.next(result);
         },
-        error: observer.error,
-        complete: observer.complete,
+        error: (err) => {
+          observer.error(err);
+        },
+        complete: () => {
+          observer.complete();
+        },
       });
     });
 }

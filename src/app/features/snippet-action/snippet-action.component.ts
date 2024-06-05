@@ -74,7 +74,6 @@ import { hasFormChanged } from '@shared/helpers/has-form-changed.operator';
     DividerModule,
     SkeletonModule,
     ConfirmDialogModule,
-    FormFocusDirective,
   ],
   providers: [ConfirmationService],
   templateUrl: './snippet-action.component.html',
