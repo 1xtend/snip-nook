@@ -42,7 +42,7 @@
 
     @for (item of codeArrayControl.controls; track item; let i = $index) {
       <app-editor
-        [options]="editorOptions()"
+        [options]="options()"
         [formControl]="codeArrayControl.controls[i]"
         height="400px"
         class="create__editor"
@@ -68,24 +68,7 @@
       ></p-button>
     </div>
 
-    <!-- @if (form.valid) { -->
     <div class="create__actions">
-      <!-- <p-button
-        type="submit"
-        severity="success"
-        [label]="action() === 'edit' ? 'Save' : 'Create snippet'"
-      ></p-button>
-
-      @if (action() === "edit") {
-        <p-confirmDialog />
-        <p-button
-          type="button"
-          severity="danger"
-          label="Delete snippet"
-          (onClick)="confirmDeletion($event)"
-        ></p-button>
-      } -->
-
       @if (action() === "create" && form.valid) {
         <p-button
           type="submit"
@@ -95,7 +78,7 @@
       }
 
       @if (action() === "edit") {
-        @if (hasChanged() && !form.invalid) {
+        @if (hasChanged() && form.valid) {
           <p-button
             type="submit"
             severity="success"
@@ -112,6 +95,5 @@
         ></p-button>
       }
     </div>
-    <!-- } -->
   </form>
 </section>

@@ -6,7 +6,6 @@ import {
   Component,
   DestroyRef,
   OnInit,
-  Signal,
   computed,
   inject,
   signal,
@@ -29,36 +28,22 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
-import { IconFieldModule } from 'primeng/iconfield';
-import { SkeletonModule } from 'primeng/skeleton';
-import { InputIconModule } from 'primeng/inputicon';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { EditorComponent } from '@shared/components/editor/editor.component';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import {
-  EMPTY,
   Observable,
   combineLatest,
   distinctUntilChanged,
-  finalize,
-  map,
   of,
   switchMap,
   take,
-  throwError,
 } from 'rxjs';
 import { ActionType } from '@shared/models/action.type';
-import { AuthService } from '@core/services/auth.service';
 import { ThemeService } from '@core/services/theme.service';
-import { User } from 'firebase/auth';
 import { NgEditorOptions } from '@1xtend/ng-monaco-editor';
-import {
-  takeUntilDestroyed,
-  toObservable,
-  toSignal,
-} from '@angular/core/rxjs-interop';
-import { FormFocusDirective } from '@shared/directives/form-focus.directive';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { hasFormChanged } from '@shared/helpers/has-form-changed.operator';
 
 @Component({
@@ -72,7 +57,6 @@ import { hasFormChanged } from '@shared/helpers/has-form-changed.operator';
     ButtonModule,
     EditorComponent,
     DividerModule,
-    SkeletonModule,
     ConfirmDialogModule,
   ],
   providers: [ConfirmationService],
@@ -86,7 +70,6 @@ export class SnippetActionComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private messageService = inject(MessageService);
-  private authService = inject(AuthService);
   private confirmationService = inject(ConfirmationService);
   private themeService = inject(ThemeService);
   private destroyRef = inject(DestroyRef);
@@ -100,8 +83,11 @@ export class SnippetActionComponent implements OnInit {
   hasChanged = signal<boolean>(false);
 
   activeTheme = toSignal(this.themeService.activeTheme$);
-  editorOptions = computed<NgEditorOptions>(() => ({
+  options = computed<NgEditorOptions>(() => ({
     minimap: {
+      enabled: false,
+    },
+    stickyScroll: {
       enabled: false,
     },
     theme:
@@ -225,7 +211,11 @@ export class SnippetActionComponent implements OnInit {
     const value = this.form.getRawValue();
     const snippet: ISnippet = this.getSnippet(value);
 
-    this.handleSnippet(snippet)
+    this.handleSnippet(snippet);
+  }
+
+  private handleSnippet(snippet: ISnippet): void {
+    this.getSnippetAction(snippet)
       .pipe(take(1))
       .subscribe({
         next: (snippet) => {
@@ -244,21 +234,14 @@ export class SnippetActionComponent implements OnInit {
       });
   }
 
-  private handleSnippet(snippet: ISnippet): Observable<ISnippet> {
+  private getSnippetAction(snippet: ISnippet): Observable<ISnippet> {
     return this.action() === 'create'
       ? this.snippetService.createSnippet(snippet)
       : this.snippetService.editSnippet(snippet);
   }
 
   addEditor(): void {
-    // this.codeArrayControl.push(
-    //   this.fb.control<ICodeItem>(
-    //     { language: '', code: '' },
-    //     { nonNullable: true, validators: [Validators.required] },
-    //   ),
-    // );
-
-    this.form.controls['code'].push(
+    this.codeArrayControl.push(
       this.fb.control<ICodeItem>(
         { language: '', code: '' },
         { nonNullable: true, validators: [Validators.required] },
@@ -271,6 +254,10 @@ export class SnippetActionComponent implements OnInit {
   }
 
   confirmDeletion(e: Event): void {
+    if (this.action() !== 'edit') {
+      return;
+    }
+
     this.confirmationService.confirm({
       target: e.target as EventTarget,
       message: 'Do you want to delete this snippet?',
@@ -290,28 +277,23 @@ export class SnippetActionComponent implements OnInit {
   }
 
   private deleteSnippet(): void {
-    const uid = this.snippet()?.uid;
+    const snippet = this.snippet();
 
-    if (!uid) {
+    if (!snippet) {
       return;
     }
 
     this.form.disable();
 
-    this.authService.user$
-      .pipe(
-        take(1),
-        switchMap((user) => {
-          return user
-            ? this.snippetService.deleteSnippet(uid).pipe(
-                take(1),
-                map(() => user),
-              )
-            : EMPTY;
-        }),
-      )
+    this.handleDelete(snippet);
+  }
+
+  private handleDelete(snippet: ISnippet): void {
+    this.snippetService
+      .deleteSnippet(snippet.uid)
+      .pipe(take(1))
       .subscribe({
-        next: (user) => {
+        next: () => {
           this.form.reset();
           this.form.enable();
 
@@ -320,7 +302,7 @@ export class SnippetActionComponent implements OnInit {
             detail: 'Snippet was successfully deleted.',
             summary: 'Success',
           });
-          this.router.navigate(['/user', user.uid, 'snippets']);
+          this.router.navigate(['/user', snippet.author.uid, 'snippets']);
         },
         error: () => {
           this.form.enable();
