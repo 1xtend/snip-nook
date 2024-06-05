@@ -3,7 +3,12 @@
     {{ action() === "edit" ? "Edit snippet" : "Create a new snippet" }}
   </h2>
 
-  <form class="create__form form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <form
+    class="create__form form"
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    focusInvalidInput
+  >
     <div class="form__wrapper">
       <div class="form__row">
         <label for="snippet-name" class="form__label">Name</label>
@@ -68,24 +73,50 @@
       ></p-button>
     </div>
 
-    @if (form.valid) {
-      <div class="create__actions">
+    <!-- @if (form.valid) { -->
+    <div class="create__actions">
+      <!-- <p-button
+        type="submit"
+        severity="success"
+        [label]="action() === 'edit' ? 'Save' : 'Create snippet'"
+      ></p-button>
+
+      @if (action() === "edit") {
+        <p-confirmDialog />
+        <p-button
+          type="button"
+          severity="danger"
+          label="Delete snippet"
+          (onClick)="confirmDeletion($event)"
+        ></p-button>
+      } -->
+
+      @if (action() === "create" && form.valid) {
         <p-button
           type="submit"
           severity="success"
-          [label]="action() === 'edit' ? 'Save' : 'Create snippet'"
+          label="Create snippet"
         ></p-button>
+      }
 
-        @if (action() === "edit") {
-          <p-confirmDialog />
+      @if (action() === "edit") {
+        @if (hasChanged() && !form.invalid) {
           <p-button
-            type="button"
-            severity="danger"
-            label="Delete snippet"
-            (onClick)="confirmDeletion($event)"
+            type="submit"
+            severity="success"
+            label="Edit snippet"
           ></p-button>
         }
-      </div>
-    }
+
+        <p-confirmDialog />
+        <p-button
+          type="button"
+          severity="danger"
+          label="Delete snippet"
+          (onClick)="confirmDeletion($event)"
+        ></p-button>
+      }
+    </div>
+    <!-- } -->
   </form>
 </section>

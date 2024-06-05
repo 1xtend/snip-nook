@@ -40,6 +40,7 @@ import {
   EMPTY,
   Observable,
   combineLatest,
+  distinctUntilChanged,
   finalize,
   map,
   of,
@@ -57,6 +58,8 @@ import {
   toObservable,
   toSignal,
 } from '@angular/core/rxjs-interop';
+import { FormFocusDirective } from '@shared/directives/form-focus.directive';
+import { hasFormChanged } from '@shared/helpers/has-form-changed.operator';
 
 @Component({
   selector: 'app-snippet-create',
@@ -71,6 +74,7 @@ import {
     DividerModule,
     SkeletonModule,
     ConfirmDialogModule,
+    FormFocusDirective,
   ],
   providers: [ConfirmationService],
   templateUrl: './snippet-action.component.html',
@@ -94,6 +98,7 @@ export class SnippetActionComponent implements OnInit {
   snippet = signal<ISnippet | undefined>(undefined);
   action = signal<ActionType>('create');
   loading = signal<boolean>(false);
+  hasChanged = signal<boolean>(false);
 
   activeTheme = toSignal(this.themeService.activeTheme$);
   editorOptions = computed<NgEditorOptions>(() => ({
@@ -148,9 +153,9 @@ export class SnippetActionComponent implements OnInit {
           this.snippet.set(snippet);
 
           if (snippet) {
+            this.initForm(snippet);
             this.loading.set(false);
             this.form.enable();
-            this.initForm(snippet);
             this.cdr.markForCheck();
           }
         },
@@ -181,17 +186,38 @@ export class SnippetActionComponent implements OnInit {
 
     if (snippet) {
       const controlsArray: FormArray<FormControl<ICodeItem>> = this.fb.array(
-        snippet.code.map((snippet) =>
-          this.fb.control(snippet, { nonNullable: true }),
+        snippet.code.map((item) =>
+          this.fb.control(item, {
+            nonNullable: true,
+            validators: [Validators.required],
+          }),
         ),
+        { validators: [codeEditorValidator()] },
       );
 
       this.form.setControl('code', controlsArray);
+
+      this.checkFormChange();
     }
   }
 
+  private checkFormChange(): void {
+    const initialValue = this.form.getRawValue();
+
+    this.form.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        hasFormChanged(initialValue),
+        distinctUntilChanged(),
+      )
+      .subscribe((changed) => {
+        this.hasChanged.set(changed);
+      });
+  }
+
   onSubmit(): void {
-    if (!this.form.valid) {
+    if (this.form.invalid && this.hasChanged()) {
+      this.form.markAllAsTouched();
       return;
     }
 
@@ -226,10 +252,17 @@ export class SnippetActionComponent implements OnInit {
   }
 
   addEditor(): void {
-    this.codeArrayControl.push(
+    // this.codeArrayControl.push(
+    //   this.fb.control<ICodeItem>(
+    //     { language: '', code: '' },
+    //     { nonNullable: true, validators: [Validators.required] },
+    //   ),
+    // );
+
+    this.form.controls['code'].push(
       this.fb.control<ICodeItem>(
         { language: '', code: '' },
-        { nonNullable: true },
+        { nonNullable: true, validators: [Validators.required] },
       ),
     );
   }
@@ -271,7 +304,7 @@ export class SnippetActionComponent implements OnInit {
         take(1),
         switchMap((user) => {
           return user
-            ? this.snippetService.deleteSnippet(user.uid).pipe(
+            ? this.snippetService.deleteSnippet(uid).pipe(
                 take(1),
                 map(() => user),
               )
