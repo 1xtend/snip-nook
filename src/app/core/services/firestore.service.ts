@@ -44,11 +44,7 @@ export class FirestoreService {
   }
 
   // Utils
-  checkSnippetOwner(userUid: string, snippetUid: string): Observable<boolean> {
-    return docData(doc(this.fs, 'users', userUid, 'snippets', snippetUid)).pipe(
-      map((snippet) => !!snippet),
-    );
-  }
+  
 
   deleteCollection(path: string, ...pathSegments: string[]) {
     const deleteCollection = collection(this.fs, path, ...pathSegments);

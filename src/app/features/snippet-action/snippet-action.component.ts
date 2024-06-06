@@ -84,12 +84,6 @@ export class SnippetActionComponent implements OnInit {
 
   activeTheme = toSignal(this.themeService.activeTheme$);
   options = computed<NgEditorOptions>(() => ({
-    minimap: {
-      enabled: false,
-    },
-    stickyScroll: {
-      enabled: false,
-    },
     theme:
       !this.activeTheme() || this.activeTheme() === 'dark'
         ? 'vs-dark'
@@ -118,7 +112,7 @@ export class SnippetActionComponent implements OnInit {
           this.action.set(action);
 
           if (action === 'create') {
-            return of(undefined);
+            return of({ snippet: undefined, owner: undefined });
           }
 
           const snippetId = params.get('id');
@@ -134,7 +128,7 @@ export class SnippetActionComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: (snippet) => {
+        next: ({ snippet }) => {
           this.snippet.set(snippet);
 
           if (snippet) {
@@ -182,11 +176,11 @@ export class SnippetActionComponent implements OnInit {
 
       this.form.setControl('code', controlsArray);
 
-      this.checkFormChange();
+      this.hasFormChanged();
     }
   }
 
-  private checkFormChange(): void {
+  private hasFormChanged(): void {
     const initialValue = this.form.getRawValue();
 
     this.form.valueChanges

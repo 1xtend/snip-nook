@@ -20,6 +20,12 @@ import {
 const monacoConfig: NgMonacoEditorConfig = {
   defaultOptions: {
     theme: 'vs-dark',
+    minimap: {
+      enabled: false,
+    },
+    stickyScroll: {
+      enabled: false,
+    },
   },
   onMonacoLoad: () => {
     const monaco = (<any>window).monaco;

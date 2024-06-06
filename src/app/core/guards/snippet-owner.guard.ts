@@ -1,13 +1,13 @@
 import { AuthService } from './../services/auth.service';
-import { FirestoreService } from '@core/services/firestore.service';
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { finalize, map, of, switchMap, take } from 'rxjs';
 import { LoadingService } from '@core/services/loading.service';
+import { SnippetService } from '@core/services/snippet.service';
 
 export const snippetOwnerGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
-  const firestoreService = inject(FirestoreService);
+  const snippetService = inject(SnippetService);
   const router = inject(Router);
   const loadingService = inject(LoadingService);
 
@@ -20,7 +20,7 @@ export const snippetOwnerGuard: CanActivateFn = (route, state) => {
       const userId = user?.uid;
 
       return userId
-        ? firestoreService.checkSnippetOwner(userId, snippetId).pipe(
+        ? snippetService.checkSnippetOwner(userId, snippetId).pipe(
             take(1),
             map((snippet) => {
               return !!snippet;

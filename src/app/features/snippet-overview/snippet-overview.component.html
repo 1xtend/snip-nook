@@ -75,18 +75,20 @@
       ></p-tabMenu>
 
       <div class="overview__tab-items">
-        <!-- <ngx-monaco-editor
+        <ng-monaco-editor
+          [options]="options()"
           [(ngModel)]="code"
-          [options]="editorOptions()"
           class="overview__editor"
           [style]="{
-            height: '500px'
+            height: '500px',
+            display: editorLoading() ? 'none' : 'block'
           }"
-        ></ngx-monaco-editor> -->
-        <ng-monaco-editor
-          [options]="editorOptions()"
-          [(ngModel)]="code"
+          (loading)="editorLoading.set($event)"
         ></ng-monaco-editor>
+
+        @if (editorLoading()) {
+          <p-skeleton width="100%" height="500px"></p-skeleton>
+        }
       </div>
     } @else {
       <div class="overview__no-snippet">

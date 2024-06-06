@@ -11,7 +11,11 @@ import {
 } from 'rxjs';
 import { AuthService } from './auth.service';
 import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
-import { writeBatch } from 'firebase/firestore';
+import {
+  DocumentSnapshot,
+  runTransaction,
+  writeBatch,
+} from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -22,9 +26,31 @@ export class SnippetService {
 
   private user$ = this.authService.user$;
 
-  getSnippet(uid: string): Observable<ISnippet | undefined> {
+  getSnippet(
+    uid: string,
+    userId?: string,
+  ): Observable<{
+    owner: boolean;
+    snippet: ISnippet | undefined;
+  }> {
     const snippetDoc = doc(this.fs, 'snippets', uid);
-    return docData(snippetDoc) as Observable<ISnippet | undefined>;
+
+    const transaction = runTransaction(this.fs, async (transaction) => {
+      let ownerSnapshot: DocumentSnapshot | undefined = undefined;
+
+      if (userId) {
+        const userSnippetDoc = doc(this.fs, 'users', userId, 'snippets', uid);
+        ownerSnapshot = await transaction.get(userSnippetDoc);
+      }
+      const snippetSnapshot = await transaction.get(snippetDoc);
+
+      return {
+        owner: !!ownerSnapshot?.data() as boolean,
+        snippet: snippetSnapshot.data() as ISnippet | undefined,
+      };
+    });
+
+    return from(transaction);
   }
 
   createSnippet(snippet: ISnippet): Observable<ISnippet> {
@@ -120,6 +146,12 @@ export class SnippetService {
 
         return batch.commit();
       }),
+    );
+  }
+
+  checkSnippetOwner(userUid: string, snippetUid: string): Observable<boolean> {
+    return docData(doc(this.fs, 'users', userUid, 'snippets', snippetUid)).pipe(
+      map((snippet) => !!snippet),
     );
   }
 }

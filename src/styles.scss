@@ -12,10 +12,11 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .main-content {
-  padding: $spacing-l 0;
+  padding: $spacing-xxl 0;
   flex: 1 1 auto;
 }
 
