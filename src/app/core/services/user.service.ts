@@ -21,6 +21,8 @@ import {
   QueryDocumentSnapshot,
   DocumentData,
   getDocs,
+  docData,
+  where,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import {
@@ -44,6 +46,7 @@ import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
 import { getDoc } from 'firebase/firestore';
 import { ErrorService } from './error.service';
+import { ISnippetPreview } from '@shared/models/snippet.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -132,6 +135,10 @@ export class UserService {
     );
   }
 
+  getUser(uid: string): Observable<IUser | undefined> {
+    return docData(doc(this.fs, 'users', uid)) as Observable<IUser | undefined>;
+  }
+
   getUsers(
     perPage: number,
     startAfterDoc?: QueryDocumentSnapshot<DocumentData>,
@@ -169,33 +176,24 @@ export class UserService {
       }),
       catchError((err) => this.errorService.handleError(err)),
     );
+  }
 
-    // return forkJoin([
-    //   getDocs(usersQuery),
-    //   this.getUsersCount()
-    // ]).pipe(
-    //   map(([users]) => {
+  getUserSnippets(
+    uid: string,
+    owner: boolean = false,
+  ): Observable<ISnippetPreview[]> {
+    let snippets;
 
-    //   })
-    // )
+    if (owner) {
+      snippets = collection(this.fs, 'users', uid, 'snippets');
+    } else {
+      snippets = query(
+        collection(this.fs, 'users', uid, 'snippets'),
+        where('public', '==', true),
+      );
+    }
 
-    // return from(getDocs(usersQuery)).pipe(
-    //   switchMap(async (snapshot) => {
-    //     const count = await getDocs(usersQuery);
-    // const users = snapshot.docs.map(
-    //   (doc) =>
-    //     ({
-    //       uid: doc.id,
-    //       ...doc.data(),
-    //     }) as IUser,
-    // );
-
-    //     return {
-    //       count: count.size,
-    //       users,
-    //     };
-    //   }),
-    // );
+    return collectionData(snippets) as Observable<ISnippetPreview[]>;
   }
 
   private async getUsersCount(): Promise<number> {

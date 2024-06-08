@@ -10,7 +10,11 @@ import {
   EMPTY,
 } from 'rxjs';
 import { AuthService } from './auth.service';
-import { ISnippet, ISnippetPreview } from '@shared/models/snippet.interface';
+import {
+  ISnippet,
+  ISnippetPreview,
+  ISnippetResult,
+} from '@shared/models/snippet.interface';
 import {
   DocumentSnapshot,
   runTransaction,
@@ -26,13 +30,7 @@ export class SnippetService {
 
   private user$ = this.authService.user$;
 
-  getSnippet(
-    uid: string,
-    userId?: string,
-  ): Observable<{
-    owner: boolean;
-    snippet: ISnippet | undefined;
-  }> {
+  getSnippet(uid: string, userId?: string): Observable<ISnippetResult> {
     const snippetDoc = doc(this.fs, 'snippets', uid);
 
     const transaction = runTransaction(this.fs, async (transaction) => {

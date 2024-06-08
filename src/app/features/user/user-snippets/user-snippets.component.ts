@@ -16,6 +16,7 @@ import { SnippetCardComponent } from '@shared/components/snippet-card/snippet-ca
 import { AuthService } from '@core/services/auth.service';
 import { SkeletonModule } from 'primeng/skeleton';
 import { User } from 'firebase/auth';
+import { UserService } from '@core/services/user.service';
 
 @Component({
   selector: 'app-user-snippets',
@@ -28,7 +29,7 @@ import { User } from 'firebase/auth';
 export class UserSnippetsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
-  private firestoreService = inject(FirestoreService);
+  private userService = inject(UserService);
   private authService = inject(AuthService);
   private messageService = inject(MessageService);
 
@@ -69,9 +70,7 @@ export class UserSnippetsComponent implements OnInit {
     this.loading.set(true);
     this.isOwner.set(owner);
 
-    return userId
-      ? this.firestoreService.getUserSnippets(userId, owner)
-      : EMPTY;
+    return userId ? this.userService.getUserSnippets(userId, owner) : EMPTY;
   }
 
   private handleParamsNext(snippets: ISnippetPreview[]): void {

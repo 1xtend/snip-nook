@@ -20,32 +20,7 @@ import { Observable, map, switchMap, take } from 'rxjs';
 export class FirestoreService {
   private fs = inject(Firestore);
 
-  // Users
-  getUser(uid: string): Observable<IUser | undefined> {
-    return docData(doc(this.fs, 'users', uid)) as Observable<IUser | undefined>;
-  }
-
-  getUserSnippets(
-    uid: string,
-    owner: boolean = false,
-  ): Observable<ISnippetPreview[]> {
-    let snippets;
-
-    if (owner) {
-      snippets = collection(this.fs, 'users', uid, 'snippets');
-    } else {
-      snippets = query(
-        collection(this.fs, 'users', uid, 'snippets'),
-        where('public', '==', true),
-      );
-    }
-
-    return collectionData(snippets) as Observable<ISnippetPreview[]>;
-  }
-
   // Utils
-  
-
   deleteCollection(path: string, ...pathSegments: string[]) {
     const deleteCollection = collection(this.fs, path, ...pathSegments);
 

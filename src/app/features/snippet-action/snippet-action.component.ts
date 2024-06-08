@@ -2,11 +2,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { SnippetService } from '../../core/services/snippet.service';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   DestroyRef,
-  OnInit,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -30,15 +29,20 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { EditorComponent } from '@shared/components/editor/editor.component';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { codeEditorValidator } from '@shared/validators/code-editor.validator';
 import {
+  EMPTY,
   Observable,
+  catchError,
   combineLatest,
   distinctUntilChanged,
-  of,
+  filter,
+  map,
+  shareReplay,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
 import { ActionType } from '@shared/models/action.type';
 import { ThemeService } from '@core/services/theme.service';
@@ -64,7 +68,7 @@ import { hasFormChanged } from '@shared/helpers/has-form-changed.operator';
   styleUrl: './snippet-action.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnippetActionComponent implements OnInit {
+export class SnippetActionComponent {
   private fb = inject(FormBuilder);
   private snippetService = inject(SnippetService);
   private router = inject(Router);
@@ -73,11 +77,24 @@ export class SnippetActionComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private themeService = inject(ThemeService);
   private destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
 
-  form!: FormGroup<ISnippetActionForm>;
+  form: FormGroup<ISnippetActionForm> = this.fb.group<ISnippetActionForm>({
+    name: this.fb.control('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(60)],
+    }),
+    public: this.fb.control(false, {
+      nonNullable: true,
+    }),
+    description: this.fb.control('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.maxLength(600)],
+    }),
+    code: this.fb.array<FormControl<ICodeItem>>([], {
+      validators: [codeEditorValidator()],
+    }),
+  });
 
-  snippet = signal<ISnippet | undefined>(undefined);
   action = signal<ActionType>('create');
   loading = signal<boolean>(false);
   hasChanged = signal<boolean>(false);
@@ -90,94 +107,76 @@ export class SnippetActionComponent implements OnInit {
         : 'vs-light',
   }));
 
+  snippet = toSignal(
+    combineLatest({
+      params: this.route.paramMap,
+      data: this.route.data,
+    }).pipe(
+      takeUntilDestroyed(),
+      tap(({ data }) => {
+        this.action.set(data['action'] || 'create');
+      }),
+      filter(({ data }) => data['action'] !== 'create'),
+      switchMap(({ params }) => {
+        const snippetId = params.get('id');
+
+        this.loading.set(true);
+        this.form.disable();
+
+        return snippetId
+          ? this.snippetService.getSnippet(snippetId).pipe(take(1))
+          : EMPTY;
+      }),
+      map((result) => result.snippet),
+      catchError((err) => {
+        this.loading.set(false);
+        this.form.enable();
+
+        return EMPTY;
+      }),
+      tap((snippet) => {
+        console.log('Snippet', snippet);
+        this.loading.set(false);
+        this.form.enable();
+      }),
+      shareReplay(1),
+    ),
+  );
+
   get codeArrayControl(): FormArray<FormControl> {
     return this.form.controls['code'];
   }
 
-  ngOnInit(): void {
-    this.initForm();
+  constructor() {
+    effect(() => {
+      const snippet = this.snippet();
 
-    this.paramsChanges();
+      if (snippet) {
+        this.setFormValue(snippet);
+      }
+    });
   }
 
-  private paramsChanges(): void {
-    combineLatest({
-      params: this.route.paramMap,
-      data: this.route.data,
-    })
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        switchMap(({ params, data }) => {
-          const action = data['action'] || 'create';
-          this.action.set(action);
-
-          if (action === 'create') {
-            return of({ snippet: undefined, owner: undefined });
-          }
-
-          const snippetId = params.get('id');
-
-          if (!snippetId) {
-            throw new Error("Current route doesn't contain snippet uid");
-          }
-
-          this.loading.set(true);
-          this.form.disable();
-
-          return this.snippetService.getSnippet(snippetId).pipe(take(1));
-        }),
-      )
-      .subscribe({
-        next: ({ snippet }) => {
-          this.snippet.set(snippet);
-
-          if (snippet) {
-            this.initForm(snippet);
-            this.loading.set(false);
-            this.form.enable();
-            this.cdr.markForCheck();
-          }
-        },
-        error: () => {
-          this.loading.set(false);
-          this.form.enable();
-        },
-      });
-  }
-
-  private initForm(snippet?: ISnippet): void {
-    this.form = this.fb.group<ISnippetActionForm>({
-      name: this.fb.control(snippet?.name || '', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(60)],
-      }),
-      public: this.fb.control(snippet?.public || false, {
-        nonNullable: true,
-      }),
-      description: this.fb.control(snippet?.description || '', {
-        nonNullable: true,
-        validators: [Validators.required, Validators.maxLength(600)],
-      }),
-      code: this.fb.array<FormControl<ICodeItem>>([], {
-        validators: [codeEditorValidator()],
-      }),
+  private setFormValue(snippet: ISnippet): void {
+    this.form.patchValue({
+      name: snippet.name,
+      description: snippet.description,
+      public: snippet.public,
     });
 
-    if (snippet) {
-      const controlsArray: FormArray<FormControl<ICodeItem>> = this.fb.array(
-        snippet.code.map((item) =>
-          this.fb.control(item, {
-            nonNullable: true,
-            validators: [Validators.required],
-          }),
-        ),
-        { validators: [codeEditorValidator()] },
-      );
+    const controlsArray: FormArray<FormControl<ICodeItem>> = this.fb.array(
+      snippet.code.map((item) =>
+        this.fb.control(item, {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+      ),
+      { validators: [codeEditorValidator()] },
+    );
 
-      this.form.setControl('code', controlsArray);
+    this.form.setControl('code', controlsArray);
 
-      this.hasFormChanged();
-    }
+    this.hasFormChanged();
   }
 
   private hasFormChanged(): void {
@@ -195,7 +194,7 @@ export class SnippetActionComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid && this.hasChanged()) {
+    if (this.form.invalid || !this.hasChanged()) {
       this.form.markAllAsTouched();
       return;
     }

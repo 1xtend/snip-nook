@@ -22,6 +22,11 @@ export interface ISnippetActionForm {
   code: FormArray<FormControl<ICodeItem>>;
 }
 
+export interface ISnippetResult {
+  owner: boolean;
+  snippet: ISnippet | undefined;
+}
+
 export interface ICodeItem {
   language: string;
   code: string;

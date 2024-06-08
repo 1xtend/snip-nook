@@ -1,38 +1,38 @@
 <section class="profile">
-  @if (loading()) {
+  @if (user(); as user) {
     <div class="profile__info info">
-      <p-skeleton shape="circle" width="4rem" height="4rem"></p-skeleton>
+      <app-avatar
+        [url]="user.photoURL"
+        size="xlarge"
+        [isButton]="!!user.photoURL"
+        (onClick)="onAvatarClick()"
+      ></app-avatar>
 
-      <p-skeleton
-        width="8rem"
-        height="32px"
-        class="info__username"
-      ></p-skeleton>
+      <h2 class="info__username">{{ user.username }}</h2>
     </div>
 
-    <p-skeleton height="33px"></p-skeleton>
+    <p-tabMenu
+      [model]="tabItems"
+      [scrollable]="true"
+      class="profile__tab-menu"
+    ></p-tabMenu>
+
+    <div class="profile__content content">
+      <router-outlet></router-outlet>
+    </div>
   } @else {
-    @if (user(); as user) {
+    @if (loading()) {
       <div class="profile__info info">
-        <app-avatar
-          [url]="user.photoURL"
-          size="xlarge"
-          [isButton]="!!user.photoURL"
-          (onClick)="onAvatarClick()"
-        ></app-avatar>
+        <p-skeleton shape="circle" width="4rem" height="4rem"></p-skeleton>
 
-        <h2 class="info__username">{{ user.username }}</h2>
+        <p-skeleton
+          width="8rem"
+          height="32px"
+          class="info__username"
+        ></p-skeleton>
       </div>
 
-      <p-tabMenu
-        [model]="tabItems"
-        [scrollable]="true"
-        class="profile__tab-menu"
-      ></p-tabMenu>
-
-      <div class="profile__content content">
-        <router-outlet></router-outlet>
-      </div>
+      <p-skeleton height="33px"></p-skeleton>
     } @else {
       <div class="info__no-user">
         <span>User does not exist.</span>
@@ -40,3 +40,5 @@
     }
   }
 </section>
+
+<a routerLink="/user/eu0UW4bVzEQ236cX4XHPHI3zrr83/overview">Link</a>

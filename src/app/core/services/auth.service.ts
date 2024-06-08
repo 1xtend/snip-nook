@@ -52,8 +52,18 @@ export class AuthService {
   private storage = inject(Storage);
   private jwtHelper = new JwtHelperService();
 
-  private userSubject = new ReplaySubject<User | null>(1);
-  user$ = this.userSubject.asObservable();
+  user$: Observable<User | null> = authState(this.auth).pipe(
+    tap((user) => {
+      if (user && !this.token) {
+        this.setAuthToken(user);
+      }
+
+      if (!user && this.token) {
+        this.clearStorage();
+      }
+    }),
+    shareReplay(1),
+  );
 
   isAuthenticated$: Observable<boolean> = merge(
     of(!!this.token && !this.isTokenExpired()),
@@ -76,25 +86,6 @@ export class AuthService {
 
   isTokenExpired(): boolean {
     return this.jwtHelper.isTokenExpired(this.token);
-  }
-
-  userChanges(): void {
-    authState(this.auth)
-      .pipe(
-        tap((user) => {
-          if (user && !this.token) {
-            this.setAuthToken(user);
-          }
-
-          if (!user && this.token) {
-            this.clearStorage();
-          }
-        }),
-      )
-      .subscribe((user) => {
-        console.log('User was changed!', user?.email);
-        this.userSubject.next(user);
-      });
   }
 
   checkUsername(username: string): Observable<boolean> {
