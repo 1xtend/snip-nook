@@ -48,27 +48,27 @@ export class UserSettingsComponent {
   uploadAvatar(e: FileUploadHandlerEvent) {
     this.loadingService.setLoading(true);
 
+    this.updateAvatar(e.files[0]);
+  }
+
+  private updateAvatar(file: File): void {
     this.userService
-      .updateAvatar(e.files[0])
+      .updateAvatar(file)
       .pipe(take(1))
       .subscribe({
-        next: () => this.handleUploadNext(),
-        error: (err) => this.handleUploadError(err),
+        next: () => {
+          this.loadingService.setLoading(false);
+          this.fileUpload()?.clear();
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Avatar has been changed successfully',
+            summary: 'Success',
+          });
+        },
+        error: () => {
+          this.loadingService.setLoading(false);
+        },
       });
-  }
-
-  private handleUploadNext(): void {
-    this.loadingService.setLoading(false);
-    this.fileUpload()?.clear();
-    this.messageService.add({
-      severity: 'success',
-      detail: 'Avatar has been changed successfully',
-      summary: 'Success',
-    });
-  }
-
-  private handleUploadError(error: Error): void {
-    this.loadingService.setLoading(false);
   }
 
   confirm(e: MouseEvent): void {
