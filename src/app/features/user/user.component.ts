@@ -3,12 +3,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  effect,
+  computed,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, ParamMap, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import {
   EMPTY,
@@ -40,12 +40,13 @@ export class UserComponent implements OnInit {
   private userService = inject(UserService);
   private modalService = inject(ModalService);
 
-  tabItems: MenuItem[] = [];
-
   loading = signal<boolean>(false);
   owner = signal<boolean>(false);
+  tabItems = computed<MenuItem[]>(() => {
+    return this.getTabItems(this.owner());
+  });
 
-  user$ = this.authService.user$;
+  private user$ = this.authService.user$;
 
   user = toSignal(
     combineLatest({
@@ -68,12 +69,6 @@ export class UserComponent implements OnInit {
       }),
     ),
   );
-
-  constructor() {
-    effect(() => {
-      this.tabItems = this.getTabItems(this.owner());
-    });
-  }
 
   ngOnInit(): void {
     this.loading.set(true);

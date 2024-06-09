@@ -1,8 +1,7 @@
 import { SharedService } from './../../core/services/shared.service';
 import {
-  EMPTY,
-  catchError,
   combineLatest,
+  finalize,
   map,
   shareReplay,
   switchMap,
@@ -99,12 +98,7 @@ export class SnippetOverviewComponent implements OnInit {
 
         return this.snippetService.getSnippet(snippetId, userId).pipe(take(1));
       }),
-      catchError(() => {
-        this.loading.set(false);
-        return EMPTY;
-      }),
       tap(({ snippet, owner }) => {
-        this.loading.set(false);
         this.owner.set(owner);
 
         if (snippet) {
@@ -114,6 +108,9 @@ export class SnippetOverviewComponent implements OnInit {
         }
       }),
       map(({ snippet }) => snippet),
+      finalize(() => {
+        this.loading.set(false);
+      }),
       shareReplay(1),
     ),
   );
