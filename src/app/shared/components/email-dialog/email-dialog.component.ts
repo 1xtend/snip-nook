@@ -19,7 +19,7 @@ import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { take } from 'rxjs';
-import { IAuthForm } from '@shared/models/auth.interface';
+import { IAuthData, IAuthForm } from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { UserService } from '@core/services/user.service';
 
@@ -81,30 +81,30 @@ export class EmailDialogComponent implements OnInit {
     this.form.disable();
     this.loading.set(true);
 
+    this.updateEmail(this.form.getRawValue());
+  }
+
+  private updateEmail(data: IAuthData): void {
     this.userService
-      .updateEmail(this.form.getRawValue())
+      .updateEmail(data)
       .pipe(take(1))
       .subscribe({
-        next: () => this.handleUpdateNext(),
-        error: (err) => this.handleUpdateError(err),
+        next: () => {
+          this.loading.set(false);
+          this.form.reset();
+          this.form.enable();
+          this.modalService.closeDialog();
+
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Email has been changed successfully',
+            summary: 'Success',
+          });
+        },
+        error: () => {
+          this.loading.set(false);
+          this.form.enable();
+        },
       });
-  }
-
-  private handleUpdateNext(): void {
-    this.loading.set(false);
-    this.form.reset();
-    this.form.enable();
-    this.modalService.closeDialog();
-
-    this.messageService.add({
-      severity: 'success',
-      detail: 'Email has been changed successfully',
-      summary: 'Success',
-    });
-  }
-
-  private handleUpdateError(error: Error): void {
-    this.loading.set(false);
-    this.form.enable();
   }
 }

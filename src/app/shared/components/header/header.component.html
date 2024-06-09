@@ -8,16 +8,14 @@
   <app-logo class="header__logo"></app-logo>
 
   @if (isAuthenticated()) {
-    @if (loading()) {
-      <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
+    @if (user(); as user) {
+      <app-avatar
+        (onClick)="openSidebar.emit('user')"
+        [url]="user.photoURL"
+        [isButton]="true"
+      ></app-avatar>
     } @else {
-      @if (user(); as user) {
-        <app-avatar
-          (onClick)="openSidebar.emit('user')"
-          [url]="user.photoURL"
-          [isButton]="true"
-        ></app-avatar>
-      }
+      <p-skeleton shape="circle" width="32px" height="32px"></p-skeleton>
     }
   } @else {
     <p-button
