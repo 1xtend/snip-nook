@@ -1,22 +1,12 @@
 import { ThemeService } from './core/services/theme.service';
-import { ModalService } from './core/services/modal.service';
-import {
-  Component,
-  OnInit,
-  computed,
-  inject,
-  model,
-  signal,
-} from '@angular/core';
-import { NavigationStart, Router, RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject, model } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ToastModule } from 'primeng/toast';
 import { UserSidebarComponent } from '@shared/components/user-sidebar/user-sidebar.component';
 import { MenuSidebarComponent } from '@shared/components/menu-sidebar/menu-sidebar.component';
-import { filter, tap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +17,6 @@ import { filter, tap } from 'rxjs';
     UserSidebarComponent,
     MenuSidebarComponent,
     LoaderComponent,
-    ProgressSpinnerModule,
     ToastModule,
   ],
   templateUrl: './app.component.html',
@@ -36,7 +25,6 @@ import { filter, tap } from 'rxjs';
 export class AppComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
-  private modalService = inject(ModalService);
   private themeService = inject(ThemeService);
 
   menuSidebarVisible = model<boolean>(false);

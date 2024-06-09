@@ -4,7 +4,6 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { ICodeItem } from '@shared/models/snippet.interface';
 
 export function codeEditorValidator(): ValidatorFn {
   return (array: AbstractControl): ValidationErrors | null => {

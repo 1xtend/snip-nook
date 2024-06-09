@@ -15,7 +15,10 @@ import {
 import { ModalService } from '@core/services/modal.service';
 import { UserService } from '@core/services/user.service';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
-import { IAuthPasswordsForm } from '@shared/models/auth.interface';
+import {
+  IAuthPasswords,
+  IAuthPasswordsForm,
+} from '@shared/models/auth.interface';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PasswordModule } from 'primeng/password';
@@ -82,31 +85,29 @@ export class PasswordDialogComponent implements OnInit {
     this.form.disable();
     this.loading.set(true);
 
+    this.updatePassword(this.form.getRawValue());
+  }
+
+  private updatePassword(data: IAuthPasswords): void {
     this.userService
       .updatePassword(this.form.getRawValue())
       .pipe(take(1))
       .subscribe({
-        next: () => this.handleUpdateNext(),
-        error: (err) => this.handleUpdateError(err),
+        next: () => {
+          this.loading.set(false);
+          this.form.reset();
+          this.form.enable();
+          this.modalService.closeDialog();
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Password has been changed successfully',
+            summary: 'Success',
+          });
+        },
+        error: () => {
+          this.loading.set(false);
+          this.form.enable();
+        },
       });
-  }
-
-  private handleUpdateNext(): void {
-    this.loading.set(false);
-    this.form.reset();
-    this.form.enable();
-
-    this.modalService.closeDialog();
-
-    this.messageService.add({
-      severity: 'success',
-      detail: 'Password has been changed successfully',
-      summary: 'Success',
-    });
-  }
-
-  private handleUpdateError(error: Error): void {
-    this.loading.set(false);
-    this.form.enable();
   }
 }
