@@ -1,95 +1,96 @@
 <section class="overview">
-  @if (loading()) {
-    <div [style]="{ marginBottom: '1rem' }">
-      <p-skeleton
-        height="32px"
-        width="300px"
-        [style]="{
-          marginBottom: '0.5rem'
-        }"
-      ></p-skeleton>
-      <p-skeleton height="22px" width="120px"></p-skeleton>
-    </div>
-
-    <div
-      class="overview__description"
-      [style]="{
-        marginBottom: '2rem'
-      }"
-    >
-      <p-skeleton
-        height="16px"
-        width="60%"
-        [style]="{
-          maxWidth: '100%',
-          marginBottom: '4px'
-        }"
-      ></p-skeleton>
-      <p-skeleton
-        height="16px"
-        width="90%"
-        [style]="{
-          maxWidth: '100%',
-          marginBottom: '4px'
-        }"
-      ></p-skeleton>
-      <p-skeleton
-        height="16px"
-        width="40%"
-        [style]="{
-          maxWidth: '100%'
-        }"
-      ></p-skeleton>
-    </div>
-
-    <p-skeleton height="33px"></p-skeleton>
-  } @else {
-    @if (snippet(); as snippet) {
-      <header class="overview__header">
-        <div class="overview__info">
-          <h2 class="overview__name">{{ snippet.name }}</h2>
-          <a
-            [routerLink]="['/user', snippet.author.uid]"
-            class="overview__author-link p-reset"
-            >&commat;{{ snippet.author.name }}</a
-          >
-        </div>
-
-        @if (isOwner()) {
-          <p-button
-            [routerLink]="['/snippet', snippet.uid, 'edit']"
-            label="Edit"
-            icon="pi pi-pen-to-square"
-            class="overview__edit-btn"
-            size="small"
-          ></p-button>
-        }
-      </header>
-
-      <p class="overview__description">{{ snippet.description }}</p>
-
-      <p-tabMenu
-        class="overview__tab-menu"
-        [model]="tabItems"
-        [activeItem]="activeTab"
-      ></p-tabMenu>
-
-      <div class="overview__tab-items">
-        <ng-monaco-editor
-          [options]="options()"
-          [(ngModel)]="code"
-          class="overview__editor"
-          [style]="{
-            height: '500px',
-            display: editorLoading() ? 'none' : 'block'
-          }"
-          (loading)="editorLoading.set($event)"
-        ></ng-monaco-editor>
-
-        @if (editorLoading()) {
-          <p-skeleton width="100%" height="500px"></p-skeleton>
-        }
+  @if (snippet(); as snippet) {
+    <header class="overview__header">
+      <div class="overview__info">
+        <h2 class="overview__name">{{ snippet.name }}</h2>
+        <a
+          [routerLink]="['/user', snippet.author.uid]"
+          class="overview__author-link p-reset"
+          >&commat;{{ snippet.author.name }}</a
+        >
       </div>
+
+      @if (owner()) {
+        <p-button
+          [routerLink]="['/snippet', snippet.uid, 'edit']"
+          label="Edit"
+          icon="pi pi-pen-to-square"
+          class="overview__edit-btn"
+          size="small"
+        ></p-button>
+      }
+    </header>
+
+    <p class="overview__description">{{ snippet.description }}</p>
+
+    <p-tabMenu
+      class="overview__tab-menu"
+      [model]="tabItems"
+      [activeItem]="activeTab"
+    ></p-tabMenu>
+
+    <div class="overview__tab-items">
+      <ng-monaco-editor
+        [options]="options()"
+        [(ngModel)]="code"
+        class="overview__editor"
+        [style]="{
+          height: '500px',
+          display: editorLoading() ? 'none' : 'block'
+        }"
+        (loading)="editorLoading.set($event)"
+      ></ng-monaco-editor>
+
+      @if (editorLoading()) {
+        <p-skeleton width="100%" height="500px"></p-skeleton>
+      }
+    </div>
+  } @else {
+    @if (loading()) {
+      <div [style]="{ marginBottom: '1rem' }">
+        <p-skeleton
+          height="32px"
+          width="300px"
+          [style]="{
+            marginBottom: '0.5rem'
+          }"
+        ></p-skeleton>
+        <p-skeleton height="22px" width="120px"></p-skeleton>
+      </div>
+
+      <div
+        class="overview__description"
+        [style]="{
+          marginBottom: '2rem'
+        }"
+      >
+        <p-skeleton
+          height="16px"
+          width="60%"
+          [style]="{
+            maxWidth: '100%',
+            marginBottom: '4px'
+          }"
+        ></p-skeleton>
+        <p-skeleton
+          height="16px"
+          width="90%"
+          [style]="{
+            maxWidth: '100%',
+            marginBottom: '4px'
+          }"
+        ></p-skeleton>
+        <p-skeleton
+          height="16px"
+          width="40%"
+          [style]="{
+            maxWidth: '100%'
+          }"
+        ></p-skeleton>
+      </div>
+
+      <p-skeleton height="33px"></p-skeleton>
+      <p-skeleton width="100%" height="500px"></p-skeleton>
     } @else {
       <div class="overview__no-snippet">
         <span>Snippet doesn't exist</span>
