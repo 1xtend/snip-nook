@@ -1,10 +1,4 @@
-<form
-  [formGroup]="form"
-  class="form"
-  #settingsForm="ngForm"
-  (ngSubmit)="onSubmit()"
-  focusInvalidInput
->
+<form [formGroup]="form" class="form" (ngSubmit)="onSubmit()" focusInvalidInput>
   <div class="form__row">
     <label for="form-password" class="form__label">Current password</label>
     <input

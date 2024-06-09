@@ -71,31 +71,31 @@ export class DeleteDialogComponent implements OnInit {
     this.loading.set(true);
     this.form.disable();
 
+    this.deleteUser(this.form.getRawValue().password);
+  }
+
+  private deleteUser(password: string): void {
     this.authService
       .deleteUser(this.form.getRawValue().password)
       .pipe(take(1))
       .subscribe({
-        next: () => this.handleDeleteNext(),
-        error: (err) => this.handleDeleteError(err),
+        next: () => {
+          this.loading.set(false);
+          this.form.reset();
+          this.form.enable();
+          this.modalService.closeDialog();
+          this.router.navigate(['/home']);
+
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Account has been successfully deleted',
+            summary: 'Success',
+          });
+        },
+        error: () => {
+          this.loading.set(false);
+          this.form.enable();
+        },
       });
-  }
-
-  private handleDeleteNext(): void {
-    this.loading.set(false);
-    this.form.reset();
-    this.form.enable();
-    this.modalService.closeDialog();
-    this.router.navigate(['/home']);
-
-    this.messageService.add({
-      severity: 'success',
-      detail: 'Account has been successfully deleted',
-      summary: 'Success',
-    });
-  }
-
-  private handleDeleteError(error: Error): void {
-    this.loading.set(false);
-    this.form.enable();
   }
 }
