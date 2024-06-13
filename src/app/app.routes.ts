@@ -116,4 +116,28 @@ export const routes: Routes = [
       action: 'create',
     },
   },
+  {
+    path: 'settings',
+    loadChildren: () =>
+      import('./features/settings/settings.component').then(
+        (m) => m.SettingsComponent,
+      ),
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'account',
+        loadComponent: () =>
+          import(
+            './features/settings/account-settings/account-settings.component'
+          ).then((m) => m.AccountSettingsComponent),
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import(
+            './features/settings/profile-settings/profile-settings.component'
+          ).then((m) => m.ProfileSettingsComponent),
+      },
+    ],
+  },
 ];

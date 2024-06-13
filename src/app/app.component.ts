@@ -1,5 +1,5 @@
 import { ThemeService } from './core/services/theme.service';
-import { Component, OnInit, inject, model } from '@angular/core';
+import { Component, HostListener, OnInit, inject, model } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { HeaderComponent } from '@shared/components/header/header.component';
@@ -7,6 +7,8 @@ import { LoaderComponent } from '@shared/components/loader/loader.component';
 import { ToastModule } from 'primeng/toast';
 import { UserSidebarComponent } from '@shared/components/user-sidebar/user-sidebar.component';
 import { MenuSidebarComponent } from '@shared/components/menu-sidebar/menu-sidebar.component';
+import { fromEvent } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-root',
