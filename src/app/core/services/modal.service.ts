@@ -17,6 +17,10 @@ export class ModalService {
   ref: DynamicDialogRef | undefined = undefined;
 
   showDialog(component: any, config?: DynamicDialogConfig): void {
+    if (!component) {
+      return;
+    }
+
     const dialogConfig: DynamicDialogConfig = {
       modal: true,
       width: '50vw',

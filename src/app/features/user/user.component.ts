@@ -14,6 +14,7 @@ import {
   EMPTY,
   combineLatest,
   finalize,
+  forkJoin,
   shareReplay,
   switchMap,
   take,
@@ -53,7 +54,6 @@ export class UserComponent implements OnInit {
       params: this.route.paramMap,
       user: this.user$,
     }).pipe(
-      takeUntilDestroyed(),
       tap(() => {
         this.loading.set(true);
       }),
@@ -61,11 +61,15 @@ export class UserComponent implements OnInit {
         const userId = params.get('id');
         this.owner.set(user?.uid === userId);
 
-        return userId ? this.userService.getUser(userId).pipe(take(1)) : EMPTY;
+        return userId ? this.userService.getUser(userId) : EMPTY;
       }),
+      takeUntilDestroyed(),
       shareReplay(1),
       finalize(() => {
         this.loading.set(false);
+      }),
+      tap((user) => {
+        console.log('USER UPDATE FROM USER.COMPONENT');
       }),
     ),
   );

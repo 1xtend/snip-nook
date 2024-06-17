@@ -1,3 +1,4 @@
+import { UserService } from '@core/services/user.service';
 import { Injectable, inject } from '@angular/core';
 import {
   Auth,
@@ -15,6 +16,7 @@ import {
   getDoc,
   doc,
   collectionSnapshots,
+  docData,
 } from '@angular/fire/firestore';
 import { Storage } from '@angular/fire/storage';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -24,10 +26,12 @@ import { IUser } from '@shared/models/user.interface';
 import { WriteBatch, collection, writeBatch } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import {
+  EMPTY,
   Observable,
   ReplaySubject,
   catchError,
   distinctUntilChanged,
+  filter,
   finalize,
   forkJoin,
   from,
@@ -62,7 +66,6 @@ export class AuthService {
         this.clearStorage();
       }
     }),
-    shareReplay(1),
   );
 
   isAuthenticated$: Observable<boolean> = merge(

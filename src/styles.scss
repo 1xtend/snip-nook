@@ -136,3 +136,25 @@ body {
     }
   }
 }
+
+// Settings
+.settings {
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $spacing-l;
+
+    &:not(:last-child) {
+      margin-bottom: $spacing-xxl;
+    }
+  }
+
+  &__title {
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: var(--gray-300);
+  }
+}

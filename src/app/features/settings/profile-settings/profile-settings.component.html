@@ -1,1 +1,56 @@
-<p>profile-settings works!</p>
+<h2>Customize profile</h2>
+
+<article class="settings">
+  <div class="settings__row">
+    <div class="settings__col">
+      <h3 class="settings__title">Username</h3>
+      <small class="settings__subtitle">Change your username</small>
+    </div>
+    <p-button
+      icon="pi pi-arrow-right"
+      [outlined]="true"
+      [rounded]="true"
+      (onClick)="openModal('username')"
+    ></p-button>
+  </div>
+  <div class="settings__row">
+    <div class="settings__col">
+      <h3 class="settings__title">Description</h3>
+      <small class="settings__subtitle">
+        Tell everyone something about yourself
+      </small>
+    </div>
+    <p-button
+      icon="pi pi-arrow-right"
+      [outlined]="true"
+      [rounded]="true"
+      (onClick)="openModal('description')"
+    ></p-button>
+  </div>
+  <div class="settings__row">
+    <div class="settings__col">
+      <h3 class="settings__title">Avatar</h3>
+      <small class="settings__subtitle">
+        Edit your avatar or upload an image
+      </small>
+    </div>
+    <p-button
+      icon="pi pi-arrow-right"
+      [outlined]="true"
+      [rounded]="true"
+      (onClick)="openModal('avatar')"
+    ></p-button>
+  </div>
+  <div class="settings__row">
+    <div class="settings__col">
+      <h3 class="settings__title">Social links</h3>
+      <small class="settings__subtitle"> Share your social media </small>
+    </div>
+    <p-button
+      icon="pi pi-arrow-right"
+      [outlined]="true"
+      [rounded]="true"
+      (onClick)="openModal('socials')"
+    ></p-button>
+  </div>
+</article>

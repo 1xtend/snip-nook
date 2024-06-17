@@ -1,1 +1,9 @@
-<p>settings works!</p>
+<section class="user-settings">
+  <h1>User settings</h1>
+
+  <p-tabMenu [model]="tabItems" [scrollable]="true"></p-tabMenu>
+
+  <div class="user-settings__content">
+    <router-outlet></router-outlet>
+  </div>
+</section>

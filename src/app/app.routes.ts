@@ -118,11 +118,12 @@ export const routes: Routes = [
   },
   {
     path: 'settings',
-    loadChildren: () =>
+    loadComponent: () =>
       import('./features/settings/settings.component').then(
         (m) => m.SettingsComponent,
       ),
     canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: 'account',
@@ -137,6 +138,11 @@ export const routes: Routes = [
           import(
             './features/settings/profile-settings/profile-settings.component'
           ).then((m) => m.ProfileSettingsComponent),
+      },
+      {
+        path: '',
+        redirectTo: 'profile',
+        pathMatch: 'full',
       },
     ],
   },

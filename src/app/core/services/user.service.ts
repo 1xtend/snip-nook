@@ -3,6 +3,7 @@ import {
   Auth,
   EmailAuthProvider,
   reauthenticateWithCredential,
+  updateCurrentUser,
   updateEmail,
   updatePassword,
   updateProfile,
@@ -17,18 +18,20 @@ import {
   orderBy,
   limit,
   startAfter,
-  Query,
   QueryDocumentSnapshot,
   DocumentData,
   getDocs,
   docData,
   where,
+  setDoc,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import {
+  EMPTY,
   Observable,
   catchError,
   combineLatest,
+  filter,
   forkJoin,
   from,
   map,
@@ -44,9 +47,9 @@ import {
 } from '@angular/fire/storage';
 import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
 import { IUser } from '@shared/models/user.interface';
-import { getDoc } from 'firebase/firestore';
 import { ErrorService } from './error.service';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
+import { writeBatch } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -54,6 +57,7 @@ import { ISnippetPreview } from '@shared/models/snippet.interface';
 export class UserService {
   private fs = inject(Firestore);
   private storage = inject(Storage);
+  private auth = inject(Auth);
   private authService = inject(AuthService);
   private errorService = inject(ErrorService);
 
@@ -173,6 +177,32 @@ export class UserService {
         );
 
         return { users, count };
+      }),
+      catchError((err) => this.errorService.handleError(err)),
+    );
+  }
+
+  updateUsername(name: string) {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user || !user.displayName) {
+          return throwError(() => new Error('User is not defined'));
+        }
+
+        const batch = writeBatch(this.fs);
+
+        const userDoc = doc(this.fs, 'users', user.uid);
+        const usernameDoc = doc(this.fs, 'usernames', name);
+
+        batch.delete(doc(this.fs, 'usernames', user.displayName));
+        batch.set(userDoc, { displayName: name });
+        batch.set(usernameDoc, { uid: user.uid });
+
+        return forkJoin({
+          doc: batch.commit(),
+          user: updateProfile(user, { displayName: name }),
+        });
       }),
       catchError((err) => this.errorService.handleError(err)),
     );
