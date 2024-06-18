@@ -196,13 +196,13 @@ export class UserService {
         const usernameDoc = doc(this.fs, 'usernames', name);
 
         batch.delete(doc(this.fs, 'usernames', user.displayName));
-        batch.set(userDoc, { displayName: name });
-        batch.set(usernameDoc, { uid: user.uid });
+        batch.set(userDoc, { username: name }, { merge: true });
+        batch.set(usernameDoc, { uid: user.uid }, { merge: true });
 
         return forkJoin({
           doc: batch.commit(),
           user: updateProfile(user, { displayName: name }),
-        });
+        }).pipe(map(() => name));
       }),
       catchError((err) => this.errorService.handleError(err)),
     );
