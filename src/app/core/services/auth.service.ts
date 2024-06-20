@@ -66,6 +66,7 @@ export class AuthService {
         this.clearStorage();
       }
     }),
+    shareReplay(1),
   );
 
   isAuthenticated$: Observable<boolean> = merge(

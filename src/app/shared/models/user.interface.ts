@@ -1,13 +1,19 @@
 export interface ISocial {
   name: string;
   link: string;
+  icon: string;
 }
 
-export interface IUser {
+export interface IUserProfile {
+  description?: string;
+  socials?: ISocial[];
+  birthday?: string;
+}
+
+export interface IUser extends IUserProfile {
   email: string;
   username: string;
   uid: string;
-  created_at: string;
   photoURL: string | null;
-  socials?: ISocial[];
+  created_at: string;
 }

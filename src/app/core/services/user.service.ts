@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   Auth,
   EmailAuthProvider,
+  User,
   reauthenticateWithCredential,
   updateCurrentUser,
   updateEmail,
@@ -24,6 +25,7 @@ import {
   docData,
   where,
   setDoc,
+  collectionSnapshots,
 } from '@angular/fire/firestore';
 import { AuthService } from './auth.service';
 import {
@@ -46,10 +48,10 @@ import {
   uploadBytes,
 } from '@angular/fire/storage';
 import { IAuthData, IAuthPasswords } from '@shared/models/auth.interface';
-import { IUser } from '@shared/models/user.interface';
+import { IUser, IUserProfile } from '@shared/models/user.interface';
 import { ErrorService } from './error.service';
 import { ISnippetPreview } from '@shared/models/snippet.interface';
-import { writeBatch } from 'firebase/firestore';
+import { runTransaction, writeBatch } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -139,6 +141,35 @@ export class UserService {
     );
   }
 
+  updateDescription(description: string): Observable<void> {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('User is not defined'));
+        }
+
+        const userDoc = doc(this.fs, 'users', user.uid);
+        return setDoc(userDoc, { description }, { merge: true });
+      }),
+    );
+  }
+
+  updateProfile(profile: IUserProfile): Observable<void> {
+    return this.user$.pipe(
+      take(1),
+      switchMap((user) => {
+        if (!user) {
+          return throwError(() => new Error('User is not defined'));
+        }
+
+        const userDoc = doc(this.fs, 'users', user.uid);
+
+        return setDoc(userDoc, profile, { merge: true });
+      }),
+    );
+  }
+
   getUser(uid: string): Observable<IUser | undefined> {
     return docData(doc(this.fs, 'users', uid)) as Observable<IUser | undefined>;
   }
@@ -182,31 +213,62 @@ export class UserService {
     );
   }
 
-  updateUsername(name: string) {
-    return this.user$.pipe(
-      take(1),
-      switchMap((user) => {
-        if (!user || !user.displayName) {
-          return throwError(() => new Error('User is not defined'));
-        }
+  // updateUsername(name: string) {
+  //   return this.user$.pipe(
+  //     take(1),
+  //     switchMap((user) => {
+  //       if (!user || !user.displayName) {
+  //         return throwError(() => new Error('User is not defined'));
+  //       }
 
-        const batch = writeBatch(this.fs);
+  //       const transaction = runTransaction(this.fs, async (transaction) => {
+  //         const userDoc = doc(this.fs, 'users', user.uid);
+  //         const deleteUsernameDoc = doc(
+  //           this.fs,
+  //           'usernames',
+  //           user.displayName || '',
+  //         );
+  //         const usernameDoc = doc(this.fs, 'usernames', name);
 
-        const userDoc = doc(this.fs, 'users', user.uid);
-        const usernameDoc = doc(this.fs, 'usernames', name);
+  //         transaction.delete(deleteUsernameDoc);
+  //         transaction.update(userDoc, { username: name });
+  //         transaction.set(usernameDoc, { uid: user.uid });
 
-        batch.delete(doc(this.fs, 'usernames', user.displayName));
-        batch.set(userDoc, { username: name }, { merge: true });
-        batch.set(usernameDoc, { uid: user.uid }, { merge: true });
+  //         const userSnippets = collection(this.fs, 'users', user.uid, 'snippets')
+  //         collectionSnapshots(userSnippets).forEach((snippet) => {
 
-        return forkJoin({
-          doc: batch.commit(),
-          user: updateProfile(user, { displayName: name }),
-        }).pipe(map(() => name));
-      }),
-      catchError((err) => this.errorService.handleError(err)),
-    );
-  }
+  //         })
+  //       });
+
+  //       return EMPTY;
+  //     }),
+  //   );
+
+  // return this.user$.pipe(
+  //   take(1),
+  //   switchMap((user) => {
+  //     if (!user || !user.displayName) {
+  //       return throwError(() => new Error('User is not defined'));
+  //     }
+
+  //     const batch = writeBatch(this.fs);
+
+  //     const userDoc = doc(this.fs, 'users', user.uid);
+  //     const usernameDoc = doc(this.fs, 'usernames', name);
+  //     const snippetDoc = doc(this.fs, 'snippets', )
+
+  //     batch.delete(doc(this.fs, 'usernames', user.displayName));
+  //     batch.set(userDoc, { username: name }, { merge: true });
+  //     batch.set(usernameDoc, { uid: user.uid }, { merge: true });
+
+  //     return forkJoin({
+  //       doc: batch.commit(),
+  //       user: updateProfile(user, { displayName: name }),
+  //     }).pipe(map(() => name));
+  //   }),
+  //   catchError((err) => this.errorService.handleError(err)),
+  // );
+  // }
 
   getUserSnippets(
     uid: string,

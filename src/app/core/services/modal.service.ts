@@ -36,8 +36,8 @@ export class ModalService {
     this.closeOnNavigate();
   }
 
-  closeDialog() {
-    this.ref?.close();
+  closeDialog(value?: any) {
+    this.ref?.close(value);
     this.ref = undefined;
   }
 

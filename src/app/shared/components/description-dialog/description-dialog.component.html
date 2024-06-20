@@ -1,0 +1,16 @@
+<form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="form__row">
+    <label for="dialog-description" class="form__label">
+      Tell everyone something about yourself
+    </label>
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      class="form__input"
+      id="dialog-description"
+      formControlName="description"
+    ></textarea>
+  </div>
+
+  <p-button type="submit" label="Save" [loading]="loading()"></p-button>
+</form>

@@ -63,7 +63,7 @@ export class UserSnippetsComponent implements OnInit {
           : EMPTY;
       }),
       shareReplay(1),
-      finalize(() => {
+      tap(() => {
         this.loading.set(false);
       }),
     ),

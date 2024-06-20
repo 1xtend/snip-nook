@@ -1,0 +1,12 @@
+<div class="socials-list">
+  @for (item of socials; track item) {
+    <p-button
+      [label]="item.name"
+      [icon]="item.icon"
+      [outlined]="true"
+      [rounded]="true"
+      severity="info"
+      (onClick)="click(item.icon)"
+    ></p-button>
+  }
+</div>

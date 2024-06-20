@@ -1,0 +1,13 @@
+<p-buttonGroup>
+  <p-button
+    [label]="label()"
+    (onClick)="click.emit()"
+    [severity]="severity()"
+    [outlined]="true"
+  ></p-button>
+  <p-button
+    [icon]="icon()"
+    (onClick)="iconClick.emit()"
+    [severity]="severity()"
+  ></p-button>
+</p-buttonGroup>

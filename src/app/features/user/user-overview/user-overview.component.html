@@ -1,15 +1,26 @@
-<section class="user-overview">
-  <h1>Name</h1>
-  <span class="user-overview__sub">Username</span>
+@if (user(); as user) {
+  <section class="user-overview">
+    @if (user.description) {
+      <article class="user-overview__item">
+        <h3 class="user-overview__title">Description</h3>
+        <p>{{ user.description }}</p>
+      </article>
+    }
+    @if (user.created_at) {
+      <article class="user-overview__item">
+        <h3 class="user-overview__title">Our member since</h3>
+        <p>{{ user.created_at | date }}</p>
+      </article>
+    }
+  </section>
+} @else {
+  @if (loading()) {
+    <div>loading...</div>
+  } @else {
+    <div>No user</div>
+  }
+}
 
-  <p class="user-overview__description">Description about user</p>
-
-  <h2>Socials</h2>
-
-  <div class="user-overview__socials">
-    <a routerLink="https://github.com/1xtend">
-      <span class="pi pi-github"></span>
-      <span>{{ username }}</span>
-    </a>
-  </div>
-</section>
+@if (loading()) {
+  <div>LOADING</div>
+}

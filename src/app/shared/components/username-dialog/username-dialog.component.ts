@@ -1,7 +1,14 @@
 import { ModalService } from './../../../core/services/modal.service';
 import { MessageService } from 'primeng/api';
 import { UserService } from '@core/services/user.service';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -19,6 +26,7 @@ import { usernameValidator } from '@shared/validators/username.validator';
 import { FormFocusDirective } from '@shared/directives/form-focus.directive';
 import { hasFormChangedValidator } from '@shared/validators/has-form-changed.validator';
 import { take } from 'rxjs';
+import { trimValidator } from '@shared/validators/trim.validator';
 
 interface IUsernameForm {
   username: FormControl<string>;
@@ -37,6 +45,7 @@ interface IUsernameForm {
   ],
   templateUrl: './username-dialog.component.html',
   styleUrl: './username-dialog.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsernameDialogComponent implements OnInit {
   private userService = inject(UserService);
@@ -58,8 +67,10 @@ export class UsernameDialogComponent implements OnInit {
         Validators.required,
         Validators.minLength(4),
         Validators.maxLength(16),
+        trimValidator(),
       ],
       asyncValidators: [usernameValidator(this.authService)],
+      updateOn: 'blur',
     }),
   });
 
@@ -100,24 +111,24 @@ export class UsernameDialogComponent implements OnInit {
   }
 
   private updateUsername(name: string): void {
-    this.userService
-      .updateUsername(name)
-      .pipe(take(1))
-      .subscribe({
-        next: (name) => {
-          this.form.enable();
-          this.loading.set(false);
-          this.modalService.closeDialog();
-          this.messageService.add({
-            severity: 'success',
-            detail: 'Username has been changed successfully',
-            summary: 'Success',
-          });
-        },
-        error: (err) => {
-          this.loading.set(false);
-          this.form.enable();
-        },
-      });
+    // this.userService
+    //   .updateUsername(name)
+    //   .pipe(take(1))
+    //   .subscribe({
+    //     next: (name) => {
+    //       this.form.enable();
+    //       this.loading.set(false);
+    //       this.modalService.closeDialog();
+    //       this.messageService.add({
+    //         severity: 'success',
+    //         detail: 'Username has been changed successfully',
+    //         summary: 'Success',
+    //       });
+    //     },
+    //     error: (err) => {
+    //       this.loading.set(false);
+    //       this.form.enable();
+    //     },
+    //   });
   }
 }

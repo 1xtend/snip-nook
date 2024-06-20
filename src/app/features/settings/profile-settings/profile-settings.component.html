@@ -1,56 +1,37 @@
 <h2>Customize profile</h2>
 
-<article class="settings">
-  <div class="settings__row">
-    <div class="settings__col">
-      <h3 class="settings__title">Username</h3>
-      <small class="settings__subtitle">Change your username</small>
-    </div>
-    <p-button
-      icon="pi pi-arrow-right"
-      [outlined]="true"
-      [rounded]="true"
-      (onClick)="openModal('username')"
-    ></p-button>
+<form class="form" [style]="{ maxWidth: '600px' }" [formGroup]="form">
+  <div class="form__row">
+    <label for="settings-description" class="form__label">Description</label>
+    <textarea
+      id="settings-description"
+      pInputTextarea
+      [autoResize]="true"
+      class="form__input"
+      formControlName="description"
+    ></textarea>
   </div>
-  <div class="settings__row">
-    <div class="settings__col">
-      <h3 class="settings__title">Description</h3>
-      <small class="settings__subtitle">
-        Tell everyone something about yourself
-      </small>
-    </div>
-    <p-button
-      icon="pi pi-arrow-right"
-      [outlined]="true"
-      [rounded]="true"
-      (onClick)="openModal('description')"
-    ></p-button>
+
+  <div class="form__row">
+    <label for="settings-birthday" class="form__label">Date of birth</label>
+    <p-calendar
+      id="settings-birthday"
+      formControlName="birthday"
+      dateFormat="dd.mm.yy"
+      [maxDate]="maxDate"
+      [minDate]="minDate"
+    ></p-calendar>
   </div>
-  <div class="settings__row">
-    <div class="settings__col">
-      <h3 class="settings__title">Avatar</h3>
-      <small class="settings__subtitle">
-        Edit your avatar or upload an image
-      </small>
-    </div>
-    <p-button
-      icon="pi pi-arrow-right"
-      [outlined]="true"
-      [rounded]="true"
-      (onClick)="openModal('avatar')"
-    ></p-button>
+
+  <div class="form__row">
+    <label for="settings-socials" class="form__label">Your socials</label>
+    <p-button label="modal" (onClick)="openModal('socials')"></p-button>
   </div>
-  <div class="settings__row">
-    <div class="settings__col">
-      <h3 class="settings__title">Social links</h3>
-      <small class="settings__subtitle"> Share your social media </small>
-    </div>
-    <p-button
-      icon="pi pi-arrow-right"
-      [outlined]="true"
-      [rounded]="true"
-      (onClick)="openModal('socials')"
-    ></p-button>
+
+  <div class="form__row">
+    <label for="settings-avatar" class="form__label">User avatar</label>
+    <p-button type="button" label="Change"></p-button>
   </div>
-</article>
+
+  <p-button type="submit" label="Save changes"></p-button>
+</form>
