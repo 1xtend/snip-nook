@@ -260,8 +260,12 @@ export class AuthService {
     localStorage.removeItem(LocalStorageEnum.AuthToken);
   }
 
-  private async setAuthToken(user: User) {
-    const token = await user.getIdToken();
-    this.setToken(token);
+  private setAuthToken(user: User): void {
+    from(user.getIdToken())
+      .pipe(take(1))
+      .subscribe((token) => {
+        this.setToken(token);
+        console.log('SET AUTH TOKEN');
+      });
   }
 }

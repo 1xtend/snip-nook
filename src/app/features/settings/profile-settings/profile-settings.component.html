@@ -25,7 +25,17 @@
 
   <div class="form__row">
     <label for="settings-socials" class="form__label">Your socials</label>
-    <p-button label="modal" (onClick)="openModal('socials')"></p-button>
+
+    <div class="socials">
+      @for (item of form.controls.socials.value; track item) {
+        <app-chip [label]="item.name" icon="pi pi-times"></app-chip>
+      }
+      <p-button
+        icon="pi pi-plus"
+        label="Add social link"
+        (onClick)="openModal('socials')"
+      ></p-button>
+    </div>
   </div>
 
   <div class="form__row">

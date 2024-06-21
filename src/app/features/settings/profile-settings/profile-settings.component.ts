@@ -2,6 +2,7 @@ import { ModalService } from '@core/services/modal.service';
 import { UserService } from '@core/services/user.service';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   DestroyRef,
   OnInit,
@@ -17,6 +18,7 @@ import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CalendarModule } from 'primeng/calendar';
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -54,7 +56,9 @@ export class ProfileSettingsComponent implements OnInit {
   private fb = inject(FormBuilder);
   private modalService = inject(ModalService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
+  private user$ = this.authService.user$;
   loading = signal<boolean>(false);
 
   form: FormGroup<IProfileForm> = this.fb.group<IProfileForm>({
@@ -74,7 +78,15 @@ export class ProfileSettingsComponent implements OnInit {
   maxDate = new Date();
   minDate = new Date(1900, 1, 1);
 
-  ngOnInit(): void {}
+  pending = signal<boolean>(false);
+
+  get socialsArray() {
+    return this.form.controls['socials'];
+  }
+
+  ngOnInit(): void {
+    this.getUser();
+  }
 
   openModal(type: DialogType): void {
     const config: DynamicDialogConfig = { header: '' };
@@ -98,5 +110,47 @@ export class ProfileSettingsComponent implements OnInit {
     this.modalService.ref?.onClose.pipe(take(1)).subscribe((icon) => {
       console.log('Received icon', icon);
     });
+  }
+
+  private getUser(): void {
+    this.pending.set(true);
+    this.form.disable();
+
+    this.user$
+      .pipe(
+        take(1),
+        switchMap((user) => {
+          return user
+            ? this.userService.getUser(user.uid).pipe(take(1))
+            : EMPTY;
+        }),
+      )
+      .subscribe({
+        next: (user) => {
+          let socials = this.fb.array<FormControl<ISocial>>([]);
+
+          if (user?.socials) {
+            socials = this.fb.array(
+              user.socials.map((item) => {
+                return this.fb.control<ISocial>(item, { nonNullable: true });
+              }),
+            );
+          }
+
+          this.form.setControl('socials', socials);
+
+          this.form.patchValue({
+            description: user?.description || '',
+            birthday: user?.birthday || '',
+          });
+
+          this.pending.set(false);
+          this.form.enable();
+        },
+        error: () => {
+          this.pending.set(false);
+          this.form.enable();
+        },
+      });
   }
 }
