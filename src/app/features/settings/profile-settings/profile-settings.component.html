@@ -26,15 +26,24 @@
   <div class="form__row">
     <label for="settings-socials" class="form__label">Your socials</label>
 
-    <div class="socials">
-      @for (item of form.controls.socials.value; track item) {
-        <app-chip [label]="item.name" icon="pi pi-times"></app-chip>
+    <div class="socials" formArrayName="socials">
+      @for (control of socialsArray.controls; track control; let i = $index) {
+        <p-inputGroup [formGroupName]="i">
+          <p-button [icon]="control.value.icon || 'pi pi-link'"></p-button>
+          <input
+            type="text"
+            pInputText
+            formControlName="link"
+            placeholder="Url"
+          />
+          <input
+            type="text"
+            pInputText
+            formControlName="name"
+            placeholder="Name"
+          />
+        </p-inputGroup>
       }
-      <p-button
-        icon="pi pi-plus"
-        label="Add social link"
-        (onClick)="openModal('socials')"
-      ></p-button>
     </div>
   </div>
 
