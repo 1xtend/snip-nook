@@ -29,7 +29,11 @@
     <div class="socials" formArrayName="socials">
       @for (control of socialsArray.controls; track control; let i = $index) {
         <p-inputGroup [formGroupName]="i">
-          <p-button [icon]="control.value.icon || 'pi pi-link'"></p-button>
+          <p-button
+            [icon]="control.value.icon || 'pi pi-link'"
+            (onClick)="openModal('socials', i)"
+            [disabled]="form.disabled"
+          ></p-button>
           <input
             type="text"
             pInputText

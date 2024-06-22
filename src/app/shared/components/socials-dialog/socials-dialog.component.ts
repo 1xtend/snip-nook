@@ -8,6 +8,7 @@ import {
 import { take } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { socialsList } from '@shared/helpers/socials-list';
+import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 
 @Component({
   selector: 'app-socials-dialog',
@@ -19,13 +20,18 @@ import { socialsList } from '@shared/helpers/socials-list';
 })
 export class SocialsDialogComponent implements OnInit {
   private modalService = inject(ModalService);
+  private dialogConfig = inject(DynamicDialogConfig);
 
   socials = socialsList;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.dialogConfig.data);
+  }
 
   click(icon: string): void {
-    console.log('icon', icon);
-    this.modalService.closeDialog(icon);
+    this.modalService.closeDialog({
+      icon,
+      index: this.dialogConfig.data,
+    });
   }
 }

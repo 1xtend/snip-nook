@@ -89,16 +89,25 @@ export class ProfileSettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUser();
+
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((value) => {
+        console.log('Value changes: ', value);
+      });
   }
 
-  openModal(type: DialogType): void {
-    const config: DynamicDialogConfig = { header: '' };
+  openModal(type: DialogType, data?: any): void {
+    let config: DynamicDialogConfig = { header: '' };
     let component: any;
 
     switch (type) {
       case 'socials': {
         component = SocialsDialogComponent;
-        config.header = 'Socials';
+        config = {
+          header: 'Socials',
+          data,
+        };
         break;
       }
 
@@ -110,8 +119,19 @@ export class ProfileSettingsComponent implements OnInit {
 
     this.modalService.showDialog(component, config);
 
-    this.modalService.ref?.onClose.pipe(take(1)).subscribe((icon) => {
-      console.log('Received icon', icon);
+    this.modalService.ref?.onClose.pipe(take(1)).subscribe((data) => {
+      if (!data) return;
+
+      const control = this.socialsArray.getRawValue()[data.index];
+      this.socialsArray.setControl(
+        data.index,
+        this.createGroup({
+          ...control,
+          icon: data.icon || 'pi pi-link',
+        }),
+      );
+
+      this.cdr.markForCheck();
     });
   }
 
