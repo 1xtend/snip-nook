@@ -73,7 +73,7 @@ export class ProfileSettingsComponent implements OnInit {
       validators: [Validators.required],
     }),
     socials: this.fb.array<FormGroup<ISocialFormGroup>>(
-      this.getSocialsArray(),
+      this.getSocialGroupsArray(),
       { validators: [Validators.required, Validators.maxLength(5)] },
     ),
   });
@@ -125,7 +125,7 @@ export class ProfileSettingsComponent implements OnInit {
       const control = this.socialsArray.getRawValue()[data.index];
       this.socialsArray.setControl(
         data.index,
-        this.createGroup({
+        this.createSocialGroup({
           ...control,
           icon: data.icon || 'pi pi-link',
         }),
@@ -150,25 +150,8 @@ export class ProfileSettingsComponent implements OnInit {
       )
       .subscribe({
         next: (user) => {
-          // let socials = this.fb.array<FormControl<ISocial | null>>([]);
-
-          // if (user?.socials) {
-          //   socials = this.fb.array(
-          //     user.socials.map((item) => {
-          //       return this.fb.control<ISocial | null>(item, {
-          //         nonNullable: true,
-          //       });
-          //     }),
-          //   );
-          // }
-
-          // this.form.setControl('socials', socials);
-
           if (user?.socials) {
-            this.form.setControl(
-              'socials',
-              this.setSocialsControl(user.socials),
-            );
+            this.form.setControl('socials', this.setSocialsArray(user.socials));
           }
 
           this.form.patchValue({
@@ -188,21 +171,23 @@ export class ProfileSettingsComponent implements OnInit {
       });
   }
 
-  private getSocialsArray(socials?: ISocial[]): FormGroup<ISocialFormGroup>[] {
+  private getSocialGroupsArray(
+    socials?: ISocial[],
+  ): FormGroup<ISocialFormGroup>[] {
     const groupsArray: FormGroup<ISocialFormGroup>[] = [];
 
     for (let i = 0; i < 5; i++) {
-      groupsArray.push(this.createGroup(socials?.[i]));
+      groupsArray.push(this.createSocialGroup(socials?.[i]));
     }
 
     return groupsArray;
   }
 
-  private setSocialsControl(socials: ISocial[]) {
-    return this.fb.array(this.getSocialsArray(socials));
+  private setSocialsArray(socials: ISocial[]) {
+    return this.fb.array(this.getSocialGroupsArray(socials));
   }
 
-  private createGroup(social?: ISocial) {
+  private createSocialGroup(social?: ISocial) {
     return this.fb.group<ISocialFormGroup>({
       icon: this.fb.control(social?.icon || '', { nonNullable: true }),
       name: this.fb.control(social?.name || '', { nonNullable: true }),
