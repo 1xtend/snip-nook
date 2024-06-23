@@ -15,6 +15,10 @@ export function hasFormChangedValidator(initialValue: any): ValidatorFn {
         const x = initialValue[key];
         const y = value[key];
 
+        if (!x && !y) {
+          return x !== y;
+        }
+
         if (typeof x === 'object' && typeof y === 'object') {
           return compareObjects(x, y);
         }
@@ -35,7 +39,7 @@ export function hasFormChangedValidator(initialValue: any): ValidatorFn {
   };
 }
 
-function compareObjects(x: any, y: any): boolean {
+function compareObjects(x: object, y: object): boolean {
   const arrayX = Object.entries(x).sort();
   const arrayY = Object.entries(y).sort();
   return isEqual(arrayX, arrayY);

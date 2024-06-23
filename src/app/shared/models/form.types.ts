@@ -14,5 +14,5 @@ export interface ISocialFormGroup {
 export interface IProfileForm {
   description: FormControl<string>;
   socials: FormArray<FormGroup<ISocialFormGroup>>;
-  birthday: FormControl<string>;
+  birthday: FormControl<string | null>;
 }

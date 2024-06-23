@@ -7,7 +7,7 @@ export interface ISocial {
 export interface IUserProfile {
   description?: string;
   socials?: ISocial[];
-  birthday?: string;
+  birthday?: string | null;
 }
 
 export interface IUser extends IUserProfile {

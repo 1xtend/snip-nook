@@ -1,6 +1,11 @@
 <h2>Customize profile</h2>
 
-<form class="form" [style]="{ maxWidth: '600px' }" [formGroup]="form">
+<form
+  class="form"
+  [style]="{ maxWidth: '600px' }"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+>
   <div class="form__row">
     <label for="settings-description" class="form__label">Description</label>
     <textarea
@@ -20,6 +25,7 @@
       dateFormat="dd.mm.yy"
       [maxDate]="maxDate"
       [minDate]="minDate"
+      dataType="string"
     ></p-calendar>
   </div>
 
@@ -56,5 +62,9 @@
     <p-button type="button" label="Change"></p-button>
   </div>
 
-  <p-button type="submit" label="Save changes"></p-button>
+  @if (form.hasError("unchanged")) {
+    <span style="color: red">unchanged!</span>
+  }
+
+  <p-button type="submit" label="Save changes" [loading]="loading()"></p-button>
 </form>

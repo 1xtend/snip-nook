@@ -1,3 +1,4 @@
+import { MessageService } from 'primeng/api';
 import { ModalService } from '@core/services/modal.service';
 import { UserService } from '@core/services/user.service';
 import {
@@ -31,9 +32,10 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { UsernameDialogComponent } from '@shared/components/username-dialog/username-dialog.component';
 import { DescriptionDialogComponent } from '@shared/components/description-dialog/description-dialog.component';
 import { IProfileForm, ISocialFormGroup } from '@shared/models/form.types';
-import { ISocial } from '@shared/models/user.interface';
+import { ISocial, IUser, IUserProfile } from '@shared/models/user.interface';
 import { ChipComponent } from '@shared/components/chip/chip.component';
 import { SocialsDialogComponent } from '@shared/components/socials-dialog/socials-dialog.component';
+import { hasFormChangedValidator } from '@shared/validators/has-form-changed.validator';
 
 @Component({
   selector: 'app-profile-settings',
@@ -59,22 +61,18 @@ export class ProfileSettingsComponent implements OnInit {
   private modalService = inject(ModalService);
   private destroyRef = inject(DestroyRef);
   private cdr = inject(ChangeDetectorRef);
+  private messageService = inject(MessageService);
 
   private user$ = this.authService.user$;
-  loading = signal<boolean>(false);
 
   form: FormGroup<IProfileForm> = this.fb.group<IProfileForm>({
     description: this.fb.control('', {
       nonNullable: true,
-      validators: [Validators.required],
     }),
-    birthday: this.fb.control('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
+    birthday: this.fb.control(null),
     socials: this.fb.array<FormGroup<ISocialFormGroup>>(
       this.getSocialGroupsArray(),
-      { validators: [Validators.required, Validators.maxLength(5)] },
+      { validators: [Validators.maxLength(5)] },
     ),
   });
 
@@ -82,6 +80,7 @@ export class ProfileSettingsComponent implements OnInit {
   minDate = new Date(1900, 1, 1);
 
   pending = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
   get socialsArray() {
     return this.form.controls['socials'];
@@ -94,6 +93,46 @@ export class ProfileSettingsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         console.log('Value changes: ', value);
+      });
+  }
+
+  onSubmit(): void {
+    if (this.form.invalid) return;
+
+    this.form.disable();
+    this.loading.set(true);
+
+    const value = this.form.getRawValue();
+    const profile: IUserProfile = {
+      ...value,
+      birthday: value.birthday?.toString(),
+    };
+
+    console.log('submit: ', this.form.getRawValue());
+
+    this.updateProfile(profile);
+  }
+
+  private updateProfile(profile: IUserProfile): void {
+    this.userService
+      .updateProfile(profile)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          console.log('PROFILE WAS UPDATED');
+          this.form.enable();
+          this.loading.set(false);
+
+          this.messageService.add({
+            severity: 'success',
+            detail: 'Profile settings have been changed successfully',
+            summary: 'Success',
+          });
+        },
+        error: () => {
+          this.form.enable();
+          this.loading.set(false);
+        },
       });
   }
 
@@ -150,17 +189,22 @@ export class ProfileSettingsComponent implements OnInit {
       )
       .subscribe({
         next: (user) => {
+          console.log('get user: ', user);
+
           if (user?.socials) {
             this.form.setControl('socials', this.setSocialsArray(user.socials));
           }
 
           this.form.patchValue({
             description: user?.description || '',
-            birthday: user?.birthday || '',
+            birthday: user?.birthday || null,
           });
 
           this.pending.set(false);
           this.form.enable();
+          this.form.setValidators(
+            hasFormChangedValidator(this.form.getRawValue()),
+          );
 
           console.log(this.form.getRawValue());
         },
@@ -189,7 +233,9 @@ export class ProfileSettingsComponent implements OnInit {
 
   private createSocialGroup(social?: ISocial) {
     return this.fb.group<ISocialFormGroup>({
-      icon: this.fb.control(social?.icon || '', { nonNullable: true }),
+      icon: this.fb.control(social?.icon || 'pi pi-link', {
+        nonNullable: true,
+      }),
       name: this.fb.control(social?.name || '', { nonNullable: true }),
       link: this.fb.control(social?.link || '', { nonNullable: true }),
     });

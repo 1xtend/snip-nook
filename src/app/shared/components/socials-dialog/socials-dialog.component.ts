@@ -18,7 +18,7 @@ export class SocialsDialogComponent {
 
   socials = socialsList;
 
-  click(icon: string): void {
+  socialClick(icon: string): void {
     this.modalService.closeDialog({
       icon,
       index: this.dialogConfig.data,
