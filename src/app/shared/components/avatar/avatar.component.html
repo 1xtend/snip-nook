@@ -1,15 +1,35 @@
 @if (isButton()) {
   <button type="button" class="p-reset avatar-button" (click)="onClick.emit()">
     @if (url(); as url) {
-      <p-avatar [image]="url" shape="circle" [size]="size()"></p-avatar>
+      <p-avatar
+        [image]="url"
+        shape="circle"
+        [size]="size()"
+        [shape]="shape()"
+      ></p-avatar>
     } @else {
-      <p-avatar icon="pi pi-user" shape="circle" [size]="size()"></p-avatar>
+      <p-avatar
+        icon="pi pi-user"
+        shape="circle"
+        [size]="size()"
+        [shape]="shape()"
+      ></p-avatar>
     }
   </button>
 } @else {
   @if (url(); as url) {
-    <p-avatar [image]="url" shape="circle" [size]="size()"></p-avatar>
+    <p-avatar
+      [image]="url"
+      shape="circle"
+      [size]="size()"
+      [shape]="shape()"
+    ></p-avatar>
   } @else {
-    <p-avatar icon="pi pi-user" shape="circle" [size]="size()"></p-avatar>
+    <p-avatar
+      icon="pi pi-user"
+      shape="circle"
+      [size]="size()"
+      [shape]="shape()"
+    ></p-avatar>
   }
 }

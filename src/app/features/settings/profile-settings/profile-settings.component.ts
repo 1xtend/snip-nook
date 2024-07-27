@@ -18,6 +18,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CalendarModule } from 'primeng/calendar';
+import { AvatarModule } from 'primeng/avatar';
 import {
   FormArray,
   FormBuilder,
@@ -36,6 +37,8 @@ import { ISocial, IUser, IUserProfile } from '@shared/models/user.interface';
 import { ChipComponent } from '@shared/components/chip/chip.component';
 import { SocialsDialogComponent } from '@shared/components/socials-dialog/socials-dialog.component';
 import { hasFormChangedValidator } from '@shared/validators/has-form-changed.validator';
+import { UpdateAvatarDialogComponent } from '@shared/components/update-avatar-dialog/update-avatar-dialog.component';
+import { AvatarComponent } from '@shared/components/avatar/avatar.component';
 
 @Component({
   selector: 'app-profile-settings',
@@ -49,6 +52,7 @@ import { hasFormChangedValidator } from '@shared/validators/has-form-changed.val
     CalendarModule,
     ChipComponent,
     InputGroupModule,
+    AvatarModule,
   ],
   templateUrl: './profile-settings.component.html',
   styleUrl: './profile-settings.component.scss',
@@ -81,6 +85,7 @@ export class ProfileSettingsComponent implements OnInit {
 
   pending = signal<boolean>(false);
   loading = signal<boolean>(false);
+  user = signal<IUser | undefined>(undefined);
 
   get socialsArray() {
     return this.form.controls['socials'];
@@ -150,6 +155,15 @@ export class ProfileSettingsComponent implements OnInit {
         break;
       }
 
+      case 'avatar': {
+        component = UpdateAvatarDialogComponent;
+        config = {
+          header: 'Avatar',
+          data,
+        };
+        break;
+      }
+
       default: {
         component = null;
         break;
@@ -202,9 +216,12 @@ export class ProfileSettingsComponent implements OnInit {
 
           this.pending.set(false);
           this.form.enable();
+
           this.form.setValidators(
             hasFormChangedValidator(this.form.getRawValue()),
           );
+
+          this.user.set(user);
 
           console.log(this.form.getRawValue());
         },

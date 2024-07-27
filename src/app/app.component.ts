@@ -9,6 +9,8 @@ import { UserSidebarComponent } from '@shared/components/user-sidebar/user-sideb
 import { MenuSidebarComponent } from '@shared/components/menu-sidebar/menu-sidebar.component';
 import { fromEvent } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ModalService } from '@core/services/modal.service';
+import { UpdateAvatarDialogComponent } from '@shared/components/update-avatar-dialog/update-avatar-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +30,7 @@ export class AppComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private themeService = inject(ThemeService);
+  private modalService = inject(ModalService);
 
   menuSidebarVisible = model<boolean>(false);
   userSidebarVisible = model<boolean>(false);
@@ -42,6 +45,13 @@ export class AppComponent implements OnInit {
 
     this.authService.user$.subscribe((user) => {
       console.log('User: ', user);
+    });
+  }
+
+  click(): void {
+    this.modalService.showDialog(UpdateAvatarDialogComponent, {
+      header: 'Avatar',
+      data: 'https://firebasestorage.googleapis.com/v0/b/snipnook-bec8d.appspot.com/o/avatars%2Fq9S3wZQABuWuZUN2hXIlMiGmRyS2?alt=media&token=59226119-65cd-499e-9506-584dc9f96ee8',
     });
   }
 

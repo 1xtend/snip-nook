@@ -59,12 +59,26 @@
 
   <div class="form__row">
     <label for="settings-avatar" class="form__label">User avatar</label>
-    <p-button type="button" label="Change"></p-button>
+
+    <div class="flex align-items-center gap-3">
+      @if (user()?.photoURL; as url) {
+        <p-avatar size="xlarge" shape="square" [image]="url"></p-avatar>
+      } @else {
+        <p-avatar size="xlarge" shape="square" icon="pi pi-user"></p-avatar>
+      }
+
+      <p-button
+        label="Update"
+        [disabled]="form.disabled"
+        (onClick)="openModal('avatar', user()?.photoURL)"
+      ></p-button>
+    </div>
   </div>
 
-  @if (form.hasError("unchanged")) {
-    <span style="color: red">unchanged!</span>
-  }
-
-  <p-button type="submit" label="Save changes" [loading]="loading()"></p-button>
+  <p-button
+    type="submit"
+    label="Save changes"
+    [loading]="loading()"
+    [disabled]="form.disabled"
+  ></p-button>
 </form>

@@ -1,0 +1,18 @@
+@import "../../../../assets/scss/app-variables";
+
+:host ::ng-deep {
+  .p-fileupload-content {
+    padding: $spacing-m;
+  }
+
+  .p-fileupload-buttonbar {
+    padding: $spacing-m;
+    display: flex;
+    gap: $spacing-s;
+    flex-wrap: wrap;
+  }
+
+  .p-fileupload .p-button {
+    margin-right: 0;
+  }
+}

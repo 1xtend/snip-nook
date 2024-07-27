@@ -19,4 +19,5 @@ export class AvatarComponent {
   url = input<string | null>(null);
   isButton = input<boolean>(false);
   size = input<'normal' | 'large' | 'xlarge' | undefined>('normal');
+  shape = input<'square' | 'circle'>('circle');
 }
